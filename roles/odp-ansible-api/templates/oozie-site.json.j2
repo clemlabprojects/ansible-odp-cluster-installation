@@ -1,0 +1,37 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "oozie-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "oozie.action.retry.interval" : "30",
+        "oozie.authentication.simple.anonymous.allowed" : "true",
+        "oozie.authentication.type" : "simple",{% endraw %}
+				{% if cluster_services.OOZIE.SSL is defined and cluster_services.OOZIE.SSL %}
+				"oozie.base.url" : "https://{{ all['OOZIE_SERVER'][0] }}:11443/oozie",
+        "oozie.https.enabled" : "true",
+        "oozie.https.keystore.file" : "{{ssl_keystore_path}}",
+        "oozie.https.keystore.pass" : "{{ssl_keystore_password}}",
+				{% else %}
+				"oozie.base.url" : "http://{{ all['OOZIE_SERVER'][0] }}:11000/oozie",
+        "oozie.https.enabled" : "false",
+        "oozie.https.keystore.file" : "/etc/security/serverKeys/keystore.jks",
+        "oozie.https.keystore.pass" : "",
+				{% endif %}
+				{% raw %}
+        "oozie.credentials.credentialclasses" : "hcat=org.apache.oozie.action.hadoop.HCatCredentials,hive2=org.apache.oozie.action.hadoop.Hive2Credentials",
+        "oozie.db.schema.name" : "oozie",
+        "oozie.service.AuthorizationService.security.enabled" : "true",
+        "oozie.service.HadoopAccessorService.hadoop.configurations" : "*={{hadoop_conf_dir}}",
+        "oozie.service.HadoopAccessorService.kerberos.enabled" : "false",{% endraw %}
+        "oozie.service.JPAService.jdbc.driver" : "{% if database_type == "mysql" or database_type == "mariadb" %}com.mysql.jdbc.Driver{% elif database_type == "postgresql" %}org.postgresql.Driver{% else %}org.apache.derby.jdbc.EmbeddedDriver{% endif %}",
+        "oozie.service.JPAService.jdbc.password" : "{{ database_oozie_user_password }}",
+        "oozie.service.JPAService.jdbc.url" : "{% if database_type == "mysql" or database_type == "mariadb" %}jdbc:mysql://{{ database_server }}:{{ database_port }}/{{ database_oozie }}{% elif database_type == "postgresql" %}jdbc:postgresql://{{ database_server }}:{{ database_port }}/{{ database_oozie }}{% else %}jdbc:derby:${oozie.data.dir}/${oozie.db.schema.name}-db;create=true{% endif %}",
+        "oozie.service.JPAService.jdbc.username" : "{{ database_oozie_user }}",{% raw %}
+        "oozie.service.SparkConfigurationService.spark.configurations" : "*=spark-conf",
+        "oozie.service.URIHandlerService.uri.handlers" : "org.apache.oozie.dependency.FSURIHandler,org.apache.oozie.dependency.HCatURIHandler",
+        "oozie.services.ext" : "\n      org.apache.oozie.service.JMSAccessorService,org.apache.oozie.service.PartitionDependencyManagerService,org.apache.oozie.service.HCatAccessorService" {% endraw %}
+      }
+    }
+  }
+}

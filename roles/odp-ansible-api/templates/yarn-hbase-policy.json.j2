@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "yarn-hbase-policy",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "security.admin.protocol.acl": "*",
+			  "security.client.protocol.acl": "*",
+			  "security.masterregion.protocol.acl": "*"{% endraw %}
+      }
+    }
+  }
+}

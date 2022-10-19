@@ -1,0 +1,11 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "nifi-registry-bootstrap-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "content" : "\n#\n# Licensed to the Apache Software Foundation (ASF) under one or more\n# contributor license agreements.  See the NOTICE file distributed with\n# this work for additional information regarding copyright ownership.\n# The ASF licenses this file to You under the Apache License, Version 2.0\n# (the \"License\"); you may not use this file except in compliance with\n# the License.  You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\n\n# Java command to use when running nifi-registry\njava=java\n\n# Username to use when running nifi-registry. This value will be ignored on Windows.\nrun.as={{nifi_registry_user}}\n\n# Configure where nifi-registry's lib and conf directories live\nlib.dir={{nifi_registry_install_dir}}/lib\nconf.dir={{nifi_registry_config_dir}}\n\n# How long to wait after telling nifi-registry to shutdown before explicitly killing the Process\ngraceful.shutdown.seconds=20\n\n# Disable JSR 199 so that we can use JSP's without running a JDK\njava.arg.1=-Dorg.apache.jasper.compiler.disablejsr199=true\n\n# JVM memory settings\njava.arg.2=-Xms{{nifi_registry_initial_mem}}\njava.arg.3=-Xmx{{nifi_registry_max_mem}}\n\n# Enable Remote Debugging\n#java.arg.debug=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000\n\njava.arg.4=-Djava.net.preferIPv4Stack=true\n\n# allowRestrictedHeaders is required for Cluster/Node communications to work properly\njava.arg.5=-Dsun.net.http.allowRestrictedHeaders=true\njava.arg.6=-Djava.protocol.handler.pkgs=sun.net.www.protocol"
+      } {% endraw %}
+    }
+  }
+}

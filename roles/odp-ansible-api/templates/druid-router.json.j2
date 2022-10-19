@@ -1,0 +1,16 @@
+{ "Clusters": {
+		"desired_configs": {
+			"type": "druid-router",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        {% raw %}
+        "druid.port": "8888",
+        "druid.router.http.numConnections": "20",
+        "druid.router.tierToBrokerMap": "{\"_default_tier\":\"druid/broker\"}",
+        "druid.server.http.numThreads": "50",
+        "druid.service": "druid/router"
+        {% endraw %}
+  		}
+		}
+	}
+}

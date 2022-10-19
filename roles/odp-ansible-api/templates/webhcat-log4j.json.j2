@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "webhcat-log4j",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "content" : "\n# Licensed to the Apache Software Foundation (ASF) under one\n# or more contributor license agreements.  See the NOTICE file\n# distributed with this work for additional information\n# regarding copyright ownership.  The ASF licenses this file\n# to you under the Apache License, Version 2.0 (the\n# \"License\"); you may not use this file except in compliance\n# with the License.  You may obtain a copy of the License at\n#\n#     http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing,\n# software distributed under the License is distributed on an\n# \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n# KIND, either express or implied.  See the License for the\n# specific language governing permissions and limitations\n# under the License.\n\n# Define some default values that can be overridden by system properties\nwebhcat.root.logger = {{hive_log_level}}, standard\nwebhcat.log.dir = .\nwebhcat.log.file = webhcat.log\n\nlog4j.rootLogger = ${webhcat.root.logger}\n\n# Logging Threshold\nlog4j.threshhold = DEBUG\n\nlog4j.appender.standard  =  org.apache.log4j.DailyRollingFileAppender\nlog4j.appender.standard.File = ${webhcat.log.dir}/${webhcat.log.file}\nlog4j.appender.standard.MaxFileSize = {{webhcat_log_maxfilesize}}MB\nlog4j.appender.standard.MaxBackupIndex = {{webhcat_log_maxbackupindex}}\n\n# Rollver at midnight\nlog4j.appender.DRFA.DatePattern = .yyyy-MM-dd\n\nlog4j.appender.DRFA.layout = org.apache.log4j.PatternLayout\n\nlog4j.appender.standard.layout = org.apache.log4j.PatternLayout\nlog4j.appender.standard.layout.conversionPattern = %-5p | %d{DATE} | %c | %m%n\n\n# Class logging settings\nlog4j.logger.com.sun.jersey = DEBUG\nlog4j.logger.com.sun.jersey.spi.container.servlet.WebComponent = ERROR\nlog4j.logger.org.apache.hadoop = INFO\nlog4j.logger.org.apache.hadoop.conf = WARN\nlog4j.logger.org.apache.zookeeper = WARN\nlog4j.logger.org.eclipse.jetty = INFO\n\n    ",
+        "webhcat_log_maxbackupindex" : "20",
+        "webhcat_log_maxfilesize" : "256"
+      }{% endraw %}
+    }
+  }
+}

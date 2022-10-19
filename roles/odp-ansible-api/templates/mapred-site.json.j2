@@ -1,0 +1,62 @@
+{"Clusters":{"desired_configs":{"type":"mapred-site","tag":"{{ range(00000000, 99999999) | random }}","properties":{
+  {% if cluster_services.MAPREDUCE2.SSL is defined and cluster_services.MAPREDUCE2.SSL %}
+  "mapreduce.jobhistory.http.policy" : "HTTPS_ONLY",
+  "mapreduce.ssl.enabled" : "true",
+  "mapreduce.shuffle.ssl.enabled" : "false",
+  "mapreduce.jobhistory.webapp.https.address" : "https://{{ all['HISTORYSERVER'][0] }}:19889",
+  {% else %}
+  "mapreduce.jobhistory.http.policy" : "HTTP_ONLY",
+  {% endif %}
+  "mapreduce.admin.map.child.java.opts" : "-server -XX:NewRatio=8 -Djava.net.preferIPv4Stack=true {% if ambari_stack_name|lower == "odp" %}-Dodp.version=${odp.version}{% else %}-Dhdp.version=${hdp.version}{% endif %}",
+  "mapreduce.admin.reduce.child.java.opts" : "-server -XX:NewRatio=8 -Djava.net.preferIPv4Stack=true {% if ambari_stack_name|lower == "odp" %}-Dodp.version=${odp.version}{% else %}-Dhdp.version=${hdp.version}{% endif %}",
+  "mapreduce.admin.user.env" : "LD_LIBRARY_PATH={% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/hadoop/lib/native:{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}{% raw %}/hadoop/lib/native/Linux-{{architecture}}-64",
+  "mapreduce.am.max-attempts" : "2",
+  "mapreduce.application.classpath" : "$PWD/mr-framework/hadoop/share/hadoop/mapreduce/*:$PWD/mr-framework/hadoop/share/hadoop/mapreduce/lib/*:$PWD/mr-framework/hadoop/share/hadoop/common/*:$PWD/mr-framework/hadoop/share/hadoop/common/lib/*:$PWD/mr-framework/hadoop/share/hadoop/yarn/*:$PWD/mr-framework/hadoop/share/hadoop/yarn/lib/*:$PWD/mr-framework/hadoop/share/hadoop/hdfs/*:$PWD/mr-framework/hadoop/share/hadoop/hdfs/lib/*:$PWD/mr-framework/hadoop/share/hadoop/tools/lib/*:{% endraw %}{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/hadoop/lib/hadoop-lzo-0.6.0.{% if ambari_stack_name|lower == "odp" %}${odp.version}{% else %}${hdp.version}{% endif %}.jar:/etc/hadoop/conf/secure",
+  "mapreduce.application.framework.path" : "{% if ambari_stack_name|lower == "odp" %}/odp/apps/${odp.version}{% else %}/hdp/apps/${hdp.version}{% endif %}{% raw %}/mapreduce/mapreduce.tar.gz#mr-framework",
+  "mapreduce.cluster.administrators" : " hadoop",
+  "mapreduce.framework.name" : "yarn",
+  "mapreduce.job.counters.max" : "130",
+  "mapreduce.job.emit-timeline-data" : "false",
+  "mapreduce.job.queuename" : "default",
+  "mapreduce.job.reduce.slowstart.completedmaps" : "0.05",{% endraw %}
+  "mapreduce.jobhistory.address" : "{{ all['HISTORYSERVER'][0] }}:10020",
+  "mapreduce.jobhistory.bind-host" : "0.0.0.0",
+  "mapreduce.jobhistory.done-dir" : "/mr-history/done",
+  "mapreduce.jobhistory.intermediate-done-dir" : "/mr-history/tmp",
+  "mapreduce.jobhistory.recovery.enable" : "true",
+  "mapreduce.jobhistory.recovery.store.class" : "org.apache.hadoop.mapreduce.v2.hs.HistoryServerLeveldbStateStoreService",
+  "mapreduce.jobhistory.recovery.store.leveldb.path" : "/hadoop/mapreduce/jhs",
+  "mapreduce.jobhistory.webapp.address" : "{{ all['HISTORYSERVER'][0] }}:19888", {% raw %}
+  "mapreduce.map.java.opts" : "-Xmx1228m",
+  "mapreduce.map.log.level" : "INFO",
+  "mapreduce.map.memory.mb" : "1536",
+  "mapreduce.map.output.compress" : "false",
+  "mapreduce.map.sort.spill.percent" : "0.7",
+  "mapreduce.map.speculative" : "false",
+  "mapreduce.output.fileoutputformat.compress" : "false",
+  "mapreduce.output.fileoutputformat.compress.type" : "BLOCK",
+  "mapreduce.reduce.input.buffer.percent" : "0.0",
+  "mapreduce.reduce.java.opts" : "-Xmx1638m",
+  "mapreduce.reduce.log.level" : "INFO",
+  "mapreduce.reduce.memory.mb" : "2048",
+  "mapreduce.reduce.shuffle.fetch.retry.enabled" : "1",
+  "mapreduce.reduce.shuffle.fetch.retry.interval-ms" : "1000",
+  "mapreduce.reduce.shuffle.fetch.retry.timeout-ms" : "30000",
+  "mapreduce.reduce.shuffle.input.buffer.percent" : "0.7",
+  "mapreduce.reduce.shuffle.merge.percent" : "0.66",
+  "mapreduce.reduce.shuffle.parallelcopies" : "30",
+  "mapreduce.reduce.speculative" : "false",
+  "mapreduce.shuffle.port" : "13562",
+  "mapreduce.task.io.sort.factor" : "100",
+  "mapreduce.task.io.sort.mb" : "859",
+  "mapreduce.task.timeout" : "300000",{% endraw %}
+  "yarn.app.mapreduce.am.admin-command-opts" : "{% if ambari_stack_name|lower == "odp" %}-Dodp.version=${odp.version}{% else %}-Dhdp.version=${hdp.version}{% endif %}",
+  "yarn.app.mapreduce.am.command-opts" : "-Xmx819m {% if ambari_stack_name|lower == "odp" %}-Dodp.version=${odp.version}{% else %}-Dhdp.version=${hdp.version}{% endif %}",
+  "yarn.app.mapreduce.am.log.level" : "INFO",
+  "yarn.app.mapreduce.am.resource.mb" : "1024",
+  "yarn.app.mapreduce.am.staging-dir" : "/user",
+  "yarn.app.mapreduce.client.job.max-retries" : "30"
+}
+}
+}
+}

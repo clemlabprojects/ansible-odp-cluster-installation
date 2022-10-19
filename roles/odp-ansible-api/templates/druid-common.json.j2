@@ -1,0 +1,37 @@
+{ "Clusters": {
+		"desired_configs": {
+			"type": "druid-common",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "database_name": "druid",
+        "druid.discovery.curator.path": "/druid/discovery",
+        {% raw %}
+        "druid.emitter": "{{metric_emitter_type}}",
+        "druid.emitter.ambari-metrics.eventConverter": "{\"type\":\"whiteList\"}",
+        "druid.emitter.ambari-metrics.hostname": "{{metric_collector_host}}",
+        "druid.emitter.ambari-metrics.port": "{{metric_collector_port}}",
+        "druid.emitter.ambari-metrics.protocol": "{{metric_collector_protocol}}",
+        "druid.emitter.ambari-metrics.trustStorePassword": "{{metric_truststore_password}}",
+        "druid.emitter.ambari-metrics.trustStorePath": "{{metric_truststore_path}}",
+        "druid.emitter.ambari-metrics.trustStoreType": "{{metric_truststore_type}}",  {% endraw %}
+        "druid.extensions.loadList": "[\"druid-datasketches\"]\n    ",
+        "druid.extensions.pullList": "[]",
+        "druid.extensions.repositoryList": "[]",
+        "druid.hadoop.security.kerberos.keytab": null,
+        "druid.hadoop.security.kerberos.principal": null,
+        "druid.metadata.storage.connector.connectURI": "jdbc:{{ database_type }}://{{ database_server }}:{{ database_port }}/{{ database_druid }}?createDatabaseIfNotExist=true",
+        "druid.metadata.storage.connector.user": "{{ database_druid_user }}",
+        "druid.metadata.storage.connector.password": "{{ database_druid_user_password }}",
+        "druid.metadata.storage.type": "{{ database_type }}",
+        "druid.metadata.storage.connector.port": "1527",
+        "druid.monitoring.monitors": "[\"com.metamx.metrics.JvmMonitor\"]",
+        "druid.security.extensions.loadList": "[]",
+        "druid.storage.storageDirectory": "",
+        "druid.storage.type": "",
+        "druid.zk.paths.base": "/druid",
+        "druid.zk.service.host": "{% for host in zookeeper_quorum %}{{ host }}{% if not loop.last %},{% endif %}{% endfor %}:2181",
+        "metastore_hostname": "{{ database_server }}:{{ database_port }}"
+  		}
+		}
+	}
+}

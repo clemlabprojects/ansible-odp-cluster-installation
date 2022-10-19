@@ -1,0 +1,33 @@
+{ "Clusters": {
+		"desired_configs": {
+			"type": "druid-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        {% raw %}
+        "content": "\n      #!/bin/bash\n\n      # Set DRUID specific environment variables here.\n\n      # The java implementation to use.\n      export JAVA_HOME={{java8_home}}\n      export PATH=$JAVA_HOME/bin:$PATH\n      export DRUID_PID_DIR={{druid_pid_dir}}\n      export DRUID_LOG_DIR={{druid_log_dir}}\n      export DRUID_CONF_DIR={{druid_conf_dir}}\n      export DRUID_LIB_DIR={{druid_home}}/lib\n      export HADOOP_CONF_DIR={{hadoop_conf_dir}}\n\n    ",
+        {% endraw %}
+        "druid.broker.jvm.direct.memory": "1048576",
+        "druid.broker.jvm.heap.memory": "2048",
+        "druid.broker.jvm.opts": "-Duser.timezone=UTC -Dfile.encoding=UTF-8",
+        "druid.coordinator.jvm.direct.memory": "1048576",
+        "druid.coordinator.jvm.heap.memory": "512",
+        "druid.coordinator.jvm.opts": "-Duser.timezone=UTC -Dfile.encoding=UTF-8",
+        "druid.historical.jvm.direct.memory": "1048576",
+        "druid.historical.jvm.heap.memory": "2048",
+        "druid.historical.jvm.opts": "-Duser.timezone=UTC -Dfile.encoding=UTF-8",
+        "druid.middlemanager.jvm.direct.memory": "1048576",
+        "druid.middlemanager.jvm.heap.memory": "256",
+        "druid.middlemanager.jvm.opts": "-Duser.timezone=UTC -Dfile.encoding=UTF-8",
+        "druid.overlord.jvm.direct.memory": "1048576",
+        "druid.overlord.jvm.heap.memory": "512",
+        "druid.overlord.jvm.opts": "-Duser.timezone=UTC -Dfile.encoding=UTF-8",
+        "druid.router.jvm.direct.memory": "1048576",
+        "druid.router.jvm.heap.memory": "512",
+        "druid.router.jvm.opts": "-Duser.timezone=UTC -Dfile.encoding=UTF-8",
+        "druid_log_dir": "/var/log/druid",
+        "druid_pid_dir": "/var/run/druid",
+        "druid_user": "druid"
+  		}
+		}
+	}
+}

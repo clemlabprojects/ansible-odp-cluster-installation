@@ -1,0 +1,17 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ssl-client",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "ssl.client.keystore.location" : "{{ ssl_keystore_path | default('NONE') }}",
+        "ssl.client.keystore.password" : "{{ ssl_keystore_password | default('NONE') }}",
+        "ssl.client.keystore.type" : "jks",
+        "ssl.client.truststore.location" : "{{ ssl_truststore_path | default('NONE')  }}",
+        "ssl.client.truststore.password" : "{{ ssl_truststore_password | default('NONE')  }}",
+        "ssl.client.truststore.reload.interval" : "10000",
+        "ssl.client.truststore.type" : "jks"
+			}
+		}
+	}
+}

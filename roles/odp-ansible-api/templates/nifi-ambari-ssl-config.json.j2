@@ -1,0 +1,27 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "nifi-ambari-ssl-config",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "content" : "\n<!-- Provide the identity (typically a DN) of each node when clustered (see tool tip for detailed description of Node Identity). Must be specified when Ranger Nifi plugin will not be used for authorization. -->\n\n<!--\n<property name=\"Node Identity 1\"></property>\n<property name=\"Node Identity 2\"></property>\n<property name=\"Node Identity 3\"></property>\n<property name=\"Node Identity 4\"></property>\n-->",
+        "nifi.initial.admin.identity" : "admin",{% endraw %}
+        "nifi.node.ssl.isenabled" : "false",
+        "nifi.security.keyPasswd" : "",
+        "nifi.security.keystore" : "",
+        "nifi.security.keystorePasswd" : "",
+        "nifi.security.keystoreType" : "",
+        "nifi.security.needClientAuth" : "false",
+        "nifi.security.truststore" : "",
+        "nifi.security.truststorePasswd" : "",
+        "nifi.security.truststoreType" : "",
+        "nifi.toolkit.dn.prefix" : "CN=",
+        "nifi.toolkit.dn.suffix" : ", OU=NIFI",
+        "nifi.toolkit.tls.helper.days" : "1095",
+        "nifi.toolkit.tls.port" : "10443",
+        "nifi.toolkit.tls.regenerate" : "false",
+        "nifi.toolkit.tls.token" : ""
+      }
+    }
+  }
+}

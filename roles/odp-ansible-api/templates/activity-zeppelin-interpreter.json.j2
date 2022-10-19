@@ -1,0 +1,11 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "activity-zeppelin-interpreter",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "activity-zeppelin-interpreter-content" : "{\n  \"interpreterSettings\": {\n    \"2BJB693M8\": {\n      \"id\": \"2BJB693M8\",\n      \"name\": \"phoenix\",\n      \"group\": \"phoenix\",\n      \"properties\": {\n        \"phoenix.jdbc.url\": \"{{activity_explorer_jdbc_url}}\",\n        \"phoenix.user\": \"\",\n        \"phoenix.password\": \"\",\n        \"phoenix.max.result\": \"1000\",\n        \"phoenix.driver.name\": \"org.apache.phoenix.jdbc.PhoenixDriver\"\n      },\n      \"interpreterGroup\": [\n        {\n          \"class\": \"org.apache.zeppelin.phoenix.PhoenixInterpreter\",\n          \"name\": \"sql\"\n        }\n      ],\n      \"dependencies\": [],\n      \"option\": {\n        \"remote\": true,\n        \"perNoteSession\": false\n      }\n    }\n  },\n\"interpreterBindings\": {\n    \"2BNVQJUBK\": [\n      \"2BJB693M8\"\n    ],\n    \"2BPD7951H\": [\n      \"2BJB693M8\"\n    ],\n    \"2BQH91X36\": [\n      \"2BJB693M8\"\n    ],\n    \"2BTCVPTMH\": [\n      \"2BJB693M8\"\n    ]\n  },\n\"interpreterRepositories\": [\n    {\n      \"id\": \"central\",\n      \"type\": \"default\",\n      \"url\": \"http://repo1.maven.org/maven2/\",\n      \"releasePolicy\": {\n        \"enabled\": true,\n        \"updatePolicy\": \"daily\",\n        \"checksumPolicy\": \"warn\"\n      },\n      \"snapshotPolicy\": {\n        \"enabled\": true,\n        \"updatePolicy\": \"daily\",\n        \"checksumPolicy\": \"warn\"\n      },\n      \"mirroredRepositories\": [],\n      \"repositoryManager\": false\n    }\n  ]\n}" {% endraw %}
+      }
+    }
+  }
+}

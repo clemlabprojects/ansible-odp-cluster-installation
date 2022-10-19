@@ -1,0 +1,7 @@
+{"Clusters":{"desired_configs":{"type":"slider-env","tag":"{{ range(00000000, 99999999) | random }}","properties":{ {% raw %}
+        "content" : "\n# Set Slider-specific environment variables here.\n\n# The only required environment variable is JAVA_HOME.  All others are\n# optional.  When running a distributed configuration it is best to\n# set JAVA_HOME in this file, so that it is correctly defined on\n# remote nodes.\n\n# The java implementation to use.  Required.\nexport JAVA_HOME={{java64_home}}\n# The hadoop conf directory.  Optional as slider-client.xml can be edited to add properties.\nexport HADOOP_CONF_DIR={{hadoop_conf_dir}}\n    "
+      }
+    }
+  }
+}
+{% endraw %}

@@ -1,0 +1,20 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "zeppelin-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+					"zeppelin.executor.instances": "2",
+					"zeppelin.executor.mem": "512m",
+					"zeppelin_user": "zeppelin",
+					"zeppelin_group": "zeppelin",
+					"zeppelin_pid_dir": "/var/run/zeppelin",
+					"zeppelin_log_dir": "/var/log/zeppelin",
+					"zeppelin.spark.jar.dir": "/apps/zeppelin",
+					"zeppelin.server.kerberos.principal": "",
+					"zeppelin.server.kerberos.keytab": "",
+					"zeppelin_env_content" : {{ zeppelinenv | to_json }}
+			}
+    }
+  }
+}

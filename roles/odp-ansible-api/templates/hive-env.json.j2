@@ -1,0 +1,40 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "hive-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "hive_ambari_database" : {% if database_type == "mysql" %}"MySQL"{% elif database_type == "postgresql" %}"PostgreSQL"{% endif %},
+	      "hive_database": {% if database_type == "mysql" %}"Existing MySQL / MariaDB Database"{% elif database_type == "postgresql" %}"Existing PostgreSQL Database"{% endif %},
+	      "hive_database_name": "{{ database_hive }}",
+	      "hive_database_type": "{% if database_type == "postgresql" %}postgres{% elif database_type == "mysql" %}mysql{% endif %}",
+	      "javax.jdo.option.ConnectionURL": "jdbc:{{ database_type }}://{{ database_server }}:{{ database_port }}/{{ database_hive }}?createDatabaseIfNotExist=true",
+        "alert_ldap_password" : "",
+        "alert_ldap_username" : "",
+        {% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3 %}
+        "beeline_jdbc_url_default" : "container",{% endif %}
+				"hive_security_authorization" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE %}Ranger{% else %}None{% endif %}",
+        "content" : {{ hiveenv | to_json }},{% raw %}
+        "enable_heap_dump" : "false",
+        "hcat_log_dir" : "/var/log/webhcat",
+        "hcat_pid_dir" : "/var/run/webhcat",
+        "hcat_user" : "hcat",
+        "heap_dump_location" : "/tmp",
+        "hive.atlas.hook" : "false",
+        "hive.client.heapsize" : "1024",
+        "hive.heapsize" : "1024",
+        "hive.log.level" : "INFO",
+        "hive.metastore.heapsize" : "1024",
+        "hive_exec_orc_storage_strategy" : "SPEED",
+        "hive_log_dir" : "/var/log/hive",
+        "hive_pid_dir" : "/var/run/hive",
+        "hive_timeline_logging_enabled" : "true",
+        "hive_txn_acid" : "off",
+        "hive_user" : "hive",
+        "hive_user_nofile_limit" : "32000",
+        "hive_user_nproc_limit" : "16000",
+        "webhcat_user" : "hcat"{% endraw %}
+			}
+		}
+	}
+}

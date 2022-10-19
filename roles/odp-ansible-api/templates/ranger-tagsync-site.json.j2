@@ -1,0 +1,28 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-tagsync-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "ranger.tagsync.atlas.default.cluster.name" : "{{cluster_name}}",
+        "ranger.tagsync.dest.ranger.endpoint" : "{{ranger_external_url}}",
+        "ranger.tagsync.dest.ranger.ssl.config.filename" : "{{stack_root}}/current/ranger-tagsync/conf/ranger-policymgr-ssl.xml",
+        "ranger.tagsync.dest.ranger.username" : "rangertagsync",
+        "ranger.tagsync.kerberos.keytab" : "",
+        "ranger.tagsync.kerberos.principal" : "",
+        "ranger.tagsync.keystore.filename" : "/usr/hdp/current/ranger-tagsync/conf/rangertagsync.jceks",
+        "ranger.tagsync.logdir" : "/var/log/ranger/tagsync",
+        "ranger.tagsync.source.atlas" : "true",
+        "ranger.tagsync.source.atlasrest" : "false",
+        "ranger.tagsync.source.atlasrest.download.interval.millis" : "60000",
+        "ranger.tagsync.source.atlasrest.endpoint" : "",
+        "ranger.tagsync.source.atlasrest.keystore.filename" : "/usr/hdp/current/ranger-tagsync/conf/atlasuser.jceks",
+        "ranger.tagsync.source.atlasrest.ssl.config.filename" : "{{stack_root}}/current/ranger-tagsync/conf/atlas-tagsync-ssl.xml",
+        "ranger.tagsync.source.atlasrest.username" : "admin",
+        "ranger.tagsync.source.file" : "false",
+        "ranger.tagsync.source.file.check.interval.millis" : "",
+        "ranger.tagsync.source.file.filename" : "" {% endraw %}
+			}
+		}
+	}
+}

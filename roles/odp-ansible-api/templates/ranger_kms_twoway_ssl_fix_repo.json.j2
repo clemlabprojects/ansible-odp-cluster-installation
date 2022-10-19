@@ -1,0 +1,16 @@
+{
+    "configs": {
+  		"policy.download.auth.users": "keyadmin,rangerkms",
+  		"password": "keyadmin",
+      {% if cluster_services.RANGER_KMS is defined and cluster_services.RANGER_KMS and cluster_services.RANGER_KMS.SSL is defined and cluster_services.RANGER_KMS.SSL %}
+  		"provider": "kms://https@{{ all['RANGER_KMS_SERVER'][0] }}:9393/kms",
+      "commonNameForCertificate": "{{ ranger_plugin_keystore_alias }}",
+      {% else %}
+      "provider": "kms://http@{{ all['RANGER_KMS_SERVER'][0] }}:9292/kms",
+      {% endif %}
+  		"username": "keyadmin"
+    },
+    "isEnabled": true,
+    "name": "{{ cluster_name }}_kms",
+    "type": "kms"
+}

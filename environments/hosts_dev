@@ -1,0 +1,24 @@
+[CLUSTER]
+edge01.clemlab.com ansible_ssh_host=10.10.10.14 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+master01.clemlab.com ansible_ssh_host=10.10.10.11 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+master02.clemlab.com ansible_ssh_host=10.10.10.12 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+master03.clemlab.com ansible_ssh_host=10.10.10.13 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+worker01.clemlab.com ansible_ssh_host=10.10.10.16 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+worker02.clemlab.com ansible_ssh_host=10.10.10.17 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+worker03.clemlab.com ansible_ssh_host=10.10.10.18 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+
+
+[ipaserver]
+admin01.clemlab.com ansible_ssh_host=10.10.10.19 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+admin02.clemlab.com ansible_ssh_host=10.10.10.20 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+
+[ipaclient]
+admin01.clemlab.com ansible_ssh_host=10.10.10.19 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+admin02.clemlab.com ansible_ssh_host=10.10.10.20 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+edge01.clemlab.com ansible_ssh_host=10.10.10.14 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+master01.clemlab.com ansible_ssh_host=10.10.10.11 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+master02.clemlab.com ansible_ssh_host=10.10.10.12 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+master03.clemlab.com ansible_ssh_host=10.10.10.13 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+worker01.clemlab.com ansible_ssh_host=10.10.10.16 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+worker02.clemlab.com ansible_ssh_host=10.10.10.17 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key
+worker03.clemlab.com ansible_ssh_host=10.10.10.18 ansible_ssh_user=rocky ansible_ssh_private_key_file=~/.vagrant.d/insecure_private_key

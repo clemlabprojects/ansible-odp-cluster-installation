@@ -1,0 +1,14 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "activity-log4j",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "activity-log4j-content" : "\n# Copyright (c) 2011-2017, Hortonworks Inc.  All rights reserved.\n# Except as expressly permitted in a written agreement between you\n# or your company and Hortonworks, Inc, any use, reproduction,\n# modification, redistribution, sharing, lending or other exploitation\n# of all or any part of the contents of this file is strictly prohibited.\n\n# Define some default values that can be overridden by system properties\n# Root logger option\nlog4j.rootLogger=INFO,file\n\nlog4j.appender.file=org.apache.log4j.RollingFileAppender\nlog4j.appender.file.File={{activity_log_dir}}/${log.file.name}\nlog4j.appender.file.MaxFileSize={{activity_max_file_size}}MB\nlog4j.appender.file.MaxBackupIndex={{activity_max_backup_index}}\nlog4j.appender.file.layout=org.apache.log4j.PatternLayout\nlog4j.appender.file.layout.ConversionPattern=%d{ISO8601} %5p [%t] %c{1}:%L - %m%n",
+        "activity_log_dir" : "/var/log/smartsense-activity",
+        "activity_max_backup_index" : "10",
+        "activity_max_file_size" : "30" {% endraw %}
+      }
+    }
+  }
+}

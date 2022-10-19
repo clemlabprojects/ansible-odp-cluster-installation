@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "hivemetastore-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "hive.metastore.metrics.enabled": "true",
+        "hive.service.metrics.hadoop2.component": "hivemetastore",
+        "hive.service.metrics.reporter": "HADOOP2"
+			}
+		}
+	}
+}

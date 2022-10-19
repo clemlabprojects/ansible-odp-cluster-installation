@@ -1,0 +1,14 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "spark2-logsearch-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "component_mappings" : "SPARK2_JOBHISTORYSERVER:spark2_jobhistory_server;SPARK2_THRIFTSERVER:spark2_thriftserver;LIVY2_SERVER:livy2_server",
+        "content" : "\n{\n   \"input\":[\n      {\n       \"type\":\"spark2_jobhistory_server\",\n       \"rowtype\":\"service\",\n       \"path\":\"{{default('/configurations/spark2-env/spark_log_dir', '/var/log/spark2')}}/spark-*-org.apache.spark.deploy.history.HistoryServer*.out\"\n     },\n     {\n       \"type\":\"spark2_thriftserver\",\n       \"rowtype\":\"service\",\n       \"path\":\"{{default('/configurations/spark2-env/spark_log_dir', '/var/log/spark2')}}/spark-*-org.apache.spark.sql.hive.thriftserver.HiveThriftServer2*.out\"\n     },\n     {\n       \"type\":\"livy2_server\",\n       \"rowtype\":\"service\",\n       \"path\":\"{{default('/configurations/livy2-env/livy2_log_dir', '/var/log/livy2')}}/livy-livy-server.out\"\n     }\n   ],\n   \"filter\":[\n      {\n          \"filter\":\"grok\",\n          \"conditions\":{\n            \"fields\":{\n              \"type\":[\n                \"spark2_jobhistory_server\",\n                \"spark2_thriftserver\",\n                \"livy2_server\"\n              ]\n             }\n          },\n          \"log4j_format\":\"\",\n          \"multiline_pattern\":\"^(%{SPARK_DATESTAMP:logtime}%{SPACE}%{LOGLEVEL:level})\",\n          \"message_pattern\":\"(?m)^%{SPARK_DATESTAMP:logtime}%{SPACE}%{LOGLEVEL:level}%{SPACE}%{JAVAFILE:file}:%{SPACE}%{GREEDYDATA:log_message}\",\n          \"post_map_values\":{\n            \"logtime\":{\n              \"map_date\":{\n                \"target_date_pattern\":\"yy/MM/dd HH:mm:ss\"\n              }\n             },\n            \"level\":{\n              \"map_fieldvalue\":{\n                \"pre_value\":\"WARNING\",\n                \"post_value\":\"WARN\"\n              }\n             }\n           }\n      }\n   ]\n}",
+        "service_name" : "Spark2"
+        {% endraw %}
+      }
+    }
+  }
+}

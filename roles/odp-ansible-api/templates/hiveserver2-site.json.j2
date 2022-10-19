@@ -1,0 +1,17 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "hiveserver2-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "hive.conf.restricted.list" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE %}hive.security.authenticator.manager,hive.security.authorization.manager,hive.security.metastore.authorization.manager,hive.security.metastore.authenticator.manager,hive.users.in.admin.role,hive.server2.xsrf.filter.enabled,hive.security.authorization.enabled{% else %}hive.security.authenticator.manager,hive.security.authorization.manager,hive.users.in.admin.role{% endif %}",
+        "hive.metastore.metrics.enabled" : "true",
+        "hive.security.authenticator.manager" : "org.apache.hadoop.hive.ql.security.SessionStateUserAuthenticator",
+        "hive.security.authorization.enabled" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE %}true{% else %}false{% endif %}",
+        "hive.security.authorization.manager" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE %}org.apache.ranger.authorization.hive.authorizer.RangerHiveAuthorizerFactory{% else %}org.apache.hadoop.hive.ql.security.authorization.plugin.sqlstd.SQLStdHiveAuthorizerFactory{% endif %}",
+        "hive.service.metrics.hadoop2.component" : "hiveserver2",
+        "hive.service.metrics.reporter" : "HADOOP2"
+			}
+		}
+	}
+}

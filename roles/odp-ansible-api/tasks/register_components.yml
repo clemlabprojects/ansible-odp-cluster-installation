@@ -1,0 +1,98 @@
+- name: Register components on hosts
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/hosts?Hosts/host_name={{ hosts }}"
+    method: POST
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: '{"host_components":[{"HostRoles":{"component_name":"{{ in_item.1 }}"}}]}'
+    body_format: json
+    validate_certs: no
+    # status_code: 200,201,202
+    return_content: no
+  with_subelements:
+    - "{{ loop_components_noha }}"
+    - noha
+  register: registration
+  loop_control:
+    label: "{{ in_item.1 }}"
+    loop_var: in_item
+  when: in_item.0.name in cluster_services and in_item.1 != "" and all[in_item.1] is defined and hosts in all[in_item.1] and cluster_services[in_item.0.name].HA is not defined
+  failed_when: registration.status not in [200, 201, 202, 409]
+
+- fail:
+    msg: "{{ fail_item.status }}: Components {{ fail_item.in_item[1] }} already registred on the hosts"
+  with_items:
+    - "{{ registration.results }}"
+  loop_control:
+    loop_var: fail_item
+    label: "{{ fail_item.in_item[1] }} on {{ hosts }}"
+  when: fail_item.status is defined and fail_item.status == 409
+  failed_when: fail_item.status not in [200, 201, 202, 409]
+
+- name: Register HA components on hosts
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/hosts?Hosts/host_name={{ hosts }}"
+    method: POST
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: '{"host_components":[{"HostRoles":{"component_name":"{{ in_item.1 }}"}}]}'
+    body_format: json
+    validate_certs: no
+    # status_code: 200,201,202
+    return_content: no
+  with_subelements:
+    - "{{ loop_components_ha }}"
+    - ha
+  register: registration
+  loop_control:
+    label: "{{ in_item.1 }}"
+    loop_var: in_item
+  when: in_item.0.name in cluster_services and in_item.1 != "" and all[in_item.1] is defined and hosts in all[in_item.1] and cluster_services[in_item.0.name].HA is defined and cluster_services[in_item.0.name].HA
+  failed_when: registration.status not in [200, 201, 202, 409]
+
+- fail:
+    msg: "{{ fail_item.status }}: Components {{ fail_item.in_item[1] }} already registred on the hosts"
+  with_items:
+    - "{{ registration.results }}"
+  loop_control:
+    loop_var: fail_item
+    label: "{{ fail_item.in_item[1] }} on {{ hosts }}"
+  when: fail_item.status is defined and fail_item.status == 409
+  failed_when: fail_item.status not in [200, 201, 202, 409]
+
+- name: Register clients components on hosts
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/hosts?Hosts/host_name={{ hosts }}"
+    method: POST
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: '{"host_components":[{"HostRoles":{"component_name":"{{ in_item.1 }}"}}]}'
+    body_format: json
+    validate_certs: no
+    # status_code: 200,201,202
+    return_content: no
+  with_subelements:
+    - "{{ loop_components_clients }}"
+    - client
+  register: registration
+  loop_control:
+    label: "{{ in_item.1 }}"
+    loop_var: in_item
+  when: in_item.0.name in cluster_services and in_item.1 != "" and all[in_item.1] is defined and hosts in all[in_item.1]
+  failed_when: registration.status not in [200, 201, 202, 409]
+
+- fail:
+    msg: "{{ fail_item.status }}: Components {{ fail_item.in_item[1] }} already registred on the hosts"
+  with_items:
+    - "{{ registration.results }}"
+  loop_control:
+    loop_var: fail_item
+    label: "{{ fail_item.in_item[1] }} on {{ hosts }}"
+  when: fail_item.status is defined and fail_item.status == 409
+  failed_when: fail_item.status not in [200, 201, 202, 409]

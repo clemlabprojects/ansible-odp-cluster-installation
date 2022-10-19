@@ -1,0 +1,32 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "activity-zeppelin-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "zeppelin.anonymous.allowed" : "false",
+        "zeppelin.interpreter.connect.timeout" : "30000",
+        "zeppelin.interpreter.dir" : "/usr/hdp/share/hst/activity-explorer/interpreter",
+        "zeppelin.interpreters" : "org.apache.zeppelin.phoenix.PhoenixInterpreter",
+        "zeppelin.notebook.dir" : "/var/lib/smartsense/activity-explorer/notebook",
+        "zeppelin.notebook.homescreen.hide" : "false",
+        "zeppelin.notebook.storage" : "org.apache.zeppelin.notebook.repo.VFSNotebookRepo",
+        "zeppelin.server.addr" : "0.0.0.0",
+        "zeppelin.server.allowed.origins" : "*",
+        "zeppelin.server.context.path" : "/",
+        "zeppelin.server.port" : "9060",
+        "zeppelin.ssl" : "false",
+        "zeppelin.ssl.client.auth" : "false",
+        "zeppelin.ssl.key.manager.password" : "admin",
+        "zeppelin.ssl.keystore.password" : "admin",
+        "zeppelin.ssl.keystore.path" : "/var/lib/smartsense/activity-explorer/keystore",
+        "zeppelin.ssl.keystore.type" : "JKS",
+        "zeppelin.ssl.truststore.password" : "admin",
+        "zeppelin.ssl.truststore.path" : "/var/lib/smartsense/activity-explorer/truststore",
+        "zeppelin.ssl.truststore.type" : "JKS",
+        "zeppelin.war.tempdir" : "/var/lib/smartsense/activity-explorer/webapp",
+        "zeppelin.websocket.max.text.message.size" : "1024000" {% endraw %}
+      }
+    }
+  }
+}

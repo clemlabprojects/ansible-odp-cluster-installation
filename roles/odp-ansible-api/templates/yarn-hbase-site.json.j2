@@ -1,0 +1,57 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "yarn-hbase-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+				"dfs.domain.socket.path": "/var/lib/hadoop-hdfs/dn_socket",
+			  "hbase.bucketcache.ioengine": "",
+			  "hbase.bucketcache.percentage.in.combinedcache": "",
+			  "hbase.bucketcache.size": "",
+			  "hbase.client.keyvalue.maxsize": "1048576",
+			  "hbase.client.retries.number": "7",
+			  "hbase.client.scanner.caching": "100",
+			  "hbase.cluster.distributed": "true",
+			  "hbase.coprocessor.master.classes": "",
+			  "hbase.coprocessor.region.classes": "",
+			  "hbase.coprocessor.regionserver.classes": "",
+			  "hbase.defaults.for.version.skip": "true",
+			  "hbase.hregion.majorcompaction": "604800000",
+			  "hbase.hregion.majorcompaction.jitter": "0.50",
+			  "hbase.hregion.max.filesize": "10737418240",
+			  "hbase.hregion.memstore.block.multiplier": "4",
+			  "hbase.hregion.memstore.flush.size": "134217728",
+			  "hbase.hregion.memstore.mslab.enabled": "true",
+			  "hbase.hstore.blockingStoreFiles": "10",
+			  "hbase.hstore.compaction.max": "10",
+			  "hbase.hstore.compactionThreshold": "3",
+			  "hbase.local.dir": "${hbase.tmp.dir}/local",
+			  "hbase.master.info.bindAddress": "0.0.0.0",
+			  "hbase.master.info.port": "17010",
+			  "hbase.master.namespace.init.timeout": "2400000",
+			  "hbase.master.port": "17000",
+			  "hbase.master.ui.readonly": "false",
+			  "hbase.master.wait.on.regionservers.timeout": "30000",
+			  "hbase.regionserver.executor.openregion.threads": "20",
+			  "hbase.regionserver.global.memstore.size": "0.4",
+			  "hbase.regionserver.handler.count": "30",
+			  "hbase.regionserver.info.port": "17030",
+			  "hbase.regionserver.port": "17020",
+			  "hbase.rootdir": "/atsv2/hbase/data",
+			  "hbase.rpc.protection": "authentication",
+			  "hbase.rpc.timeout": "90000",
+			  "hbase.security.authentication": "simple",
+			  "hbase.security.authorization": "false",
+			  "hbase.superuser": "yarn",
+			  "hbase.tmp.dir": "/tmp/hbase-${user.name}",{% raw %}
+			  "hbase.zookeeper.property.clientPort": "{{zookeeper_clientPort}}",
+			  "hbase.zookeeper.quorum": "{{zookeeper_quorum_hosts}}",{% endraw %}
+			  "hbase.zookeeper.useMulti": "true",
+			  "hfile.block.cache.size": "0.40",
+			  "zookeeper.recovery.retry": "6",
+			  "zookeeper.session.timeout": "90000",
+			  "zookeeper.znode.parent": "/atsv2-hbase-unsecure"
+      }
+    }
+  }
+}

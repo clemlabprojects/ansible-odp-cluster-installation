@@ -1,0 +1,12 @@
+{ "Clusters": {
+		"desired_configs": {
+			"type": "druid-coordinator",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "druid.coordinator.merge.on": "false",
+        "druid.port": "8081",
+        "druid.service": "druid/coordinator"
+  		}
+		}
+	}
+}

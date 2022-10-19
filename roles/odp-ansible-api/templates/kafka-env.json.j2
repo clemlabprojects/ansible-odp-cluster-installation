@@ -1,0 +1,17 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "kafka-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "content" : "\n#!/bin/bash\n\n# Set KAFKA specific environment variables here.\n\n# The java implementation to use.\nexport JAVA_HOME={{java64_home}}\nexport PATH=$PATH:$JAVA_HOME/bin\nexport PID_DIR={{kafka_pid_dir}}\nexport LOG_DIR={{kafka_log_dir}}\n{% if kerberos_security_enabled or kafka_other_sasl_enabled %}\nexport KAFKA_KERBEROS_PARAMS=\"-Djavax.security.auth.useSubjectCredsOnly=false {{kafka_kerberos_params}}\"\n{% else %}\nexport KAFKA_KERBEROS_PARAMS={{kafka_kerberos_params}}\n{% endif %}\n# Add kafka sink to classpath and related depenencies\nif [ -e \"/usr/lib/ambari-metrics-kafka-sink/ambari-metrics-kafka-sink.jar\" ]; then\n  export CLASSPATH=$CLASSPATH:/usr/lib/ambari-metrics-kafka-sink/ambari-metrics-kafka-sink.jar\n  export CLASSPATH=$CLASSPATH:/usr/lib/ambari-metrics-kafka-sink/lib/*\nfi\nif [ -f /etc/kafka/conf/kafka-ranger-env.sh ]; then\n. /etc/kafka/conf/kafka-ranger-env.sh\nfi",
+        "is_supported_kafka_ranger" : "true",
+        "kafka_log_dir" : "/var/log/kafka",
+        "kafka_pid_dir" : "/var/run/kafka",
+        "kafka_user" : "kafka",
+        "kafka_user_nofile_limit" : "128000",
+        "kafka_user_nproc_limit" : "65536"
+      }{% endraw %}
+    }
+  }
+}

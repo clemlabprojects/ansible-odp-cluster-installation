@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-kms-logsearch-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "component_mappings" : "RANGER_KMS:ranger_kms",
+        "content" : "\n{\n  \"input\":[\n    {\n      \"type\":\"ranger_kms\",\n      \"rowtype\":\"service\",\n      \"path\":\"{{default('/configurations/kms-env/kms_log_dir', '/var/log/ranger/kms')}}/kms.log\"\n    }\n   ],\n  \"filter\":[\n    {\n      \"filter\":\"grok\",\n      \"conditions\":{\n        \"fields\":{\n          \"type\":[\n            \"ranger_kms\"\n          ]\n         }\n       },\n      \"log4j_format\":\"%d{ISO8601} %-5p %c{1} - %m%n\",\n      \"multiline_pattern\":\"^(%{TIMESTAMP_ISO8601:logtime})\",\n      \"message_pattern\":\"(?m)^%{TIMESTAMP_ISO8601:logtime}%{SPACE}%{LOGLEVEL:level}%{SPACE}%{JAVACLASS:logger_name}%{SPACE}-%{SPACE}%{GREEDYDATA:log_message}\",\n      \"post_map_values\":{\n        \"logtime\":{\n          \"map_date\":{\n            \"target_date_pattern\":\"yyyy-MM-dd HH:mm:ss,SSS\"\n          }\n         }\n       }\n     }\n   ]\n }",
+        "service_name" : "Ranger KMS" {% endraw %}
+      }
+    }
+  }
+}

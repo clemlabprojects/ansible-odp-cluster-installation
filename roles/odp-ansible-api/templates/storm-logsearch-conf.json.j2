@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "storm-logsearch-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { 
+				"component_mappings": "NIMBUS:storm_nimbus;SUPERVISOR:storm_supervisor,storm_worker,storm_logviewer,storm_worker_event;STORM_UI_SERVER:storm_ui;DRPC_SERVER:storm_drpc",
+				"content": {{ stormlogsearchconf | to_json }},
+				"service_name": "Storm"
+			}
+		}
+	}
+}

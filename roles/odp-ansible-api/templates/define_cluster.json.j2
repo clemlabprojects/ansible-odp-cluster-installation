@@ -1,0 +1,1 @@
+[{% for i in services %}{"ServiceInfo":{"service_name":"{{ i.name|upper }}","desired_repository_version_id": 1}}{% if not loop.last %},{% endif %}{% endfor %}]

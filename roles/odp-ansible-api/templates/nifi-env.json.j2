@@ -1,0 +1,17 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "nifi-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "content" : "\n#!/bin/sh\n#\n#    Licensed to the Apache Software Foundation (ASF) under one or more\n#    contributor license agreements.  See the NOTICE file distributed with\n#    this work for additional information regarding copyright ownership.\n#    The ASF licenses this file to You under the Apache License, Version 2.0\n#    (the \"License\"); you may not use this file except in compliance with\n#    the License.  You may obtain a copy of the License at\n#\n#       http://www.apache.org/licenses/LICENSE-2.0\n#\n#    Unless required by applicable law or agreed to in writing, software\n#    distributed under the License is distributed on an \"AS IS\" BASIS,\n#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n#    See the License for the specific language governing permissions and\n#    limitations under the License.\n#\n\n# The java implementation to use.\nexport JAVA_HOME={{jdk64_home}}\n\nexport NIFI_HOME={{nifi_install_dir}}\n\n#The directory for the NiFi pid file\nexport NIFI_PID_DIR=\"{{nifi_pid_dir}}\"\n\n#The directory for NiFi log files\nexport NIFI_LOG_DIR=\"{{nifi_node_log_dir}}\"",
+        "nifi_group" : "nifi",
+        "nifi_node_log_dir" : "/var/log/nifi",
+        "nifi_pid_dir" : "/var/run/nifi",
+        "nifi_user" : "nifi",
+        "nifi_user_nofile_limit" : "50000",
+        "nifi_user_nproc_limit" : "10000"
+      } {% endraw %}
+    }
+  }
+}

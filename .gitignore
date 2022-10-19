@@ -1,0 +1,3 @@
+.vagrant*
+build_dir
+BENCHMARK.md

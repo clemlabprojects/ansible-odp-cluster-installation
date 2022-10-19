@@ -1,0 +1,413 @@
+---
+# - command: "kadmin -p {{ kerberos_principal }} -w {{ kerberos_principal_password }} -q 'list_principals'"
+#   register: kadmin_check
+#   retries: 60
+
+- name: Check if Kerberos already installed
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}/services/KERBEROS"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    validate_certs: no
+    return_content: yes
+    status_code: 200,201,202,404
+    timeout: 60
+  register: check_kerberos_services
+
+- name: Add KERBEROS service to the cluster
+  uri:
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}/services/KERBEROS"
+   method: POST
+   force_basic_auth: yes
+   user: "{{ ambari_username }}"
+   password: "{{ ambari_password }}"
+   headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+   validate_certs: no
+   return_content: yes
+   status_code: 200,201,202,404,409
+  register: add_kerberos_services
+  when: check_kerberos_services.status != 200
+
+- name: Check if KERBEROS_CLIENT already installed
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}/services/KERBEROS/components/KERBEROS_CLIENT"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    validate_certs: no
+    status_code: 200,201,202,404
+    return_content: yes
+  register: check_kerberos_client
+
+- name: Add KERBEROS_CLIENT component to the cluster
+  uri:
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}/services/KERBEROS/components/KERBEROS_CLIENT"
+   method: POST
+   force_basic_auth: yes
+   user: "{{ ambari_username }}"
+   password: "{{ ambari_password }}"
+   headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+   validate_certs: no
+   status_code: 200,201,202,404
+   return_content: yes
+  register: add_kerberos_client
+  when: check_kerberos_client.status != 200
+
+- name: Fail if the KERBEROS_CLIENT component can't be installed
+  fail:
+    msg: "Failed to install KERBEROS service on {{ cluster_name | lower }} cluster."
+  when: add_kerberos_client.status is defined and add_kerberos_client.status == 404
+
+- name: Add KERBEROS_CLIENT configuration (MIT_KDC)
+  uri:
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}"
+   method: PUT
+   force_basic_auth: yes
+   user: "{{ ambari_username }}"
+   password: "{{ ambari_password }}"
+   headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+   body: "{{ lookup('template','templates/kerberos/krb5-conf.json.j2') }}"
+   body_format: json
+   validate_certs: no
+   # status_code: 200,201,202,404
+   return_content: yes
+  register: add_kerberos_client_conf
+  until: add_kerberos_client_conf.status == 200 or add_kerberos_client_conf.status == 201 or add_kerberos_client_conf.status == 202
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 60
+  when: wait and kdc_type == 'mit-kdc'
+  failed_when: (add_kerberos_client_conf.status == '500')
+
+- debug:
+    var: add_kerberos_client_conf
+
+- name: Add KERBEROS_CLIENT configuration (IPA)
+  uri:
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}"
+   method: PUT
+   force_basic_auth: yes
+   user: "{{ ambari_username }}"
+   password: "{{ ambari_password }}"
+   headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+   body: "{{ lookup('template','templates/kerberos/krb5-conf_ipa.json.j2') }}"
+   body_format: json
+   validate_certs: no
+   # status_code: 200,201,202,404
+   return_content: yes
+  register: add_kerberos_client_conf_ipa
+  until: add_kerberos_client_conf_ipa.status == 200 or add_kerberos_client_conf_ipa.status == 201 or add_kerberos_client_conf_ipa.status == 202
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 60
+  when: wait and kdc_type == 'ipa'
+  failed_when: (add_kerberos_client_conf_ipa.status == '500')
+
+# # ######### Ansible BUG (or bad behaviour) replacing the string "admin" by "*****". Need to replace asterisks before injecting #########
+# - name: Transfer cluster-env
+#   template: >
+#    src=templates/kerberos/deploy_krb_client.json.j2
+#    dest=/tmp/deploy_krb_client.json
+#
+#
+# - name: Slurp cluster-env
+#   slurp:
+#     src: /tmp/deploy_krb_client.json
+#   register: deploy_krb_client
+#
+# ######################################################################################################################################
+#
+# - name: Deploy KERBEROS_CLIENT service for each hosts
+#   uri:
+#    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}/hosts"
+#    method: POST
+#    force_basic_auth: yes
+#    user: "{{ ambari_username }}"
+#    password: "{{ ambari_password }}"
+#    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+#    body: "{{ deploy_krb_client['content'] | b64decode }}"
+  #  body_format: json
+  #  validate_certs: no
+  #  return_content: yes
+  #  status_code: 200,201,202,404
+  # register: deploy_kerberos_client
+  # failed_when: deploy_kerberos_client.status == 404
+
+- name: Deploy KERBEROS_CLIENT service for each hosts
+  uri:
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}/hosts"
+   method: POST
+   force_basic_auth: yes
+   user: "{{ ambari_username }}"
+   password: "{{ ambari_password }}"
+   headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+   body: "{{ lookup('template','templates/kerberos/deploy_krb_client.json.j2') }}"
+   body_format: json
+   validate_certs: no
+   return_content: yes
+   status_code: 200,201,202,404
+  register: deploy_kerberos_client
+  failed_when: deploy_kerberos_client.status == 404
+
+- name: Install KERBEROS services and components
+  uri:
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}/services/KERBEROS"
+   method: PUT
+   force_basic_auth: yes
+   user: "{{ ambari_username }}"
+   password: "{{ ambari_password }}"
+   headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+   body: '{"ServiceInfo": {"state" : "INSTALLED"}}'
+   body_format: json
+   validate_certs: no
+   status_code: 200,201,202,404
+   return_content: yes
+  register: install_kerberos_and_components
+
+- name: Sleep
+  shell: sleep 30
+
+- name: Reset KDC admin credentials
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}/credentials/kdc.admin.credential"
+    headers:
+      X-Requested-By: ambari
+    method: DELETE
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    body_format: json
+    return_content: yes
+    validate_certs: no
+    status_code: 200, 201, 202, 409
+
+- name: Add Kerberos Credential (MIT-KDC)
+  uri:
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}/credentials/kdc.admin.credential"
+   method: POST
+   force_basic_auth: yes
+   user: "{{ ambari_username }}"
+   password: "{{ ambari_password }}"
+   headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+   body: '{"Credential":{"principal":"{{ kerberos_principal }}","key":"{{ kerberos_principal_password  }}","type":"persisted"}}'
+   body_format: json
+   validate_certs: no
+   # status_code: 200,201,202,404
+   return_content: yes
+  register: add_kerberos_credential
+  until: add_kerberos_credential.status == 200 or add_kerberos_credential.status == 201 or add_kerberos_credential.status == 202
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 60
+  when: wait and kdc_type == 'mit-kdc'
+  failed_when: (add_kerberos_credential.status == '500')
+
+- name: Add Kerberos Credential (IPA)
+  uri:
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}/credentials/kdc.admin.credential"
+   method: POST
+   force_basic_auth: yes
+   user: "{{ ambari_username }}"
+   password: "{{ ambari_password }}"
+   headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+   body: '{"Credential":{"principal":"{{ ipa_ambari_principal }}@{{kerberos_realm}}","key":"{{ ipa_ambari_password  }}","type":"persisted"}}'
+   body_format: json
+   validate_certs: no
+   # status_code: 200,201,202,404
+   return_content: yes
+  register: add_kerberos_ipa_credential
+  until: add_kerberos_ipa_credential.status == 200 or add_kerberos_ipa_credential.status == 201 or add_kerberos_ipa_credential.status == 202
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 60
+  when: wait and kdc_type == 'ipa'
+  failed_when: (add_kerberos_ipa_credential.status == '500')
+
+# - name: Install KERBEROS services
+#   uri:
+#    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}/host_components?HostRoles/state=INIT"
+#    method: PUT
+#    force_basic_auth: yes
+#    user: "{{ ambari_username }}"
+#    password: "{{ ambari_password }}"
+#    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+#    body: '{ "context": "Install Keberos Services","HostRoles": { "state":"INSTALLED" } }'
+#    body_format: json
+#    validate_certs: no
+#    status_code: 200,201,202,404
+#    return_content: yes
+#   register: install_kerberos
+#
+# - name: Sleep
+#   shell: sleep 20
+
+# - name: Enabling Kerberos (MIT-KDC)
+#   uri:
+#    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}"
+#    method: PUT
+#    force_basic_auth: yes
+#    user: "{{ ambari_username }}"
+#    password: "{{ ambari_password }}"
+#    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+#    body: "{{ lookup('template','templates/kerberos/krb_enable.json.j2') }}"
+#    body_format: json
+#    validate_certs: no
+#    return_content: yes
+#   when: kdc_type == 'mit-kdc'
+#   register: add_kerberos_client_configuration
+#   failed_when: add_kerberos_client_configuration.status == '500' or add_kerberos_client_configuration.status == '404'
+
+- name: Transfer krb_enable
+  template: >
+   src=templates/kerberos/krb_enable.json.j2
+   dest=/tmp/krb_enable.json
+  when: kdc_type == 'mit-kdc'
+
+- name: Slurp krb5_enable
+  slurp:
+    src: /tmp/krb_enable.json
+  register: krb_enable
+  when: kdc_type == 'mit-kdc'
+
+- name: Enabling Kerberos (MIT-KDC)
+  uri:
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}"
+   method: PUT
+   force_basic_auth: yes
+   user: "{{ ambari_username }}"
+   password: "{{ ambari_password }}"
+   headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+   body: "{{ krb_enable['content'] | b64decode }}"
+   body_format: json
+   validate_certs: no
+   return_content: yes
+  when: kdc_type == 'mit-kdc'
+  register: add_kerberos_client_configuration
+  failed_when: add_kerberos_client_configuration.status == '500' or add_kerberos_client_configuration.status == '404'
+
+- debug:
+    var: add_kerberos_client_configuration
+
+- name: Wait for KERBEROS to be fully installed on the cluster
+  uri:
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/requests/{{ add_kerberos_client_configuration.json.Requests.id }}"
+   method: GET
+   force_basic_auth: yes
+   user: "{{ ambari_username }}"
+   password: "{{ ambari_password }}"
+   headers: '{"X-Requested-By":"ambari", "Content-Type":"application/json"}'
+   status_code: 200,201,202
+   validate_certs: no
+   return_content: yes
+  register: cluster_check_kerberos_install
+  until: (((cluster_check_kerberos_install.content|from_json).Requests.request_status == 'COMPLETED' and (cluster_check_kerberos_install.content|from_json).Requests.completed_task_count|int > 0) or
+       (cluster_check_kerberos_install.content|from_json).Requests.request_status == 'FAILED' or
+       (cluster_check_kerberos_install.content|from_json).Requests.request_status == 'TIMEDOUT' or
+       (cluster_check_kerberos_install.content|from_json).Requests.request_status == 'ABORTED')
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 30
+  when: wait and kdc_type == 'mit-kdc' and add_kerberos_client_configuration is defined and (add_kerberos_client_configuration.content) != ""
+
+#-------- FreeIpa tasks ---------#
+
+
+- name: Transfer krb_enable IPA
+  template: >
+   src=templates/kerberos/krb_enable_ipa.json.j2
+   dest=/tmp/krb_enable_ipa.json
+  when: kdc_type == 'ipa'
+
+- name: Slurp krb5_enable
+  slurp:
+    src: /tmp/krb_enable_ipa.json
+  register: krb_enable
+  when: kdc_type == 'ipa'
+
+
+- name: Enabling Kerberos (IPA)
+  uri:
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}"
+   method: PUT
+   force_basic_auth: yes
+   user: "{{ ambari_username }}"
+   password: "{{ ambari_password }}"
+   headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+   body: "{{ krb_enable['content'] | b64decode }}"
+   body_format: json
+   validate_certs: no
+   return_content: yes
+  when: kdc_type == 'ipa'
+  register: add_kerberos_client_configuration_ipa
+  failed_when: add_kerberos_client_configuration_ipa.status == '500' or add_kerberos_client_configuration_ipa.status == '404'
+
+- name: Add KERBEROS_CLIENT configuration (IPA)
+  uri:
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}"
+   method: PUT
+   force_basic_auth: yes
+   user: "{{ ambari_username }}"
+   password: "{{ ambari_password }}"
+   headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+   body: "{{ lookup('template','templates/kerberos/krb_enable_ipa.json.j2') }}"
+   body_format: json
+   validate_certs: no
+   return_content: yes
+  when: kdc_type == 'ipa'
+  register: add_kerberos_client_configuration_ipa_req
+  failed_when: add_kerberos_client_configuration_ipa_req.status == '500' or add_kerberos_client_configuration_ipa_req.status == '404'
+
+- name: Wait for KERBEROS to be fully installed on the cluster (IPA)
+  uri:
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/requests/{{ add_kerberos_client_configuration_ipa.json.Requests.id }}"
+   method: GET
+   force_basic_auth: yes
+   user: "{{ ambari_username }}"
+   password: "{{ ambari_password }}"
+   headers: '{"X-Requested-By":"ambari", "Content-Type":"application/json"}'
+   status_code: 200,201,202
+   validate_certs: no
+   return_content: yes
+  register: cluster_check_kerberos_install_ipa
+  until: (((cluster_check_kerberos_install_ipa.content|from_json).Requests.request_status == 'COMPLETED' and (cluster_check_kerberos_install_ipa.content|from_json).Requests.completed_task_count|int > 0) or
+       (cluster_check_kerberos_install_ipa.content|from_json).Requests.request_status == 'FAILED' or
+       (cluster_check_kerberos_install_ipa.content|from_json).Requests.request_status == 'TIMEDOUT' or
+       (cluster_check_kerberos_install_ipa.content|from_json).Requests.request_status == 'ABORTED')
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 30
+  when: kdc_type == 'ipa' and wait and add_kerberos_client_configuration_ipa_req is defined and (add_kerberos_client_configuration_ipa_req.content) != ""
+
+# - name: Regenerate keytabs
+#   uri:
+#    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}?regenerate_keytabs=all"
+#    method: PUT
+#    force_basic_auth: yes
+#    user: "{{ ambari_username }}"
+#    password: "{{ ambari_password }}"
+#    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+#    body: '{"Clusters":{"security_type":"KERBEROS"}}'
+#    body_format: json
+#    validate_certs: no
+#    return_content: yes
+#   register: regenerate_keytabs
+#   failed_when: regenerate_keytabs.status == '500' or regenerate_keytabs.status == '404'
+#
+# - name: Wait for regenerating keytabs
+#   uri:
+#    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/requests/{{ regenerate_keytabs.json.Requests.id }}"
+#    method: GET
+#    force_basic_auth: yes
+#    user: "{{ ambari_username }}"
+#    password: "{{ ambari_password }}"
+#    headers: '{"X-Requested-By":"ambari", "Content-Type":"application/json"}'
+#    status_code: 200,201,202
+#    validate_certs: no
+#    return_content: yes
+#   register: cluster_check_kerberos_install
+#   until: (((cluster_check_kerberos_install.content|from_json).Requests.request_status == 'COMPLETED' and (cluster_check_kerberos_install.content|from_json).Requests.completed_task_count|int > 0) or
+#        (cluster_check_kerberos_install.content|from_json).Requests.request_status == 'FAILED' or
+#        (cluster_check_kerberos_install.content|from_json).Requests.request_status == 'TIMEDOUT' or
+#        (cluster_check_kerberos_install.content|from_json).Requests.request_status == 'ABORTED')
+#   retries: "{{ wait_timeout // 10 }}"
+#   delay: 30
+#   when: wait and regenerate_keytabs is defined and (regenerate_keytabs.content) != ""

@@ -1,0 +1,312 @@
+---
+### BASE CLUSTER ###
+- name: Get hadoop-env content
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ ambari_stack_version }}/services/HDFS/configurations/content"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: gethadoopenvcontent
+
+- set_fact:
+    hadoopenvcontent: "{{ item.StackConfigurations.property_value }}"
+  with_items:
+    - "{{ gethadoopenvcontent.json }}"
+  when: item.StackConfigurations is defined and item.StackConfigurations.type == "hadoop-env.xml"
+#################################
+
+### CLUSTER ENV ###
+- name: Get stack-tools content
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ ambari_stack_version }}/configurations/stack_tools"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: getclusterenvcontent
+#################################
+
+### YARN ###
+- name: Get yarn-env content
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ ambari_stack_version }}/services/YARN/configurations/content"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: getyarnenvcontent
+
+- set_fact:
+    yarnenvcontent: "{{ item.StackConfigurations.property_value }}"
+  with_items:
+    - "{{ getyarnenvcontent.json }}"
+  when: item.StackConfigurations is defined and item.StackConfigurations.type == "yarn-env.xml"
+#################################
+
+### MAPRED ###
+- name: Get mapred-env content
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ ambari_stack_version }}/services/MAPREDUCE2/configurations/content"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: getmapredenvcontent
+
+- set_fact:
+    mapredenvcontent: "{{ item.StackConfigurations.property_value }}"
+  with_items:
+    - "{{ getmapredenvcontent.json }}"
+  when: item.StackConfigurations is defined and item.StackConfigurations.type == "mapred-env.xml"
+#################################
+
+### HBASE ###
+- name: Get hbase-env content
+  block:
+    - uri:
+        url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ ambari_stack_version }}/services/HBASE/configurations/content"
+        method: GET
+        force_basic_auth: yes
+        user: "{{ ambari_username }}"
+        password: "{{ ambari_password }}"
+        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+        body_format: json
+        validate_certs: no
+        status_code: 200,201,202
+        return_content: yes
+      register: gethbaseenvcontent
+
+    - set_fact:
+        hbaseenvcontent: "{{ item.StackConfigurations.property_value }}"
+      with_items:
+        - "{{ gethbaseenvcontent.json }}"
+      when: item.StackConfigurations is defined and item.StackConfigurations.type == "hbase-env.xml"
+
+  when: cluster_services.HBASE is defined
+#################################
+
+### AMBARI_INFRA_SOLR ###
+- name: AMBARI_INFRA_SOLR conf content
+  block:
+    - uri:
+        url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ ambari_stack_version }}/services/{% if ambari_stack_version >= 3.0 or ambari_stack_name|lower == 'odp' %}AMBARI_INFRA_SOLR{% else %}AMBARI_INFRA{% endif %}/configurations/content"
+        method: GET
+        force_basic_auth: yes
+        user: "{{ ambari_username }}"
+        password: "{{ ambari_password }}"
+        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+        body_format: json
+        validate_certs: no
+        status_code: 200,201,202
+        return_content: yes
+      register: getinfrasolrenvcontent
+
+    - name: Set infra-solr-env content
+      set_fact:
+        infrasolrenvcontent: "{{ item.StackConfigurations.property_value }}"
+      with_items:
+        - "{{ getinfrasolrenvcontent.json }}"
+      when: item.StackConfigurations is defined and item.StackConfigurations.type == "infra-solr-env.xml"
+
+    - name: Set infra-solr-xml content
+      set_fact:
+        infrasolrxmlcontent: "{{ item.StackConfigurations.property_value }}"
+      with_items:
+        - "{{ getinfrasolrenvcontent.json }}"
+      when: item.StackConfigurations is defined and item.StackConfigurations.type == "infra-solr-xml.xml"
+
+    - name: Set infra-solr-security-json content
+      set_fact:
+        infrasolrsecurityjsoncontent: "{{ item.StackConfigurations.property_value }}"
+      with_items:
+        - "{{ getinfrasolrenvcontent.json }}"
+      when: item.StackConfigurations is defined and item.StackConfigurations.type == "infra-solr-security-json.xml"
+
+    - name: Set infra-solr-security-json content
+      set_fact:
+        infrasolrlog4jcontent: "{{ item.StackConfigurations.property_value }}"
+      with_items:
+        - "{{ getinfrasolrenvcontent.json }}"
+      when: item.StackConfigurations is defined and item.StackConfigurations.type == "infra-solr-log4j.xml"
+
+  when: cluster_services.AMBARI_INFRA_SOLR is defined or cluster_services.AMBARI_INFRA is defined
+
+#################################
+
+### AMBARI_METRICS ###
+
+- name: Get AMBARI_METRICS conf content
+  block:
+    - uri:
+        url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ ambari_stack_version }}/services/AMBARI_METRICS/configurations/content"
+        method: GET
+        force_basic_auth: yes
+        user: "{{ ambari_username }}"
+        password: "{{ ambari_password }}"
+        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+        body_format: json
+        validate_certs: no
+        status_code: 200,201,202
+        return_content: yes
+      register: getamsenvcontent
+
+    - name: Set ams-env content
+      set_fact:
+        amsenvcontent: "{{ item.StackConfigurations.property_value }}"
+      with_items:
+        - "{{ getamsenvcontent.json }}"
+      when: item.StackConfigurations is defined and item.StackConfigurations.type == "ams-env.xml"
+
+    - name: Set ams-hbase-env content
+      set_fact:
+        amshbaseenvcontent: "{{ item.StackConfigurations.property_value }}"
+      with_items:
+        - "{{ getamsenvcontent.json }}"
+      when: item.StackConfigurations is defined and item.StackConfigurations.type == "ams-hbase-env.xml"
+
+  when: cluster_services.AMBARI_METRICS is defined
+
+#################################
+
+### RANGER ###
+
+- name: Get RANGER conf content
+  block:
+    - uri:
+        url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ ambari_stack_version }}/services/RANGER/configurations/content"
+        method: GET
+        force_basic_auth: yes
+        user: "{{ ambari_username }}"
+        password: "{{ ambari_password }}"
+        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+        body_format: json
+        validate_certs: no
+        status_code: 200,201,202
+        return_content: yes
+      register: getrangerenvcontent
+
+    - name: Set ranger-env content
+      set_fact:
+        rangerenvcontent: "{{ item.StackConfigurations.property_value }}"
+      with_items:
+        - "{{ getrangerenvcontent.json }}"
+      when: item.StackConfigurations is defined and item.StackConfigurations.type == "ranger-env.xml" and (ambari_stack_version >= 3 or ambari_stack_name|lower == 'odp')
+
+    - name: Set ranger-solr-configuration content
+      set_fact:
+        rangersolrenvcontent: "{{ item.StackConfigurations.property_value }}"
+      with_items:
+        - "{{ getrangerenvcontent.json }}"
+      when: item.StackConfigurations is defined and item.StackConfigurations.type == "ranger-solr-configuration.xml"
+
+  when: cluster_services.RANGER is defined
+
+#################################
+
+### ZEPPELIN ###
+- name: Get ZEPPELIN conf content
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ ambari_stack_version }}/services/ZEPPELIN/configurations/zeppelin_env_content"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: getzeppelinenvcontent
+
+- name: Set zeppelin-env content
+  set_fact:
+    zeppelinenv: "{{ item.StackConfigurations.property_value }}"
+  with_items:
+    - "{{ getzeppelinenvcontent.json }}"
+  when: item.StackConfigurations is defined and item.StackConfigurations.type == "zeppelin-env.xml"
+
+#################################
+
+### HIVE ###
+- name: Get HIVE conf content
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ ambari_stack_version }}/services/HIVE/configurations/content"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: gethiveenvcontent
+
+- name: Set hive-log4j2 content
+  set_fact:
+    hivelog4j2: "{{ item.StackConfigurations.property_value }}"
+  with_items:
+    - "{{ gethiveenvcontent.json }}"
+  when: item.StackConfigurations is defined and item.StackConfigurations.type == "hive-log4j2.xml"
+
+- name: Set hive-env content
+  set_fact:
+    hiveenv: "{{ item.StackConfigurations.property_value }}"
+  with_items:
+    - "{{ gethiveenvcontent.json }}"
+  when: item.StackConfigurations is defined and item.StackConfigurations.type == "hive-env.xml"
+
+- name: Set hive-interactive-env content
+  set_fact:
+    hiveinteractiveenv: "{{ item.StackConfigurations.property_value }}"
+  with_items:
+    - "{{ gethiveenvcontent.json }}"
+  when: item.StackConfigurations is defined and item.StackConfigurations.type == "hive-interactive-env.xml"
+
+#################################
+
+### NIFI REGISTRY ###
+- name: Get nifi-registry-env content
+  block:
+    - uri:
+        url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ ambari_stack_version }}/services/NIFI_REGISTRY/configurations/content"
+        method: GET
+        force_basic_auth: yes
+        user: "{{ ambari_username }}"
+        password: "{{ ambari_password }}"
+        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+        body_format: json
+        validate_certs: no
+        status_code: 200,201,202
+        return_content: yes
+      register: getnifiregistryenvcontent
+
+    - set_fact:
+        nifiregistryenvcontent: "{{ item.StackConfigurations.property_value }}"
+      with_items:
+        - "{{ getnifiregistryenvcontent.json }}"
+      when: item.StackConfigurations is defined and item.StackConfigurations.type == "nifi-registry-authorizers-env.xml"
+
+  when: cluster_services.NIFI_REGISTRY is defined
+#################################

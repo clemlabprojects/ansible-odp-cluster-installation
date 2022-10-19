@@ -1,0 +1,45 @@
+---
+- name: Start smoke test
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/request_schedules"
+    method: POST
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: "{{ lookup('template','templates/smoke_test.json.j2') }}"
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: smoketest_results
+
+- name: Wait for check services to be executed
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/request_schedules/{{ item.RequestSchedule.id }}"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body_format: json
+    status_code: 200,201,202
+    validate_certs: no
+    return_content: yes
+  register: cluster_check_task_start_services
+  until: (cluster_check_task_start_services.json.RequestSchedule.status == 'COMPLETED' or
+          cluster_check_task_start_services.json.RequestSchedule.status == 'FAILED' or
+          cluster_check_task_start_services.json.RequestSchedule.status == 'TIMEDOUT' or
+          cluster_check_task_start_services.json.RequestSchedule.status == 'ABORTED')
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 10
+  when: wait and smoketest_results.json is defined
+  with_items:
+    - "{{ smoketest_results.json.resources }}"
+
+- name: Results "Services check"
+  debug: msg="Services check result => {{ item.json.RequestSchedule.last_execution_status }}"
+  with_items:
+    - "{{ cluster_check_task_start_services.results }}"
+  loop_control:
+      label: '{{ item.json.RequestSchedule.last_execution_status }}'

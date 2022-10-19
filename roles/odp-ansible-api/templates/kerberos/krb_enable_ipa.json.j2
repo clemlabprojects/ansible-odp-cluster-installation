@@ -1,0 +1,11 @@
+{
+  "session_attributes" : {
+    "kerberos_admin" : {
+      "principal" : "{{ ipa_ambari_principal }}@{{kerberos_realm}}",
+      "password" : "{{ ipa_ambari_password }}"
+    }
+  },
+  "Clusters": {
+    "security_type" : "KERBEROS"
+  }
+} 

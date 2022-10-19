@@ -1,0 +1,21 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "hadoop-policy",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+				"security.admin.operations.protocol.acl": "hadoop",
+			  "security.client.datanode.protocol.acl": "*",
+			  "security.client.protocol.acl": "*",
+			  "security.datanode.protocol.acl": "*",
+			  "security.inter.datanode.protocol.acl": "*",
+			  "security.inter.tracker.protocol.acl": "*",
+			  "security.job.client.protocol.acl": "*",
+			  "security.job.task.protocol.acl": "*",
+			  "security.namenode.protocol.acl": "*",
+			  "security.refresh.policy.protocol.acl": "hadoop",
+			  "security.refresh.usertogroups.mappings.protocol.acl": "hadoop"
+			} {% endraw %}
+		}
+	}
+}

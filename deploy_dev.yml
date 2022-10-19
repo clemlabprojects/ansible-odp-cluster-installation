@@ -1,0 +1,97 @@
+- hosts: "{{ ambari_server }}"
+  gather_facts: yes
+  # user: vagrant
+  # become: true
+  # become_user: root
+  vars_files:
+    - vars/external_vars_dev.yml
+    - vaults/vault-dev.yml
+
+  roles:
+    - role: odp-ansible-api
+      tags: ambari_cluster
+      vars:
+        silent: true
+        ambari_server_hostname: '{{ ambari_server }}'
+        ambari_server_port: '{{ ambari_server_ssl_port }}'
+        ambari_server_protocol: https
+        cluster_name: '{{ ambari_namespace }}' ##without
+        ambari_username: admin
+        ambari_password: admin
+        hostnames: "{{ all['CLUSTER'] }}"
+        cluster_hosts: "{{ groups['CLUSTER'] }}"
+        repos_url: "{{repos_url_hdp}}"
+        repos_url_utils: "{{repos_url_hdp_utils}}"
+        first_namenode: "{{ all['NAMENODE'][0] }}"
+        second_namenode: "{{ all['NAMENODE'][1] }}"
+        zookeeper_quorum: "{{ all['ZOOKEEPER_SERVER'] }}"
+        hdp_namenode_dir:
+          - "/data/nn"
+        hdp_datanode_dir:
+          - "/data/hdfs/data/1"
+          - "/data/hdfs/data/2"
+        hdp_checkpoint_dir:
+          - "/data/checkpoint"
+        hdp_journalnode_dir:
+          - "/data/journalnode"
+        hdp_yarn_local_dir:
+          - "/data/yarn/local/1"
+          - "/data/yarn/local/2"
+        hdp_yarn_log_dir:
+          - "/data/yarn/log/2"
+          - "/data/yarn/log/2"
+        database_type: mysql
+        database_server: "{{ mariadb_server }}"
+        database_port: 3306
+        database_druid: "{{ druid_database }}"
+        database_druid_user: "{{ druid_database_user }}"
+        database_druid_user_password: "{{ druid_database_user_password }}"
+        database_hive: "{{ hive_database }}"
+        database_hive_user: "{{ hive_database_user }}"
+        database_hive_user_password: "{{ hive_database_user_password }}"
+        database_ranger: "{{ ranger_database }}"
+        database_ranger_user: "{{ ranger_database_user }}"
+        database_ranger_user_password: "{{ ranger_database_user_password }}"
+        database_oozie: "{{ oozie_database }}"
+        database_oozie_user: "{{ oozie_database_user }}"
+        database_oozie_user_password: "{{ oozie_database_user_password }}"
+        ssl_truststore_path: "/etc/security/serverKeys/truststore.jks"
+        ssl_truststore_password: "{{ security_truststore_password }}"
+        ssl_keystore_path: "/etc/security/serverKeys/keystore.jks"
+        ssl_keystore_password: "{{ security_keystore_password }}"
+        ranger_truststore_alias: "clemlab.odp.ranger"
+        ranger_keystore_credential_alias: "master03.clemlab.com"
+        ranger_keystore_keyalias: "master03.clemlab.com"
+        rangerkms_master_key: "11v4tQSFEcZp4dOazAPO"
+        rangerkms_encryption_key: "11v4tQSFEcZp4dOazAPO"
+        database_rangerkms: "{{ rangerkms_database }}"
+        database_rangerkms_user: "{{ rangerkms_database_user }}"
+        database_rangerkms_user_password: "{{ rangerkms_database_user_password }}"
+        ranger_plugin_keystore_path: "/etc/security/serverKeys/ranger-ssl-plugin-keystore.jks"
+        ranger_plugin_keystore_alias: "rangersslagent"
+        ranger_plugin_keystore_password: "changeit"
+        hst_agent_version: "1.4.5.2.6.2.2-1"
+        kerberos_realm: "{{ openkrb_realm }}"
+        kdc_type: "ipa"
+        kerberos_realm: '{{ ipaserver_realm }}'
+        kdc_server: '{{ freeipa_servers[0] }}'
+        manage_identities: true
+        hadoop_rpc_protection: privacy
+        ignore_create_users_and_groups: true                                    
+        ambari_manage_krb5_conf: true              
+        ipa_ambari_password: "{{ ambari_admin_principal_password}}"
+        ipa_do_creation: True
+        ambari_stack_name: ODP
+        ambari_stack_version: 1.0
+        build_stack_version: "1.0.3.0"                                     
+        # vdf_url: "http://10.0.2.2/ODP/ODP-VDF.xml"
+        preinstall_stack_packages: False
+        preinstall_system_packages: False
+        cluster_services:
+          HDFS:
+          YARN:
+          MAPREDUCE2:
+          TEZ:
+          ZOOKEEPER:
+          HIVE:
+

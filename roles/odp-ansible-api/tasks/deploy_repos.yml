@@ -1,0 +1,77 @@
+---
+######## SMARTSENSE ###############
+- name: Fetch Smartsense version
+  block:
+    - name: Get HST Agent Version
+      shell: yum info smartsense-hst | grep Version
+      register: yum_info_smartsense_hst
+
+    - name: set
+      set_fact:
+        hst_agent_version_major: "{{ yum_info_smartsense_hst.stdout_lines[0] | regex_replace('Version', '') | regex_replace(':', '') | trim }}"
+
+    - name: Get Minor Version
+      shell: cat /var/lib/ambari-server/resources/stacks/{{ ambari_stack_name }}/{% if ambari_stack_version < 3 %}2.1{% else %}3.0{% endif %}/services/SMARTSENSE/metainfo.xml | grep '<version>'
+      register: hst_agent_version_minor
+
+    - name: set
+      set_fact:
+        hst_agent_version: "{{ hst_agent_version_minor.stdout_lines[0] | regex_replace('<version>', '') | regex_replace('</version>', '') | trim }}"
+  when: cluster_services.SMARTSENSE is defined and inventory_hostname == ambari_server_hostname
+####################################
+
+######## Install hdp-select ###############
+- template:
+    src: templates/repository_versions/hdp.repo.j2
+    dest: /etc/yum.repos.d/hdp.repo
+  when: hdp_repo_path is not defined and ambari_stack_name|lower != 'odp'
+
+- template:
+    src: templates/repository_versions/odp.repo.j2
+    dest: /etc/yum.repos.d/odp.repo
+  when: hdp_repo_path is not defined and ambari_stack_name|lower == 'odp'
+
+# - copy:
+#     src: "{{hdp_repo_path}}"
+#     dest: /etc/yum.repos.d/hdp.repo
+#   when: hdp_repo_path is defined
+
+- name: Ensure software is installed (yum)
+  yum: name="hdp-select" state=present update_cache=yes disable_gpg_check=yes
+  when: ambari_stack_name|lower != 'odp'
+
+- name: Ensure software is installed (yum)
+  yum: name="odp-select" state=present update_cache=yes disable_gpg_check=yes
+  when: ambari_stack_name|lower == 'odp'
+####################################################
+
+####### Install HDP dependencies ###############
+- name: Install HDP dependencies (libtirpc-devel,psmisc,redhat-lsb,nc)
+  block:
+    - copy:
+        src: files/packages_hdp.tar.gz
+        dest: /tmp/packages_hdp.tar.gz
+
+    - unarchive:
+        src: /tmp/packages_hdp.tar.gz
+        dest: /tmp/
+        remote_src: yes
+
+    - find:
+        paths: /tmp/packages_hdp
+        patterns: "*.rpm"
+      register: findrpms
+
+    - set_fact:
+        listrpms: "{{ listrpms|d([]) + [ in_item.path ] }}"
+      with_items:
+        - "{{ findrpms.files }}"
+      loop_control:
+        label: "{{ in_item }}"
+        loop_var: in_item
+
+    - yum:
+        name: "{{ listrpms|join(',') }},zip"
+        state: present
+  when: preinstall_system_packages is defined and preinstall_system_packages
+###################################################

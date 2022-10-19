@@ -1,0 +1,21 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "zoo.cfg",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+				"autopurge.purgeInterval": "24",
+				"autopurge.snapRetainCount": "30",
+				"clientPort": "2181",
+				"dataDir": "{{zoo_datadir}}",
+				"initLimit": "10",
+				"4lw.commands.whitelist": "*",
+				"syncLimit": "5",
+			  {% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3.0 %}
+				"quorum.auth.enableSasl": "{% if cluster_services.KERBEROS is defined and cluster_services.KERBEROS %}true{% else %}false{% endif %}",
+				{% endif %}
+				"tickTime": "3000"
+			}
+		}
+	}
+}

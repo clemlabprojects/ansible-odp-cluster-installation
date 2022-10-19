@@ -1,0 +1,11 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "nifi-jaas-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "content" : "\nNiFiClient {\r\n    com.sun.security.auth.module.Krb5LoginModule required\r\n    useKeyTab=true\r\n    keyTab=\"{{nifi_service_keytab}}\"\r\n    storeKey=true\r\n    useTicketCache=false\r\n    principal=\"{{nifi_service_principal}}\";\r\n};\r\nRegistryClient {\r\n    com.sun.security.auth.module.Krb5LoginModule required\r\n    useKeyTab=true\r\n    keyTab=\"{{nifi_service_keytab}}\"\r\n    storeKey=true\r\n    useTicketCache=false\r\n    principal=\"{{nifi_service_principal}}\";\r\n};"
+      } {% endraw %}
+    }
+  }
+}

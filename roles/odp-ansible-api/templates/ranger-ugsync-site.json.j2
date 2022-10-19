@@ -1,0 +1,71 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-ugsync-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+			{% if cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL %}
+			"ranger.usersync.truststore.file" : "{{ ssl_truststore_path }}",
+			"ranger.usersync.truststore.password" : "{{ ssl_truststore_password }}",
+			"ranger.usersync.ssl" : "true",
+			{% else %}
+			"ranger.usersync.truststore.file" : "/usr/{{ ambari_stack_name|lower }}/current/ranger-usersync/conf/mytruststore.jks",
+			"ranger.usersync.truststore.password" : "changeit",
+			"ranger.usersync.ssl" : "false",
+			{% endif %}
+				"ranger.usersync.credstore.filename" : "/usr/{% if ambari_stack_name|lower == 'odp'%}odp{% else %}hdp{% endif %}/current/ranger-usersync/conf/ugsync.jceks",
+				"ranger.usersync.keystore.file" : "/usr/{% if ambari_stack_name|lower == 'odp'%}odp{% else %}hdp{% endif %}/current/ranger-usersync/conf/unixauthservice.jks",
+				"ranger.usersync.policymgr.keystore" : "/usr/{% if ambari_stack_name|lower == 'odp'%}odp{% else %}hdp{% endif %}/current/ranger-usersync/conf/ugsync.jceks",
+        "ranger.usersync.enabled" : "true",{% raw %}
+        "ranger.usersync.filesource.file" : "/tmp/usergroup.txt",
+        "ranger.usersync.filesource.text.delimiter" : ",",
+        "ranger.usersync.group.memberattributename" : "",
+        "ranger.usersync.group.nameattribute" : "",
+        "ranger.usersync.group.objectclass" : "",
+        "ranger.usersync.group.search.first.enabled" : "false",
+        "ranger.usersync.group.searchbase" : "",
+        "ranger.usersync.group.searchenabled" : "true",
+        "ranger.usersync.group.searchfilter" : "",
+        "ranger.usersync.group.searchscope" : "",
+        "ranger.usersync.group.usermapsyncenabled" : "true",
+        "ranger.usersync.kerberos.keytab" : "",
+        "ranger.usersync.kerberos.principal" : "",
+        "ranger.usersync.keystore.password" : "UnIx529p",
+        "ranger.usersync.ldap.bindalias" : "testldapalias",
+        "ranger.usersync.ldap.binddn" : "",
+        "ranger.usersync.ldap.bindkeystore" : "",
+        "ranger.usersync.ldap.deltasync" : "true",
+        "ranger.usersync.ldap.grouphierarchylevels" : "0",
+        "ranger.usersync.ldap.groupname.caseconversion" : "none",
+        "ranger.usersync.ldap.ldapbindpassword" : "",
+        "ranger.usersync.ldap.referral" : "ignore",
+        "ranger.usersync.ldap.searchBase" : "dc=hadoop,dc=apache,dc=org",
+        "ranger.usersync.ldap.url" : "",
+        "ranger.usersync.ldap.user.groupnameattribute" : "memberof, ismemberof",
+        "ranger.usersync.ldap.user.nameattribute" : "",
+        "ranger.usersync.ldap.user.objectclass" : "person",
+        "ranger.usersync.ldap.user.searchbase" : "",
+        "ranger.usersync.ldap.user.searchfilter" : "",
+        "ranger.usersync.ldap.user.searchscope" : "sub",
+        "ranger.usersync.ldap.username.caseconversion" : "none",
+        "ranger.usersync.logdir" : "/var/log/ranger/usersync",
+        "ranger.usersync.pagedresultsenabled" : "true",
+        "ranger.usersync.pagedresultssize" : "500",
+        "ranger.usersync.passwordvalidator.path" : "./native/credValidator.uexe",
+        "ranger.usersync.policymanager.baseURL" : "{{ranger_external_url}}",
+        "ranger.usersync.policymanager.maxrecordsperapicall" : "1000",
+        "ranger.usersync.policymanager.mockrun" : "false",
+        "ranger.usersync.policymgr.alias" : "ranger.usersync.policymgr.password",
+        "ranger.usersync.policymgr.username" : "rangerusersync",
+        "ranger.usersync.port" : "5151",
+        "ranger.usersync.sink.impl.class" : "org.apache.ranger.unixusersync.process.PolicyMgrUserGroupBuilder",
+        "ranger.usersync.sleeptimeinmillisbetweensynccycle" : "60000",
+        "ranger.usersync.source.impl.class" : "org.apache.ranger.unixusersync.process.UnixUserGroupBuilder",
+        "ranger.usersync.unix.group.file" : "/etc/group",
+        "ranger.usersync.unix.minUserId" : "500",
+        "ranger.usersync.unix.password.file" : "/etc/passwd",
+        "ranger.usersync.user.searchenabled" : "false"{% endraw %}
+			}
+		}
+	}
+}

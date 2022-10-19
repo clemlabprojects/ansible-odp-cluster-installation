@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "hive-logsearch-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "component_mappings" : "HIVE_METASTORE:hive_metastore;HIVE_SERVER:hive_hiveserver2;WEBHCAT_SERVER:webhcat_server",
+        "content" : "\n{\n  \"input\":[\n    {\n      \"type\":\"hive_hiveserver2\",\n      \"rowtype\":\"service\",\n      \"path\":\"{{default('/configurations/hive-env/hive_log_dir', '/var/log/hive')}}/hiveserver2.log\"\n    },\n    {\n      \"type\":\"hive_metastore\",\n      \"rowtype\":\"service\",\n      \"path\":\"{{default('/configurations/hive-env/hive_log_dir', '/var/log/hive')}}/hivemetastore.log\"\n    },\n    {\n      \"type\": \"webhcat_server\",\n      \"rowntype\":\"service\",\n      \"path\":\"{{default('configurations/hive-env/hcat_log_dir', '/var/log/webhcat')}}/webhcat.log\"\n    }\n  ],\n  \"filter\":[\n    {\n      \"filter\":\"grok\",\n      \"conditions\":{\n        \"fields\":{\n          \"type\":[\n            \"hive_hiveserver2\",\n            \"hive_metastore\"\n          ]\n         }\n       },\n      \"log4j_format\":\"%d{ISO8601} %-5p [%t]: %c{2} (%F:%M(%L)) - %m%n\",\n      \"multiline_pattern\":\"^(%{TIMESTAMP_ISO8601:logtime})\",\n      \"message_pattern\":\"(?m)^%{TIMESTAMP_ISO8601:logtime}%{SPACE}%{LOGLEVEL:level}%{SPACE}\\\\[%{DATA:thread_name}\\\\]:%{SPACE}%{JAVACLASS:logger_name}%{SPACE}\\\\(%{JAVAFILE:file}:%{JAVAMETHOD:method}\\\\(%{INT:line_number}\\\\)\\\\)%{SPACE}-%{SPACE}%{GREEDYDATA:log_message}\",\n      \"post_map_values\":{\n        \"logtime\":{\n          \"map_date\":{\n            \"target_date_pattern\":\"yyyy-MM-dd HH:mm:ss,SSS\"\n          }\n         }\n       }\n     },\n    {\n      \"filter\":\"grok\",\n      \"conditions\":{\n        \"fields\":{\n          \"type\":[\n            \"webhcat_server\"\n          ]\n         }\n       },\n      \"log4j_format\":\" %-5p | %d{DATE} | %c | %m%n\",\n      \"multiline_pattern\":\"^(%{SPACE}%{LOGLEVEL:level}%{CUSTOM_SEPARATOR}%{CUSTOM_DATESTAMP:logtime})\",\n      \"message_pattern\":\"(?m)^%{SPACE}%{LOGLEVEL:level}%{CUSTOM_SEPARATOR}%{CUSTOM_DATESTAMP:logtime}%{CUSTOM_SEPARATOR}%{JAVACLASS:file}%{CUSTOM_SEPARATOR}%{GREEDYDATA:log_message}\",\n      \"post_map_values\":{\n        \"logtime\":{\n          \"map_date\":{\n            \"target_date_pattern\":\"dd MMM yyyy HH:mm:ss,SSS\"\n          }\n         },\n        \"level\":{\n           \"map_fieldvalue\":{\n             \"pre_value\":\"WARNING\",\n             \"post_value\":\"WARN\"\n            }\n        }\n       }\n     }\n   ]\n }\n    ",
+        "service_name" : "Hive"
+      }{% endraw %}
+    }
+  }
+}

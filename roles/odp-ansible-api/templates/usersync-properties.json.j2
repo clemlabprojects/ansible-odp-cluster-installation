@@ -1,0 +1,12 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "usersync-properties",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "cluster_name" : "{{ cluster_name }}",
+        "stack_id" : "{{ ambari_stack_name }}-{{ ambari_stack_version }}"
+			}
+		}
+	}
+}

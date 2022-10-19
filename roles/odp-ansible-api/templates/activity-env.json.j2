@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "activity-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "activity-env-content" : "#!/bin/bash\n\n# Copyright (c) 2011-2017, Hortonworks Inc.  All rights reserved.\n# Except as expressly permitted in a written agreement between you\n# or your company and Hortonworks, Inc, any use, reproduction,\n# modification, redistribution, sharing, lending or other exploitation\n# of all or any part of the contents of this file is strictly prohibited.\n\n# Enable verbose shell execution\n#set -xv\n\n## Set HOME for various components\nexport HADOOP_HOME=/usr/hdp/current/hadoop-client\nexport HDFS_HOME=/usr/hdp/current/hadoop-hdfs-client\nexport MAPREDUCE_HOME=/usr/hdp/current/hadoop-mapreduce-client\nexport YARN_HOME=/usr/hdp/current/hadoop-yarn-client\nexport HIVE_HOME=/usr/hdp/current/hive-client\nexport HCAT_HOME=/usr/hdp/current/hive-webhcat\nexport TEZ_HOME=/usr/hdp/current/tez-client\nexport HBASE_HOME=/usr/hdp/current/hbase-client\nexport PHOENIX_HOME=/usr/hdp/current/phoenix-client\nexport ACTIVITY_ANALYZER_HOME=/usr/hdp/share/hst/activity-analyzer\nexport AMS_COLLECTOR_HOME=/usr/lib/ambari-metrics-collector\nexport JAVA_HOME={{java_home}}\n\n## Set conf dir for various components\nexport HADOOP_CONF_DIR=/etc/hadoop/conf/\nexport HIVE_CONF_DIR=/etc/hive/conf/\nexport HBASE_CONF_DIR=/etc/hbase/conf/\nexport TEZ_CONF_DIR=/etc/tez/conf/\nexport ACTIVITY_ANALYZER_CONF_DIR=/etc/smartsense-activity/conf/\nexport AMS_HBASE_CONF=/etc/ams-hbase/conf\n\nexport DEBUG_ENABLED=false\n\n## Set JVM related configs\nexport ANALYZER_JAVA_OPTS=\"{{analyzer_jvm_opts}} -Xmx{{analyzer_jvm_heap}}m\"",
+        "analyzer_jvm_heap" : "8192",
+        "analyzer_jvm_opts" : "-Xms128m" {% endraw %}
+      }
+    }
+  }
+}

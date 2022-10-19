@@ -1,0 +1,158 @@
+---
+######## Ranger Admin and KMS 2-Way SSL Fix ########
+- name: Set common certificate name for KMS repository in Ranger Admin
+  uri:
+    url: "https://{{ all['RANGER_ADMIN'][0] }}:6182/service/public/v2/api/service/name/{{ cluster_name }}_kms"
+    method: PUT
+    force_basic_auth: yes
+    user: "admin"
+    password: "{{ ranger_admin_password }}"
+    headers: '{"Content-Type": "application/json"}'
+    body: "{{ lookup('template','templates/ranger_kms_twoway_ssl_fix_repo.json.j2') }}"
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  when: cluster_services.RANGER is defined and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL and cluster_services.RANGER.TWOWAY is defined and cluster_services.RANGER.TWOWAY and cluster_services.RANGER_KMS is defined
+####################################################
+
+######## Ranger Admin - Fix - Service Check User Policy for Yarn ########
+- name: get YARN Ambari-qa policy info
+  uri:
+    url: "https://{{ all['RANGER_ADMIN'][0] }}:6182/service/public/v2/api/service/{{cluster_name}}_yarn/policy/Service%20Check%20User%20Policy%20for%20Yarn"
+    method: GET
+    force_basic_auth: yes
+    user: "admin"
+    password: "{{ ranger_admin_password }}"
+    headers: '{"Content-Type": "application/json"}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: ranger_yarn_ambari_policy
+  when: cluster_services.RANGER is defined and ambari_stack_version >= 3
+
+- name: update YARN Ambari-qa policy info
+  uri:
+    url: "https://{{ all['RANGER_ADMIN'][0] }}:6182/service/public/v2/api/service/{{cluster_name}}_yarn/policy/Service%20Check%20User%20Policy%20for%20Yarn"
+    method: PUT
+    force_basic_auth: yes
+    user: "admin"
+    password: "{{ ranger_admin_password }}"
+    headers: '{"Content-Type": "application/json"}'
+    body: "{{ lookup('template','templates/ranger/yarn_ambari_qa_policy.json.j2') }}"
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  when: ranger_yarn_ambari_policy.json is defined and cluster_services.RANGER is defined and ranger_yarn_ambari_policy.json.resources.queue['values'][0] is defined and ranger_yarn_ambari_policy.json.resources.queue['values'][0] == 'default' and ambari_stack_version >= 3  
+####################################################
+
+############## Restart required services #####################
+- name: Restart services with stale config
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/requests"
+    method: POST
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: '{"RequestInfo":{"command":"RESTART","context":"Restart all required services API","operation_level":"host_component"},"Requests/resource_filters":[{"hosts_predicate":"HostRoles/stale_configs=true&HostRoles/cluster_name={{ cluster_name }}"}]}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: register_components_stale_config
+
+- name: Wait for all services to be restart
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/requests/{{ register_components_stale_config.json.Requests.id }}"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    status_code: 200,201,202
+    validate_certs: no
+    return_content: yes
+  register: cluster_register_components_stale_config
+  until: (cluster_register_components_stale_config.json.Requests.request_status == 'COMPLETED' and (cluster_register_components_stale_config.json.Requests.completed_task_count|int > 0) or
+          cluster_register_components_stale_config.json.Requests.request_status == 'FAILED' or
+          cluster_register_components_stale_config.json.Requests.request_status == 'TIMEDOUT' or
+          cluster_register_components_stale_config.json.Requests.request_status == 'ABORTED')
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 10
+  when: wait and register_components_stale_config is defined and register_components_stale_config.json is defined and register_components_stale_config and (register_components_stale_config.json) != ""
+
+- name: Stop SPARK2 service after fixed Ranger rules
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/services/SPARK2"
+    method: PUT
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: '{"RequestInfo": {"context" :"Stop SPARK2 API"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: register_components_stop
+  when: cluster_services.SPARK2 is defined
+
+- name: Wait for SPARK2 service to be stopped
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/requests/{{ register_components_stop.json.Requests.id }}"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    status_code: 200,201,202
+    validate_certs: no
+    return_content: yes
+  register: cluster_register_components_stop
+  until: (cluster_register_components_stop.json.Requests.request_status == 'COMPLETED' and (cluster_register_components_stop.json.Requests.completed_task_count|int > 0) or
+          cluster_register_components_stop.json.Requests.request_status == 'FAILED' or
+          cluster_register_components_stop.json.Requests.request_status == 'TIMEDOUT' or
+          cluster_register_components_stop.json.Requests.request_status == 'ABORTED')
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 10
+  when: wait and register_components_stop is defined and register_components_stop.json is defined and register_components_stop and (register_components_stop.json) != ""
+
+- name: Start SPARK2 service after fixed Ranger rules
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/services/SPARK2"
+    method: PUT
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: '{"RequestInfo": {"context" :"Start SPARK2 API"}, "Body": {"ServiceInfo": {"state": "STARTED"}}}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: register_components_start
+  when: cluster_services.SPARK2 is defined
+
+- name: Wait for SPARK2 service to be started
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/requests/{{ register_components_start.json.Requests.id }}"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    status_code: 200,201,202
+    validate_certs: no
+    return_content: yes
+  register: cluster_register_components_start
+  until: (cluster_register_components_start.json.Requests.request_status == 'COMPLETED' and (cluster_register_components_start.json.Requests.completed_task_count|int > 0) or
+          cluster_register_components_start.json.Requests.request_status == 'FAILED' or
+          cluster_register_components_start.json.Requests.request_status == 'TIMEDOUT' or
+          cluster_register_components_start.json.Requests.request_status == 'ABORTED')
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 10
+  when: wait and register_components_start is defined and register_components_start.json is defined and register_components_start and (register_components_start.json) != ""
+####################################################

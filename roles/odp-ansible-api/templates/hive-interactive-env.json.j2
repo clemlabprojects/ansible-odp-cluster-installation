@@ -1,0 +1,24 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "hive-interactive-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { 
+        "content" : {{ hiveinteractiveenv | to_json }},{% raw %}
+        "enable_hive_interactive" : "false",
+        "hive_aux_jars" : "",
+        "hive_heapsize" : "512",
+        "llap_app_name" : "llap0",
+        "llap_extra_slider_opts" : "",
+        "llap_headroom_space" : "12288",
+        "llap_heap_size" : "0",
+        "llap_java_opts" : "-XX:+AlwaysPreTouch {% if java_version > 7 %}-Xss512k -XX:+UseG1GC -XX:TLABSize=8m -XX:+ResizeTLAB -XX:+UseNUMA -XX:+AggressiveOpts -XX:InitiatingHeapOccupancyPercent=40 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=200{% else %}-XX:+PrintGCDetails -verbose:gc -XX:+PrintGCTimeStamps -XX:+UseNUMA -XX:+UseParallelGC{% endif %}{{heap_dump_opts}}",
+        "llap_log_level" : "INFO",
+        "num_llap_nodes" : "1",
+        "num_llap_nodes_for_llap_daemons" : "1",
+        "num_retries_for_checking_llap_status" : "20",
+        "slider_am_container_mb" : "341"
+      }{% endraw %}
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "atlas-logsearch-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+			  "component_mappings": "ATLAS_SERVER:atlas_app",
+				{% raw %}
+			  "content": "\n{\n  \"input\":[\n    {\n      \"type\":\"atlas_app\",\n      \"rowtype\":\"service\",\n      \"path\":\"{{default('/configurations/atlas-env/metadata_log_dir', '/var/log/atlas')}}/application.log\"\n    }\n  ],\n  \"filter\":[\n    {\n      \"filter\":\"grok\",\n      \"conditions\":{\n        \"fields\":{\n          \"type\":[\n            \"atlas_app\"\n          ]\n         }\n       },\n      \"log4j_format\":\"%d %-5p - [%t:%x] ~ %m (%c{1}:%L)%n\",\n      \"multiline_pattern\":\"^(%{TIMESTAMP_ISO8601:logtime})\",\n      \"message_pattern\":\"(?m)^%{TIMESTAMP_ISO8601:logtime}%{SPACE}%{LOGLEVEL:level}%{SPACE}%{SPACE}-%{SPACE}\\\\[%{DATA:thread_name}\\\\]%{SPACE}~%{SPACE}%{GREEDYDATA:log_message}\",\n      \"post_map_values\":{\n        \"logtime\":{\n          \"map_date\":{\n            \"target_date_pattern\":\"yyyy-MM-dd HH:mm:ss,SSS\"\n          }\n         }\n       }\n     }\n   ]\n }\n    ",
+				{% endraw %}
+			  "service_name": "Atlas"
+			}
+    }
+  }
+}

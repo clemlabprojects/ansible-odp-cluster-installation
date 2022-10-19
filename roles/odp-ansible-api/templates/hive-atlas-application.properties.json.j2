@@ -1,0 +1,17 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "hive-atlas-applications.properties",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "atlas.hook.hive.keepAliveTime" : "10",
+        "atlas.hook.hive.maxThreads" : "5",
+        "atlas.hook.hive.minThreads" : "5",
+        "atlas.hook.hive.numRetries" : "3",
+        "atlas.hook.hive.queueSize" : "1000",
+        "atlas.hook.hive.synchronous" : "false"
+      }{% endraw %}
+    }
+  }
+}
+

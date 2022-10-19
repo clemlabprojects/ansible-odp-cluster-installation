@@ -1,0 +1,18 @@
+{ "Clusters": {
+		"desired_configs": {
+			"type": "druid-historical",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "druid.port": "8083",
+        "druid.processing.buffer.sizeBytes": "1073741824",
+        "druid.processing.numMergeBuffers": "2",
+        "druid.processing.numThreads": "10",
+        "druid.segmentCache.infoDir": "/apps/druid/segmentCache/info_dir",
+        "druid.segmentCache.locations": "[{\"path\":\"/apps/druid/segmentCache\",\"maxSize\":300000000000}]",
+        "druid.server.http.numThreads": "50",
+        "druid.server.maxSize": "300000000000",
+        "druid.service": "druid/historical"
+  		}
+		}
+	}
+}

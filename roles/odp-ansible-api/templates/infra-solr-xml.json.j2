@@ -1,0 +1,11 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "infra-solr-xml",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "content" : {{ infrasolrxmlcontent | to_json }}
+      }
+    }
+  }
+}

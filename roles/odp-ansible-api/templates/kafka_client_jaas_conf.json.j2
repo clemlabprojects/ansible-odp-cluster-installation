@@ -1,0 +1,11 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "kafka_client_jaas_conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "content" : "\n{% if kerberos_security_enabled %}\nKafkaClient {\ncom.sun.security.auth.module.Krb5LoginModule required\nuseTicketCache=true\nrenewTicket=true\nserviceName=\"{{kafka_bare_jaas_principal}}\";\n};\n{% endif %}"
+      }{% endraw %}
+    }
+  }
+}

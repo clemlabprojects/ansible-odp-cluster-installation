@@ -1,0 +1,11 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "product-info",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "product-info-content" : "\n{\n    \"schemaVersion\" : \"1.0.0\",\n    \"productId\": \"{{stackName}}\",\n    \"componentId\": \"{{stackName}}\",\n    \"productVersion\" : \"{{stackVersion}}\",\n    \"type\":\"cluster\",\n    \"instanceInfo\": {\n        \"guid\": \"\",\n        \"parentGuid\": \"\",\n        \"name\":\"{{clusterName}}\",\n        \"flexSubscriptionId\": \"{{flexSubscriptionId}}\",\n        \"provider\": \"\",\n        \"region\": \"\"\n     }\n}" {% endraw %}
+      }
+    }
+  }
+}

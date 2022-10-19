@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "infra-solr-log4j",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "content" : {{ infrasolrlog4jcontent | to_json }},
+        "infra_log_maxbackupindex" : "9",
+        "infra_log_maxfilesize" : "10"
+      }
+    }
+  }
+}

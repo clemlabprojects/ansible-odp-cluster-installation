@@ -1,0 +1,64 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ams-hbase-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "dfs.client.read.shortcircuit" : "true",
+        "hbase.client.scanner.caching" : "10000",
+        "hbase.client.scanner.timeout.period" : "300000",
+        "hbase.cluster.distributed" : "false",
+        "hbase.hregion.majorcompaction" : "0",
+        "hbase.hregion.max.filesize" : "4294967296",
+        "hbase.hregion.memstore.block.multiplier" : "4",
+        "hbase.hregion.memstore.flush.size" : "134217728",
+        "hbase.hstore.blockingStoreFiles" : "200",
+        "hbase.hstore.flusher.count" : "2",
+        "hbase.local.dir" : "${hbase.tmp.dir}/local",
+        "hbase.master.info.bindAddress" : "0.0.0.0",
+        "hbase.master.info.port" : "61310",
+        "hbase.master.normalizer.class" : "org.apache.hadoop.hbase.master.normalizer.SimpleRegionNormalizer",
+        "hbase.master.port" : "61300",
+        "hbase.master.wait.on.regionservers.mintostart" : "1",
+        "hbase.normalizer.enabled" : "false",
+        "hbase.normalizer.period" : "600000",
+        "hbase.regionserver.global.memstore.lowerLimit" : "0.3",
+        "hbase.regionserver.global.memstore.upperLimit" : "0.35",
+        "hbase.regionserver.info.port" : "61330",
+        "hbase.regionserver.port" : "61320",
+        "hbase.regionserver.thread.compaction.large" : "2",
+        "hbase.regionserver.thread.compaction.small" : "3",
+        "hbase.replication" : "false",
+        "hbase.rootdir" : "file:///var/lib/ambari-metrics-collector/hbase",
+        "hbase.rpc.timeout" : "300000",
+        "hbase.snapshot.enabled" : "false",
+        "hbase.tmp.dir" : "/var/lib/ambari-metrics-collector/hbase-tmp",
+        "hbase.zookeeper.leaderport" : "61388",
+        "hbase.zookeeper.peerport" : "61288",
+        "hbase.zookeeper.property.clientPort" : "{{zookeeper_clientPort}}",
+        "hbase.zookeeper.property.dataDir" : "${hbase.tmp.dir}/zookeeper",
+        "hbase.zookeeper.property.tickTime" : "6000",
+        "hbase.zookeeper.quorum" : "{{zookeeper_quorum_hosts}}",
+        "hfile.block.cache.size" : "0.3",
+        "phoenix.coprocessor.maxMetaDataCacheSize" : "20480000",
+        "phoenix.coprocessor.maxServerCacheTimeToLiveMs" : "60000",
+        "phoenix.groupby.maxCacheSize" : "307200000",
+        "phoenix.mutate.batchSize" : "10000",
+        "phoenix.query.keepAliveMs" : "300000",
+        "phoenix.query.maxGlobalMemoryPercentage" : "15",
+        "phoenix.query.rowKeyOrderSaltedTable" : "true",
+        "phoenix.query.spoolThresholdBytes" : "20971520",
+        "phoenix.query.timeoutMs" : "300000",
+        "phoenix.sequence.saltBuckets" : "2",
+        "phoenix.spool.directory" : "${hbase.tmp.dir}/phoenix-spool",
+        "zookeeper.session.timeout" : "120000",
+        "zookeeper.session.timeout.localHBaseCluster" : "120000",{% endraw %}
+        {% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3.0 %}
+        "hbase.superuser" : "activity_explorer,activity_analyzer",
+        "hbase.unsafe.stream.capability.enforce" : "false",
+        {% endif %}
+        "zookeeper.znode.parent" : "/ams-hbase-unsecure"
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "oozie-logsearch-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "component_mappings" : "OOZIE_SERVER:oozie_app",
+        "content" : "\n{\n  \"input\":[\n    {\n      \"type\":\"oozie_app\",\n      \"rowtype\":\"service\",\n      \"path\":\"{{default('/configurations/oozie-env/oozie_log_dir', '/var/log/oozie')}}/oozie.log\"\n    }\n   ],\n  \"filter\":[\n    {\n      \"filter\":\"grok\",\n      \"conditions\":{\n        \"fields\":{\n          \"type\":[\n            \"oozie_app\"\n          ]\n         }\n       },\n      \"log4j_format\":\"%d{ISO8601} %5p %c{1}:%L - SERVER[${oozie.instance.id}] %m%n\",\n      \"multiline_pattern\":\"^(%{TIMESTAMP_ISO8601:logtime})\",\n      \"message_pattern\":\"(?m)^%{TIMESTAMP_ISO8601:logtime}%{SPACE}%{LOGLEVEL:level}%{SPACE}%{DATA:logger_name}:%{INT:line_number}%{SPACE}-%{SPACE}%{GREEDYDATA:log_message}\",\n      \"post_map_values\":{\n        \"logtime\":{\n          \"map_date\":{\n            \"target_date_pattern\":\"yyyy-MM-dd HH:mm:ss,SSS\"\n          }\n         }\n       }\n     }\n   ]\n }",
+        "service_name" : "Oozie" {% endraw %}
+      }
+    }
+  }
+}

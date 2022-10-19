@@ -1,0 +1,15 @@
+{ "Clusters": {
+		"desired_configs": {
+			"type": "druid-overlord",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        {% raw %}
+        "druid.indexer.runner.type": "remote",
+        "druid.indexer.storage.type": "metadata",
+        "druid.port": "8090",
+        "druid.service": "druid/overlord"
+        {% endraw %}
+  		}
+		}
+	}
+}

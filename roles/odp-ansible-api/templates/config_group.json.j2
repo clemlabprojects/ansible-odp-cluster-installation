@@ -1,0 +1,19 @@
+{
+  "ConfigGroup": {
+     "cluster_name": "{{cluster_name}}",
+     "group_name": "{{item.group_name}}",
+     "tag": "{{item.group_tag}}",
+     "description": "config group {{item.config_type}}",
+     "hosts": [ {% for host in item.hosts %} { "host_name" : "{{ host }}" } {% if not loop.last %},{% endif %}{% endfor %} ],
+     "desired_configs": [
+        {
+           "type": "{{item.config_type}}",
+           "tag": "{{item.group_tag}}",
+           "properties": { 
+               {% for property in item.properties %}"{{ property.split('=')[0] }}":"{{ property.split('=')[1] }}"{% if not loop.last %},{% endif %}{% endfor %}
+         } 
+      }
+    ]
+  }
+}
+  

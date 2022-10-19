@@ -1,0 +1,174 @@
+############# VARS - NETWORK - HOSTNAMES #################
+########################################################
+
+hosts:
+    - fqdn: master01.clemlab.com
+      ip: 10.10.10.11
+      shortname: master01
+    - fqdn: master02.clemlab.com
+      ip: 10.10.10.12
+      shortname: master02
+    - fqdn: master03.clemlab.com
+      ip: 10.10.10.13
+      shortname: master03
+    - fqdn: worker01.clemlab.com
+      ip: 10.10.10.16
+      shortname: worker01
+    - fqdn: worker02.clemlab.com
+      ip: 10.10.10.17
+      shortname: worker02
+    - fqdn: worker03.clemlab.com
+      ip: 10.10.10.18
+      shortname: worker03
+    - fqdn: edge01.clemlab.com
+      ip: 10.10.10.14
+      shortname: edge01
+    - fqdn: admin01.clemlab.com
+      ip: 10.10.10.19
+      shortname: admin01
+    - fqdn: admin02.clemlab.com
+      ip: 10.10.10.20
+      shortname: admin02
+
+########################################################
+
+############## VARS - SECURITY - SSL ###############
+########################################################
+
+security_ssl_cert_folder: /home/ansible                 # Folder that contain all certificates for nodes
+security_ssl_cacert_name: "ca.cert.pem"                  # Name of your CA certficate file
+security_ssl_cacert_path: /home/ansible/ca.cert.pem     # Path for CA certificate file
+security_ssl_cacert_folder: /home/ansible/certs/ca
+security_server_ssl_stores: /etc/security/serverKeys    # Path where the keystore and truststore will be generate
+security_keystore_password: keyStore123-                 # Java Keystore password...System Java Keystore Password
+security_truststore_password: trustStore123-             # Java Truststore password...System Java Truststore Password
+security_ssl_cacert_alias: hadoop_root_ca
+
+
+############## VARS - AMBARI - Setup ###############
+########################################################
+ambari_admin_principal_password: admin123
+ambari_password: admin
+ambari_server: master01.clemlab.com
+ambari_server_ssl: True
+ambari_server_port: 8442
+ambari_server_ssl_port: 8442
+ambari_server_master_key: CkK2TyKxsbAJbc6scwuu                         # Ambari master key to encrypt password...HDP Ambari Operational Master Key
+ambari_server_database: ambari_db                              # Name of ambari database
+ambari_server_database_user: ambari                            # User to connect to ambari database
+ambari_server_database_user_password: TVaaOKqJ5PkEzpKHtbF%g                   # Password for user to connect to ambari database...HDP Ambari Operational Mysql
+
+############## VARS - AMBARI - API   #################
+######################################################
+hive_database: hive_db                                  # Name of hive database
+hive_database_user: hive                                # User to connect to hive database
+hive_database_user_password: hive123                     # Password for user hive
+cluster_name: clemlabtest
+ambari_namespace: clemlabtest
+# sattelite_repo: true
+# ## centos 7 
+# vdf_path: files/ODP-1.0.3.0-165.xml
+# hdp_repo_path: files/offline/hdp.repo
+# build_stack_version: 1.0
+# stack_version_id: 1.0.3.0-366
+# # repos_url_hdp: "http://repo.luc-data.com:10080/centos7/"
+# repos_url_hdp: "http://10.0.2.2:10080/centos7/dph_1.0.0.0-1/dist/centos7/1.x/BUILDS/1.0.3.0-366/rpms/"
+# repos_url_hdp_utils: "http://10.0.2.2:10080/centos7/hdp_3.1.5.0/HDP-UTILS/centos7/1.1.0.22"
+# rangerkms_database: ranger_kms
+# rangerkms_database_user: ranger_kms
+# rangerkms_database_user_password: 4DseoDoCDtgFuTyAw0ER5btq%5
+# source_hdp: "http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.0.1.0/hdp.repo"
+
+## centos 8 
+vdf_path: files/ODP-1.0.4.0-47.xml
+hdp_repo_path: files/offline/hdp.repo
+build_stack_version: 1.0
+stack_version_id: 1.0.4.0-65
+# repos_url_hdp: "http://repo.luc-data.com:10080/centos7/"
+## offline
+#repos_url_hdp: "http://10.0.2.2:10080/centos7/dph_1.0.0.0-1/dist/centos7/1.x/BUILDS/1.0.4.0-65/rpms/"
+
+## online
+repos_url_hdp: "https://clemlabs.s3.eu-west-3.amazonaws.com/centos8/odp-release/1.0.4.0-65/rpms/"
+repos_url_hdp_utils: "http://10.0.2.2:10080/centos7/hdp_3.1.5.0/HDP-UTILS/centos7/1.1.0.22"
+rangerkms_database: ranger_kms
+rangerkms_database_user: ranger_kms
+rangerkms_database_user_password: 4DseoDoCDtgFuTyAw0ER5btq%5
+source_hdp: "http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.0.1.0/hdp.repo"
+base_components:
+    - hadoop
+client_components:
+    - spark2  
+base_packages:
+    - hadoop
+    - hadoop-client
+client_packages:
+    - spark2
+all:
+  TIMELINE_READER:
+      - master03.clemlab.com
+  YARN_REGISTRY_DNS:
+      - master01.clemlab.com
+  DATANODE:
+      - worker01.clemlab.com
+      - worker02.clemlab.com
+      - worker03.clemlab.com
+  HCAT:
+      - master02.clemlab.com
+      - master03.clemlab.com
+  HDFS_CLIENT:
+      - master01.clemlab.com
+      - edge01.clemlab.com
+      - worker01.clemlab.com
+      - worker02.clemlab.com
+      - worker03.clemlab.com
+  HISTORYSERVER:
+      - master03.clemlab.com
+  HIVE_CLIENT:
+      - master01.clemlab.com
+      - edge01.clemlab.com
+      - worker01.clemlab.com
+      - worker02.clemlab.com
+      - worker03.clemlab.com
+  HIVE_METASTORE:
+      - master02.clemlab.com
+  HIVE_SERVER:
+      - master02.clemlab.com
+      - master03.clemlab.com
+  MAPREDUCE2_CLIENT:
+      - edge01.clemlab.com
+      - worker01.clemlab.com
+      - worker02.clemlab.com
+      - worker03.clemlab.com
+  NAMENODE:
+      - master01.clemlab.com
+  NODEMANAGER:
+      - worker01.clemlab.com
+      - worker02.clemlab.com
+      - worker03.clemlab.com
+  RESOURCEMANAGER:
+      - master01.clemlab.com
+      - master02.clemlab.com
+  TEZ_CLIENT:
+      - edge01.clemlab.com
+      - worker01.clemlab.com
+      - worker02.clemlab.com
+      - worker03.clemlab.com
+  WEBHCAT_SERVER:
+      - master01.clemlab.com
+      - master02.clemlab.com
+  YARN_CLIENT:
+      - master01.clemlab.com
+      - master02.clemlab.com
+      - worker01.clemlab.com
+      - worker02.clemlab.com
+      - worker03.clemlab.com
+  ZOOKEEPER_CLIENT:
+      - worker01.clemlab.com
+      - worker02.clemlab.com
+      - worker03.clemlab.com
+  ZOOKEEPER_SERVER:
+      - master01.clemlab.com
+      - master02.clemlab.com
+      - master03.clemlab.com
+

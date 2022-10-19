@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "tagsync-application-properties",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+				"atlas.kafka.bootstrap.servers" : ":6667",
+				"atlas.kafka.entities.group.id" : "ranger_entities_consumer", {% endraw %}
+				"atlas.kafka.zookeeper.connect" : "{% for host in zookeeper_quorum %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}"
+			}
+		}
+	}
+}

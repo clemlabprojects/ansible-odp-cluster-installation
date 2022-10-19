@@ -1,0 +1,23 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "spark2-hive-site-override",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+				"metastore.catalog.default": "spark",
+        "hive.metastore.client.connect.retry.delay" : "5",
+        "hive.server2.enable.doAs" : "false",{% endraw %}
+        {% if cluster_services.HIVE.SSL is defined and cluster_services.HIVE.SSL %}
+        "hive.server2.transport.mode" : "http",
+        "hive.server2.thrift.http.port" : "10002",
+        "hive.server2.thrift.port" : "10016",
+        {% else %}
+        "hive.server2.transport.mode" : "binary",
+        "hive.server2.thrift.http.port" : "10002",
+        "hive.server2.thrift.port" : "10016",
+        {% endif %}
+        "hive.metastore.client.socket.timeout" : "1800"
+      }
+    }
+  }
+}

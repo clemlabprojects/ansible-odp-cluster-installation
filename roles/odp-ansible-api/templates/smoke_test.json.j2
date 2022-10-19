@@ -1,0 +1,34 @@
+[
+   {
+      "RequestSchedule":{
+         "batch":[
+            {
+               "requests":[
+                  {% for myService in services if myService.name in cluster_services %}
+                    { "order_id":{{ loop.index }},
+                     "type":"POST",
+                     "uri":"/api/v1/clusters/{{ cluster_name }}/requests",
+                     "RequestBodyInfo":{
+                        "RequestInfo":{
+                           "context":"{{ myService.name }} Service Check",
+                           "command":"{{ myService.smoketest|join }}"
+                        },
+                        "Requests/resource_filters":[
+                           {
+                              "service_name":"{{ myService.name }}"
+                           }
+                        ]
+                     }
+                  }{% if not loop.last %},{% endif %}{% endfor %}
+               ]
+            },
+            {
+               "batch_settings":{
+                  "batch_separation_in_seconds":1,
+                  "task_failure_tolerance":1
+               }
+            }
+         ]
+      }
+   }
+]

@@ -1,0 +1,53 @@
+{
+    "id": {{ranger_yarn_ambari_policy.json.id}},
+    "guid": "{{ranger_yarn_ambari_policy.json.guid}}",
+    "isEnabled": {{ranger_yarn_ambari_policy.json.isEnabled}},
+    "version": {{ranger_yarn_ambari_policy.json.version}},
+    "service": "{{ranger_yarn_ambari_policy.json.service}}",
+    "name": "{{ranger_yarn_ambari_policy.json.name}}",
+    "policyType": {{ranger_yarn_ambari_policy.json.policyType}},
+    "policyPriority": {{ranger_yarn_ambari_policy.json.policyPriority}},
+    "description": "{{ranger_yarn_ambari_policy.json.description}}",
+    "isAuditEnabled": {{ranger_yarn_ambari_policy.json.isAuditEnabled}},
+    "resources": {
+        "queue": {
+            "values": [
+                "root.default"
+            ],
+            "isExcludes": false,
+            "isRecursive": false
+        }
+    },
+    "policyItems": [{
+            "accesses": [{
+                "type": "submit-app",
+                "isAllowed": true
+            }, {
+                "type": "admin-queue",
+                "isAllowed": true
+            }],
+            "users": [
+                "ambari-qa"
+            ],
+            "groups": [],
+            "conditions": [],
+            "delegateAdmin": false
+        }{% if cluster_services.SPARK2 is defined %}, {
+		"accesses": [{
+			"type": "submit-app",
+			"isAllowed": true
+		}],
+		"users": ["spark"],
+		"groups": [],
+		"conditions": [],
+		"delegateAdmin": false
+	}{% endif %}],
+    "denyPolicyItems": [],
+    "allowExceptions": [],
+    "denyExceptions": [],
+    "dataMaskPolicyItems": [],
+    "rowFilterPolicyItems": [],
+    "options": {},
+    "validitySchedules": [],
+    "policyLabels": []
+}

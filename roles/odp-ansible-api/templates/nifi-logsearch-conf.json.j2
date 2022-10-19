@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "nifi-logsearch-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "component_mappings" : "NIFI_MASTER:nifi_app,nifi_bootstrap,nifi_setup,nifi_user;NIFI_CA:nifi_ca",
+        "content" : "\n{\n  \"input\":[\n    {\n      \"type\":\"nifi_app\",\n      \"rowtype\":\"service\",\n      \"path\":\"{{nifi_log_dir}}/nifi-app.log\"\n    },\n    {\n      \"type\":\"nifi_bootstrap\",\n      \"rowtype\":\"service\",\n      \"path\":\"{{nifi_log_dir}}/nifi-bootstrap.log\"\n    },\n    {\n      \"type\":\"nifi_setup\",\n      \"rowtype\":\"service\",\n      \"path\":\"{{nifi_log_dir}}/nifi-setup.log\"\n    },\n    {\n      \"type\":\"nifi_user\",\n      \"rowtype\":\"service\",\n      \"path\":\"{{nifi_log_dir}}/nifi-user.log\"\n    },\n    {\n      \"type\":\"nifi_ca\",\n      \"rowtype\":\"service\",\n      \"path\":\"{{nifi_log_dir}}/nifi-ca.stdout\"\n    }\n  ],\n  \"filter\":[\n    {\n      \"filter\":\"grok\",\n      \"conditions\":{\n        \"fields\":{\n          \"type\":[\n            \"nifi_app\",\n            \"nifi_bootstrap\",\n            \"nifi_setup\",\n            \"nifi_user\",\n            \"nifi_ca\"\n          ]\n        }\n      },\n      \"log4j_format\":\"\",\n      \"multiline_pattern\":\"^(%{TIMESTAMP_ISO8601:logtime})\",\n      \"message_pattern\":\"(?m)^%{TIMESTAMP_ISO8601:logtime}%{SPACE}%{LOGLEVEL:level}%{SPACE}\\\\[%{DATA:thread_name}\\\\]%{SPACE}%{GREEDYDATA:log_message}\",\n      \"post_map_values\":{\n        \"logtime\":{\n          \"map_date\":{\n            \"target_date_pattern\":\"yyyy-MM-dd HH:mm:ss,SSS\"\n          }\n        }\n      }\n    }\n  ]\n}",
+        "service_name" : "NiFi"
+      } {% endraw %}
+    }
+  }
+}

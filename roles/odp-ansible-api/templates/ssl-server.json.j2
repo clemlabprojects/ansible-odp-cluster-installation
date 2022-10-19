@@ -1,0 +1,18 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ssl-server",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "ssl.server.keystore.keypassword" : "{{ ssl_keystore_password | default('NONE')  }}",
+        "ssl.server.keystore.location" : "{{ ssl_keystore_path | default('NONE')  }}",
+        "ssl.server.keystore.password" : "{{ ssl_keystore_password | default('NONE')  }}",
+        "ssl.server.keystore.type" : "jks",
+        "ssl.server.truststore.location" : "{{ ssl_truststore_path | default('NONE')  }}",
+        "ssl.server.truststore.password" : "{{ ssl_truststore_password | default('NONE')  }}",
+        "ssl.server.truststore.reload.interval" : "10000",
+        "ssl.server.truststore.type" : "jks"
+			}
+		}
+	}
+}

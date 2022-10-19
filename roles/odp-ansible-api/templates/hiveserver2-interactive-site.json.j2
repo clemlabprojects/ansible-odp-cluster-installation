@@ -1,0 +1,14 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "hiveserver2-interactive-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "hive.async.log.enabled" : "false",
+        "hive.metastore.metrics.enabled" : "true",
+        "hive.service.metrics.hadoop2.component" : "hiveserver2",
+        "hive.service.metrics.reporter" : "HADOOP2"
+      }{% endraw %}
+    }
+  }
+}

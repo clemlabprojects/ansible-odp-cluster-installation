@@ -1,0 +1,9 @@
+templates/*.json
+templates/fix.json.j2
+._*
+.DS_Store
+molecule
+molecule.bck
+venv
+.yamllint
+files

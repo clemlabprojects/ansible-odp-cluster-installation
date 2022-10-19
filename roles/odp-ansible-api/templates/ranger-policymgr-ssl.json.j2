@@ -1,0 +1,38 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}-policymgr-ssl",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+			{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "NIFI" %}
+				"owner.for.certificate": "",
+			{% endif %}
+			{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "NIFI_REGISTRY" %}
+				"owner.for.certificate": "",
+			{% endif %}
+			{% if cluster_services.RANGER is defined and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL and cluster_services.RANGER.TWOWAY is defined and cluster_services.RANGER.TWOWAY %}
+				"xasecure.policymgr.clientssl.keystore" : "{{ ranger_plugin_keystore_path }}",
+				"xasecure.policymgr.clientssl.truststore" : "{{ ssl_truststore_path }}",
+				"xasecure.policymgr.clientssl.keystore.password" : "{{ ranger_plugin_keystore_password }}",
+				"xasecure.policymgr.clientssl.truststore.password" : "{{ ssl_truststore_password }}",
+				"xasecure.policymgr.clientssl.keystore.credential.file" : "{% raw %}jceks://file{{credential_file}}{% endraw %}",
+				"xasecure.policymgr.clientssl.truststore.credential.file" : "{% raw %}jceks://file{{credential_file}}{% endraw %}"
+			{% elif cluster_services.RANGER is defined and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL and cluster_services.RANGER.TWOWAY is not defined or cluster_services.RANGER.TWOWAY is defined and not cluster_services.RANGER.TWOWAY %}
+				"xasecure.policymgr.clientssl.keystore" : "{{ ssl_keystore_path }}",
+				"xasecure.policymgr.clientssl.truststore" : "{{ ssl_truststore_path }}",
+				"xasecure.policymgr.clientssl.keystore.password" : "{{ ssl_keystore_password }}",
+				"xasecure.policymgr.clientssl.truststore.password" : "{{ ssl_truststore_password }}",
+        "xasecure.policymgr.clientssl.keystore.credential.file" : "{% raw %}jceks://file{{credential_file}}{% endraw %}",
+        "xasecure.policymgr.clientssl.truststore.credential.file" : "{% raw %}jceks://file{{credential_file}}{% endraw %}"
+			{% else %}
+        "xasecure.policymgr.clientssl.keystore" : "/usr/{{ ambari_stack_name }}/current/{{ in_services|lower }}-client/conf/ranger-plugin-keystore.jks",
+        "xasecure.policymgr.clientssl.truststore" : "/usr/{{ ambari_stack_name }}/current/{{ in_services|lower }}-client/conf/ranger-plugin-truststore.jks",
+        "xasecure.policymgr.clientssl.keystore.password" : "changeit",
+        "xasecure.policymgr.clientssl.truststore.password" : "changeit",
+        "xasecure.policymgr.clientssl.keystore.credential.file" : {% raw %}"jceks://file{{credential_file}}",{% endraw %}
+        "xasecure.policymgr.clientssl.truststore.credential.file" : {% raw %}"jceks://file{{credential_file}}"{% endraw %}
+			{% endif %}
+      }
+    }
+}
+}

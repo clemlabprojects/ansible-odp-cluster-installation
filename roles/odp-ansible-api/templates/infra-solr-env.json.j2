@@ -1,0 +1,44 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "infra-solr-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "content" : {{ infrasolrenvcontent | to_json }},{% raw %}
+        "infra_solr_datadir" : "/opt/ambari_infra_solr/data",
+        "infra_solr_jmx_port" : "18886",
+        "infra_solr_kerberos_keytab" : "/etc/security/keytabs/infra_solr.service.keytab",
+        "infra_solr_kerberos_name_rules" : "DEFAULT",
+        "infra_solr_kerberos_principal" : "infra-solr",
+        "infra_solr_keystore_location" : "/etc/security/serverKeys/infra.solr.keyStore.jks",
+        "infra_solr_keystore_password" : "changeit",
+        "infra_solr_keystore_type" : "jks",
+        "infra_solr_log_dir" : "/var/log/ambari-infra-solr",
+        "infra_solr_maxmem" : "2048",
+        "infra_solr_minmem" : "1024",
+        "infra_solr_pid_dir" : "/var/run/ambari-infra-solr",
+        "infra_solr_port" : "8886",
+        "infra_solr_ssl_enabled" : "false",
+        "infra_solr_truststore_location" : "/etc/security/serverKeys/infra.solr.trustStore.jks",
+        "infra_solr_truststore_password" : "changeit",
+        "infra_solr_truststore_type" : "jks",
+        "infra_solr_user" : "infra-solr",
+        "infra_solr_web_kerberos_keytab" : "/etc/security/keytabs/spnego.service.keytab",
+        "infra_solr_web_kerberos_principal" : "HTTP/_HOST@EXAMPLE.COM",{% endraw %}
+        {% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3.0 %}
+        "infra_solr_java_stack_size" : "1",
+        "infra_solr_extra_java_opts" : "",
+        "infra_solr_gc_log_opts" : "-verbose:gc -XX:+PrintHeapAtGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=15 -XX:GCLogFileSize=200M",
+        "infra_solr_gc_tune" : "-XX:NewRatio=3 -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:MaxTenuringThreshold=8 -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:ConcGCThreads=4 -XX:ParallelGCThreads=4 -XX:+CMSScavengeBeforeRemark -XX:PretenureSizeThreshold=64m -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=50 -XX:CMSMaxAbortablePrecleanTime=6000 -XX:+CMSParallelRemarkEnabled -XX:+ParallelRefProcEnabled",
+        "infra_solr_jmx_enabled" : "false",
+        "infra_solr_user_nofile_limit" : "128000",
+        "infra_solr_user_nproc_limit" : "65536",
+        "infra_solr_zookeeper_external_enabled" : "false",
+        "infra_solr_zookeeper_external_principal" : "zookeeper/_HOST@EXAMPLE.COM",
+        "infra_solr_zookeeper_quorum" : "{zookeeper_quorum}",
+        {% endif %}
+        "infra_solr_znode" : "/infra-solr"
+      }
+    }
+  }
+}

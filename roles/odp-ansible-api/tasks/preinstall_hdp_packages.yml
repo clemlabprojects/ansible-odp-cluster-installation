@@ -1,0 +1,46 @@
+---
+- set_fact:
+    loop_packages_noha: []
+    loop_packages_clients: []
+
+- set_fact:
+    loop_packages_noha: "{{ loop_packages_noha + [in_item.0.name]}}"
+  with_subelements:
+    - "{{ hostvars[ambari_server_hostname]['loop_components_noha'] }}"
+    - noha
+  loop_control:
+    label: "{{ in_item.1 }}"
+    loop_var: in_item
+  when: in_item.0.name in cluster_services and all[in_item.1] is defined and inventory_hostname in all[in_item.1] and in_item.1 != "" and hostvars[ambari_server_hostname]['loop_components_noha'] is defined
+
+- set_fact:
+    loop_packages_clients: "{{ loop_packages_clients + [in_item.0.name]}}"
+  with_subelements:
+    - "{{ hostvars[ambari_server_hostname]['loop_components_clients'] }}"
+    - client
+  loop_control:
+    label: "{{ in_item.1 }}"
+    loop_var: in_item
+  when: in_item.0.name in cluster_services and all[in_item.1] is defined and inventory_hostname in all[in_item.1] and in_item.1 != "" and hostvars[ambari_server_hostname]['loop_components_clients'] is defined
+
+- set_fact:
+    merge_loop_packages: "{{ merge_loop_packages|d([]) + in_item.packages }}"
+  with_items:
+    - "{{ hostvars[ambari_server_hostname]['loop_services_packages'] }}"
+  loop_control:
+    label: "{{ in_item }}"
+    loop_var: in_item
+  when: in_item.name in loop_packages_noha or in_item.name in loop_packages_clients
+
+- name: Install packages
+  yum:
+    name: "{{ hostvars[inventory_hostname]['merge_loop_packages'] }}"
+    state: present
+    install_weak_deps: no
+    disable_gpg_check: yes
+  when: hostvars[inventory_hostname]['merge_loop_packages'] is defined
+  ignore_errors: True
+  register: debuginstallpackages
+
+- name: Logs packages installation
+  shell: echo "{{ debuginstallpackages }}" > /tmp/debuginstallpackages.txt

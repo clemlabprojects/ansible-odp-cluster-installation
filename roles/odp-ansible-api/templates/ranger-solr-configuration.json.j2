@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-solr-configuration",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+				"ranger_audit_max_retention_days" : "90",
+				"ranger_audit_logs_merge_factor" : "5",
+        "content" : {{ rangersolrenvcontent | to_json }},
+      }
+    }
+  }
+}

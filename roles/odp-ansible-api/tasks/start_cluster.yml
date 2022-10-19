@@ -1,0 +1,36 @@
+---
+- name: Start all services
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/services?ServiceInfo/state=INSTALLED"
+    method: PUT
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: '{"RequestInfo": {"context" :"Starting Services API"}, "Body": {"ServiceInfo": {"state": "STARTED"}}}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: check_start_all_services
+
+- name: Wait for all services to be started
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/requests/{{ check_start_all_services.json.Requests.id }}"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body_format: json
+    status_code: 200,201,202
+    validate_certs: no
+    return_content: yes
+  register: cluster_check_task_start_services
+  until: (cluster_check_task_start_services.json.Requests.request_status == 'COMPLETED' and (cluster_check_task_start_services.json.Requests.completed_task_count|int > 0) or
+          cluster_check_task_start_services.json.Requests.request_status == 'FAILED' or
+          cluster_check_task_start_services.json.Requests.request_status == 'TIMEDOUT' or
+          cluster_check_task_start_services.json.Requests.request_status == 'ABORTED')
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 10
+  when: wait and check_start_all_services.json is defined

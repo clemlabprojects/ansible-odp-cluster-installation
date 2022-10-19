@@ -1,0 +1,41 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "tez-interactive-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "tez.am.am-rm.heartbeat.interval-ms.max" : "10000",
+        "tez.am.client.heartbeat.poll.interval.millis" : "6000",
+        "tez.am.client.heartbeat.timeout.secs" : "90",
+        "tez.am.node-blacklisting.enabled" : "false",
+        "tez.am.resource.memory.mb" : "{{tez_am_resource_memory_mb}}",
+        "tez.am.task.listener.thread-count" : "1",
+        "tez.am.task.reschedule.higher.priority" : "false",
+        "tez.container.max.java.heap.fraction" : "-1",
+        "tez.dag.recovery.enabled" : "false",
+        "tez.grouping.node.local.only" : "true",
+        "tez.history.logging.log.level" : "TASK_ATTEMPT",
+        "tez.history.logging.taskattempt-filters" : "SERVICE_BUSY,EXTERNAL_PREEMPTION",
+        "tez.history.logging.timeline.num-dags-per-group" : "5",{% endraw %}
+        "tez.lib.uris" : "/{% if ambari_stack_name|lower == "odp" %}odp/apps/${odp.version}{% else %}hdp/apps/${hdp.version}{% endif %}/tez_hive2/tez.tar.gz",
+        "tez.runtime.enable.final-merge.in.output" : "false",
+        "tez.runtime.io.sort.mb" : "512",
+        "tez.runtime.pipelined-shuffle.enabled" : "false",
+        "tez.runtime.pipelined.sorter.lazy-allocate.memory" : "true",
+        "tez.runtime.report.partition.stats" : "true",
+        "tez.runtime.shuffle.connect.timeout" : "30000",
+        "tez.runtime.shuffle.fetch.buffer.percent" : "0.6",
+        "tez.runtime.shuffle.fetch.verify-disk-checksum" : "false",
+        "tez.runtime.shuffle.keep-alive.enabled" : "true",
+        "tez.runtime.shuffle.memory.limit.percent" : "0.25",
+        "tez.runtime.shuffle.parallel.copies" : "8",
+        "tez.runtime.shuffle.read.timeout" : "30000",
+        "tez.runtime.shuffle.ssl.enable" : "false",
+        "tez.runtime.unordered.output.buffer.size-mb" : "100",
+        "tez.session.am.dag.submit.timeout.secs" : "1209600",
+        "tez.task.heartbeat.timeout.check-ms" : "15000",
+        "tez.task.timeout-ms" : "90000"
+      }
+    }
+  }
+}

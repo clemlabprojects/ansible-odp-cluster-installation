@@ -1,0 +1,37 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "kms-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "hadoop.kms.audit.aggregation.window.ms" : "10000",
+        "hadoop.kms.authentication.kerberos.keytab" : "${user.home}/kms.keytab",
+        "hadoop.kms.authentication.kerberos.name.rules" : "DEFAULT",
+        "hadoop.kms.authentication.kerberos.principal" : "HTTP/localhost",
+        "hadoop.kms.authentication.signer.secret.provider" : "random",
+        "hadoop.kms.authentication.signer.secret.provider.zookeeper.auth.type" : "kerberos",
+        "hadoop.kms.authentication.signer.secret.provider.zookeeper.connection.string" : "#HOSTNAME#:#PORT#,...",
+        "hadoop.kms.authentication.signer.secret.provider.zookeeper.kerberos.keytab" : "/etc/hadoop/conf/kms.keytab",
+        "hadoop.kms.authentication.signer.secret.provider.zookeeper.kerberos.principal" : "kms/#HOSTNAME#",
+        "hadoop.kms.authentication.signer.secret.provider.zookeeper.path" : "/hadoop-kms/hadoop-auth-signature-secret",
+        "hadoop.kms.authentication.type" : "simple",
+        "hadoop.kms.cache.enable" : "true",
+        "hadoop.kms.cache.timeout.ms" : "600000",
+        "hadoop.kms.current.key.cache.timeout.ms" : "30000",{% endraw %}
+				{% if cluster_services.RANGER_KMS is defined and cluster_services.RANGER_KMS.SSL is defined and cluster_services.RANGER_KMS.SSL %}
+        "hadoop.kms.key.provider.uri" : "dbks://https@{{ all['RANGER_KMS_SERVER'][0] }}:9393/kms",
+				{% else %}
+        "hadoop.kms.key.provider.uri" : "dbks://http@{{ all['RANGER_KMS_SERVER'][0] }}:9292/kms",
+				{% endif %}
+        "hadoop.kms.proxyuser.yarn.groups" : "*",
+        "hadoop.kms.proxyuser.yarn.hosts" : "*",
+        "hadoop.kms.proxyuser.yarn.users" : "*",
+				"hadoop.kms.proxyuser.keyadmin.groups" : "*",
+        "hadoop.kms.proxyuser.keyadmin.hosts" : "*",
+        "hadoop.kms.proxyuser.keyadmin.users" : "*",
+        "hadoop.kms.security.authorization.manager" : "org.apache.ranger.authorization.kms.authorizer.RangerKmsAuthorizer",
+        "hadoop.security.keystore.JavaKeyStoreProvider.password" : "none"
+      }
+    }
+  }
+}

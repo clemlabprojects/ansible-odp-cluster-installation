@@ -1,0 +1,57 @@
+---
+# Check variables/layout
+# - name : Check variables/layout
+#   import_tasks: check_variables.yml
+
+# Deploy HDP repository
+- name: Deploy HDP repository
+  # strategy: free
+  import_tasks: deploy_repos.yml
+
+# Actions beforce installing
+- name: Actions beforce installing
+  # strategy: free
+  import_tasks: pre_install.yml
+
+# Get defaults values from API
+- import_tasks: get_defaults_values_api.yml
+  when: inventory_hostname == ambari_server_hostname
+
+# Create base cluster
+- import_tasks: create_base_cluster.yml
+  when: inventory_hostname == ambari_server_hostname
+
+# Deploy cluster
+- import_tasks: deploy_cluster.yml
+  when: inventory_hostname == ambari_server_hostname
+
+- name: Preinstall HDP packages
+  # strategy: free
+  import_tasks: preinstall_hdp_packages.yml
+  when: preinstall_stack_packages is defined and preinstall_stack_packages
+
+# Trigger cluster
+- import_tasks: trigger_cluster_installation.yml
+  when: inventory_hostname == ambari_server_hostname
+
+# Kerberize
+- import_tasks: create_freeipa_ambari_admin.yml
+  when: cluster_services.KERBEROS is defined and kdc_type == 'ipa' and ipa_do_creation
+
+- import_tasks: enable_kerberos.yml
+  when: cluster_services.KERBEROS is defined and inventory_hostname == ambari_server_hostname
+
+# Actions before starting
+- import_tasks: pre_start.yml
+
+# Start cluster
+- import_tasks: start_cluster.yml
+  when: inventory_hostname == ambari_server_hostname
+
+# Actions after starting
+- import_tasks: post_start.yml
+  when: inventory_hostname == ambari_server_hostname
+#
+# # Smoke test
+# - import_tasks: smoke_test.yml
+#   when: cluster_services.SMOKETEST is defined and inventory_hostname == ambari_server_hostname

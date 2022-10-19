@@ -1,0 +1,34 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-kms-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "ajp.enabled" : "false",
+        "ranger.contextName" : "/kms",
+        "ranger.credential.provider.path" : "/etc/ranger/kms/rangerkms.jceks",
+        "ranger.service.host" : "{{kms_host}}",
+        "ranger.service.http.port" : "{{kms_port}}",
+        "ranger.service.https.attrib.client.auth" : "false", {% endraw %}
+				{% if cluster_services.RANGER is defined and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL and cluster_services.RANGER_KMS is defined and cluster_services.RANGER_KMS.SSL is defined and cluster_services.RANGER_KMS.SSL %}
+        "ranger.service.https.attrib.keystore.credential.alias" : "keyStoreCredentialAlias",
+				"ranger.https.attrib.keystore.file" : "{{ ssl_keystore_path }}",
+        "ranger.service.https.attrib.keystore.file" : "{{ ssl_keystore_path }}",
+        "ranger.service.https.attrib.keystore.keyalias" : "{{ ranger_keystore_keyalias }}",
+        "ranger.service.https.attrib.keystore.pass" : "{{ ssl_keystore_password }}",
+        "ranger.service.https.attrib.ssl.enabled" : "true",
+				"ranger.service.https.attrib.client.auth" : "want",
+				{% else %}
+        "ranger.service.https.attrib.keystore.credential.alias" : "keyStoreCredentialAlias",
+        "ranger.service.https.attrib.keystore.file" : "/etc/security/serverKeys/ranger-kms-keystore.jks",
+        "ranger.service.https.attrib.keystore.keyalias" : "rangerkms",
+        "ranger.service.https.attrib.keystore.pass" : "changeit",
+        "ranger.service.https.attrib.ssl.enabled" : "false",
+				{% endif %}
+        "ranger.service.https.port" : "9393",
+        "ranger.service.shutdown.port" : "7085",
+        "xa.webapp.dir" : "./webapp"
+      }
+    }
+  }
+}

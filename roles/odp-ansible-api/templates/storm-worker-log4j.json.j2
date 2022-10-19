@@ -1,0 +1,17 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "storm-worker-log4j",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { 
+				"content": {{ stormworkerlog4j2 | to_json }},
+				"storm_wrkr_a1_maxbackupindex": "9",
+				"storm_wrkr_a1_maxfilesize": "100",
+				"storm_wrkr_err_maxbackupindex": "4",
+				"storm_wrkr_err_maxfilesize": "100",
+				"storm_wrkr_out_maxbackupindex": "4",
+				"storm_wrkr_out_maxfilesize": "100"
+			}
+		}
+	}
+}

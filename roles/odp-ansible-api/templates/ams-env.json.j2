@@ -1,0 +1,26 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ams-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "ambari_metrics_user" : "ams",
+        "ams_classpath_additional" : "",
+        "content" : {{ amsenvcontent | to_json }},
+        "failover_strategy_blacklisted_interval" : "300",
+        "metrics_collector_heapsize" : "512",
+        "metrics_collector_log_dir" : "/var/log/ambari-metrics-collector",
+        "metrics_collector_pid_dir" : "/var/run/ambari-metrics-collector",
+        "metrics_monitor_log_dir" : "/var/log/ambari-metrics-monitor",
+        "metrics_monitor_pid_dir" : "/var/run/ambari-metrics-monitor",
+        {% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3.0 %}
+        "min_ambari_metrics_hadoop_sink_version" : "2.7.0.0",
+        "timeline.metrics.host.inmemory.aggregation.jvm.arguments" : "-Xmx256m -Xms128m -XX:PermSize=68m",
+        "timeline.metrics.skip.network.interfaces.patterns" : "None",
+        "timeline.metrics.skip.virtual.interfaces" : "false",
+        {% endif %}
+        "timeline.metrics.skip.disk.metrics.patterns" : "true"
+      }
+    }
+}
+}

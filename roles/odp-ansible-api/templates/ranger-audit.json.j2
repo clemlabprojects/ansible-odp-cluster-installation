@@ -1,0 +1,19 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}-audit",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "xasecure.audit.destination.db" : "false",
+        "xasecure.audit.destination.hdfs" : "true",
+        "xasecure.audit.destination.hdfs.dir" : "hdfs://{% if cluster_services.HDFS.HA is defined and cluster_services.HDFS.HA %}{{ cluster_name }}{% else %}{{ first_namenode }}:8020{% endif %}/ranger/audit",
+        {% if cluster_services.AMBARI_INFRA is defined or cluster_services.AMBARI_INFRA_SOLR is defined %}
+        "xasecure.audit.destination.solr.zookeepers" : "{% for host in zookeeper_quorum %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/infra-solr",
+        "xasecure.audit.destination.solr" : "true"
+        {% else %}
+        "xasecure.audit.destination.solr" : "false"
+        {% endif %}
+      }
+    }
+}
+}

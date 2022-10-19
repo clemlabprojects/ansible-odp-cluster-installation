@@ -1,0 +1,74 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "core-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+				{% if cluster_services.HDFS.HA is defined and cluster_services.HDFS.HA %}"fs.defaultFS": "hdfs://{{ cluster_name }}",{% else %}"fs.defaultFS": "hdfs://{{ first_namenode }}:8020",{% endif %}{% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3.0 %}{% raw %}
+				"fs.azure.user.agent.prefix" : "User-Agent: APN/1.0 Hortonworks/1.0 HDP/{{version}}",
+				"fs.gs.application.name.suffix" : " (GPN:Hortonworks; version 1.0) HDP/{{version}}",
+				"fs.gs.path.encoding" : "uri-path",
+				"fs.gs.working.dir" : "/",
+				"fs.s3a.fast.upload" : "true",
+				"fs.s3a.fast.upload.buffer" : "disk",
+				"fs.s3a.multipart.size" : "67108864",
+				"fs.s3a.user.agent.prefix" : "User-Agent: APN/1.0 Hortonworks/1.0 HDP/{{version}}",{% endraw %}{% endif %}
+				"fs.trash.interval": "360",
+				"ha.failover-controller.active-standby-elector.zk.op.retries": "120",
+				"ha.zookeeper.quorum": "{% for host in zookeeper_quorum %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}",
+				"ha.zookeeper.parent-znode": "/hadoop-ha",
+				"hadoop.http.authentication.simple.anonymous.allowed": "true",
+				"hadoop.proxyuser.hcat.groups": "*",
+				"hadoop.proxyuser.hcat.hosts": "*",
+				"hadoop.proxyuser.httpfs.groups": "*",
+				"hadoop.proxyuser.httpfs.hosts": "*",
+				"hadoop.proxyuser.hue.groups": "*",{% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3.0 %}
+				"hadoop.http.cross-origin.allowed-headers" : "X-Requested-With,Content-Type,Accept,Origin,WWW-Authenticate,Accept-Encoding,Transfer-Encoding",
+				"hadoop.http.cross-origin.allowed-methods" : "GET,PUT,POST,OPTIONS,HEAD,DELETE",
+				"hadoop.http.cross-origin.allowed-origins" : "*",
+				"hadoop.http.cross-origin.max-age" : "1800",
+				"hadoop.http.filter.initializers" : "org.apache.hadoop.security.AuthenticationFilterInitializer,org.apache.hadoop.security.HttpCrossOriginFilterInitializer",
+				"hadoop.proxyuser.yarn.hosts": "*",
+				"hadoop.proxyuser.root.hosts": "*",
+				"hadoop.proxyuser.root.groups": "*",
+				"hadoop.proxyuser.hdfs.hosts": "*",
+				"hadoop.proxyuser.hdfs.groups": "*",{% endif %}
+				"hadoop.proxyuser.hue.hosts": "*",{% if cluster_services.HIVE is defined %}
+				"hadoop.proxyuser.HTTP.hosts": "{{ all['WEBHCAT_SERVER'] | join(',') }}",
+				"hadoop.proxyuser.HTTP.groups": "*",
+				"hadoop.proxyuser.hive.hosts": "{{ all['HIVE_SERVER'] | join(',') }}",
+				"hadoop.proxyuser.hive.groups": "*",{% endif %}
+				{% if cluster_services.SPARK is defined %}
+				"hadoop.proxyuser.livy.hosts" : "{{ all['SPARK2_THRIFTSERVER'] | join(',') }}",
+				"hadoop.proxyuser.livy.groups" : "*",{% endif %}
+				{% if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN is defined and cluster_services.RANGER.PLUGIN.HIVE is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE %}"hadoop.proxyuser.hive.hosts": "{% for hiveserver in all['HIVE_SERVER'] %}{{ hiveserver }}{% if not loop.last %},{% endif %}{% endfor %}",{% endif %}
+				"hadoop.security.auth_to_local": "DEFAULT",
+				"hadoop.security.authentication": "simple",
+				"hadoop.security.authorization": "false",
+				{% if cluster_services.RANGER_KMS is defined and cluster_services.RANGER_KMS.SSL is defined and cluster_services.RANGER_KMS.SSL %}
+				"hadoop.security.key.provider.path": "kms://https@{{ all['RANGER_KMS_SERVER'][0] }}:9393/kms",
+				{% elif cluster_services.RANGER_KMS is defined and cluster_services.RANGER_KMS.SSL is defined and not cluster_services.RANGER_KMS.SSL %}
+				"hadoop.security.key.provider.path": "kms://http@{{ all['RANGER_KMS_SERVER'][0] }}:9292/kms",
+				{% else %}
+				"hadoop.security.key.provider.path": "",
+				{% endif %}
+				"io.compression.codecs": "org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.SnappyCodec",
+				"io.file.buffer.size": "131072",
+				"io.serializations": "org.apache.hadoop.io.serializer.WritableSerialization",
+				{% if cluster_services.HDFS.SSL is defined and cluster_services.HDFS.SSL %}
+				"hadoop.rpc.protection" : "{{ hadoop_rpc_protection | default('authentication') }}",
+				"hadoop.ssl.require.client.cert" : "false",
+				"hadoop.ssl.hostname.verifier" : "DEFAULT",
+				"hadoop.ssl.keystores.factory.class" : "org.apache.hadoop.security.ssl.FileBasedKeyStoresFactory",
+				"hadoop.ssl.server.conf" : "ssl-server.xml",
+				"hadoop.ssl.client.conf" : "ssl-client.xml",{% endif %}
+				"ipc.client.connect.max.retries": "50",
+				"ipc.client.connection.maxidletime": "30000",
+				"ipc.client.idlethreshold": "8000",
+				"ipc.server.tcpnodelay": "true",
+				"mapreduce.jobtracker.webinterface.trusted": "false",
+				"net.topology.script.file.name": "/etc/hadoop/conf/topology_script.py"
+			}
+		}
+	}
+}

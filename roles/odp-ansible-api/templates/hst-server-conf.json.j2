@@ -1,0 +1,27 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "hst-server-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "agent.request.processing.timeout" : "7200",
+        "agent.request.syncup.interval" : "180",
+        "client.threadpool.size.max" : "40",
+        "customer.account.name" : "unspecified",
+        "customer.enable.flex.subscription" : "false",
+        "customer.flex.subscription.id" : "",
+        "customer.notification.email" : "unspecified",
+        "customer.smartsense.id" : "A-00000000-C-00000000",
+        "gateway.host" : "embedded",
+        "gateway.port" : "9451",
+        "gateway.registration.port" : "9450",
+        "server.max.heap" : "2048",
+        "server.port" : "9000",
+        "server.ssl_enabled" : "false",
+        "server.storage.dir" : "/var/lib/smartsense/hst-server/data",
+        "server.tmp.dir" : "/var/lib/smartsense/hst-server/tmp",{% endraw %}
+        "server.url" : "http://{{ all['HST_SERVER'][0] }}:9000"
+      }
+    }
+  }
+}

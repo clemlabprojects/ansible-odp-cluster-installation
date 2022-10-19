@@ -1,0 +1,140 @@
+- hosts: admin1
+  gather_facts: yes
+  vars_files:
+    - cluster.yaml
+
+  roles:
+    - role: ambari-cluster
+      vars:
+        silent: true
+        ambari_server_hostname: admin1
+        ambari_server_port: 7443
+        ambari_server_protocol: https
+        cluster_name: dev01                 ## without special caracter, space, underscore...
+        ambari_username: admin
+        ambari_password: admin
+        cluster_hosts: "{{ all['MYCLUSTER'] }}"
+        repos_url: "http://my_repo_url/HDP/centos7/2.6.4.0-91/"
+        repos_url_utils: "http://my_repo_url/UTIL/"
+        first_namenode: "{{ all['NAMENODE'][0] }}"
+        second_namenode: "{{ all['NAMENODE'][1] }}"
+        zookeeper_quorum: "{{ all['ZOOKEEPER_SERVER'] }}"
+        hdp_namenode_dir:
+          - "/data/nn"
+        hdp_datanode_dir:
+          - "/data/hdfs/data/1"
+          - "/data/hdfs/data/2"
+          - "/data/hdfs/data/3"
+          - "/data/hdfs/data/4"
+        hdp_checkpoint_dir:
+          - "/data/checkpoint"
+        hdp_journalnode_dir:
+          - "/data/journalnode"
+        hdp_yarn_local_dir:
+          - "/data/yarn/local/1"
+          - "/data/yarn/local/2"
+        hdp_yarn_log_dir:
+          - "/data/yarn/log/2"
+          - "/data/yarn/log/2"
+        database_type: mysql
+        database_server: admin1
+        database_hive: hive_db
+        database_hive_user: hive
+        database_hive_user_password: hive123
+        database_ranger: ranger_db
+        database_ranger_user: ranger
+        database_ranger_user_password: ranger123
+        database_oozie: oozie_db
+        database_oozie_user: oozie
+        database_oozie_user_password: oozie123
+        ranger_admin_password: test12345678
+        ssl_truststore_path: "/etc/security/serverKeys/truststore.jks"
+        ssl_truststore_password: truststore123
+        ssl_keystore_path: "/etc/security/serverKeys/keystore.jks"
+        ssl_keystore_password: keystore123
+        ranger_truststore_alias: "master1"                                ####
+        ranger_keystore_credential_alias: "master1"                       ####
+        ranger_keystore_keyalias: "master1"                               ####
+        knox_master_password: knox12345678                                ## Knox Master Password (default test12345678)
+        hst_agent_version: "1.4.5.2.6.2.2-1"                              ## Must match your package version
+        kerberos_realm: DEV.HABIBIZ                                       ####
+        kdc_server: master1.habibiz                                       ####
+        kerberos_principal: admin@DEV.HABIBIZ                             #### Kerberos parameters
+        kerberos_principal_password: admin123                             ####
+        ignore_create_users_and_groups: false                             ## Ignore creation of default users/groups with Ambari
+        ambari_manage_krb5_conf: true                                     ## True : Ambari-server iwll manage krb5.conf
+        hdp_version: 2.6                                                  ## HDP version (2.1 2.2 [..] 2.6)
+        vdf_path: templates/repository_version/HDP2.6.xml                 ## VDF path if you want a specific HDP version
+        config_groups:
+          - cfg1:
+            config_type: 'hdfs-site'
+            config_tag: "datanode"
+            group_name: "datanode"
+            group_description: "dfs.datanode.data.dir for storage node"
+            group_tag: 'datanode_storage'
+            properties:
+              - dfs.datanode.data.dir=[DISK]/data/1/hdfs/data,[DISK]/data/2/hdfs/data
+            hosts:
+            - master01.habib
+            - master02.habib
+            - broker01.habib
+          - cfg2:
+            config_type: 'yarn-site'
+            config_tag: "nodemanager"
+            group_name: "nodemanager"
+            group_description: "local and workdir for storage node"
+            group_tag: 'nodemanager_storage'
+            properties:
+              - yarn.nodemanager.local-dirs=/data/hadoop_01/yarn/local,/data/hadoop_02/yarn/local
+              - yarn.nodemanager.log-dirs=/data/hadoop_01/yarn/log,/data/hadoop_02/yarn/log
+              - yarn.nodemanager.resource.memory-mb=2048
+              - yarn.scheduler.maximum-allocation-mb=2048
+              - yarn.scheduler.minimum-allocation-mb=512
+            hosts:
+            - master01.habib
+            - master02.habib
+            - broker01.habib
+
+        cluster_services:
+          HDFS:
+            HA: True
+            SSL: True
+          YARN:
+            HA: True
+            SSL: True
+          MAPREDUCE2:
+            SSL: True
+          TEZ:
+            SSL: True
+          PIG:
+          SLIDER:
+          ZOOKEEPER:
+          HIVE:
+            SSL: True
+          HBASE:
+            HA: True
+            SSL: True
+          RANGER:
+            SSL: True
+            TWOWAY: True
+            PLUGIN:
+              HDFS: True
+              YARN: True
+              HIVE: True
+          RANGER_KMS:
+            SSL: True
+          AMBARI_INFRA:
+          AMBARI_METRICS:
+          KAFKA:
+          SPARK2:
+            SSL: True
+          OOZIE:
+            SSL: True
+          SMARTSENSE:
+          KNOX:
+            SSL: True
+          ZEPPELIN:
+            SSL: True
+          ATLAS:
+          KERBEROS:
+          SMOKETEST:

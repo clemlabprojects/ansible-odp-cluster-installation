@@ -1,0 +1,34 @@
+{"Clusters":{"desired_configs":{"type":"webhcat-site","tag":"{{ range(00000000, 99999999) | random }}","properties":{
+  "templeton.exec.timeout" : "60000",
+  "templeton.hadoop" : "{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/hadoop/bin/hadoop",
+  "templeton.hadoop.conf.dir" : "/etc/hadoop/conf",
+  "templeton.hadoop.queue.name" : "default",
+  "templeton.hcat" : "{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/hive/bin/hcat",
+  "templeton.hcat.home" : "hive.tar.gz/hive/hcatalog",
+  "templeton.hive.archive" : "hdfs://{% if ambari_stack_name|lower == "odp" %}/odp/apps/${odp.version}{% else %}/hdp/apps/${hdp.version}{% endif %}/hive/hive.tar.gz",
+  "templeton.hive.extra.files" : "{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/tez/conf/tez-site.xml,{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/tez,{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/tez/lib",
+  "templeton.hive.home" : "hive.tar.gz/hive",
+  "templeton.hive.path" : "hive.tar.gz/hive/bin/hive",
+  "templeton.hive.properties" : "hive.metastore.local=false,hive.metastore.uris=thrift://{{ all['HIVE_METASTORE'][0] }}:9083,hive.metastore.sasl.enabled=false",
+  "templeton.jar" : "{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/hive/share/webhcat/svr/lib/hive-webhcat-*.jar",
+  "templeton.libjars" : "{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/zookeeper/zookeeper.jar,{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/hive/lib/hive-common.jar",
+  "templeton.override.enabled" : "false",
+  "templeton.pig.archive" : "hdfs://{% if ambari_stack_name|lower == "odp" %}/odp/apps/${odp.version}{% else %}/hdp/apps/${hdp.version}{% endif %}/pig/pig.tar.gz",
+  "templeton.pig.path" : "pig.tar.gz/pig/bin/pig",
+  "templeton.port" : "50111",
+  "templeton.python" : "${env.PYTHON_CMD}",
+  "templeton.sqoop.archive" : "hdfs://{% if ambari_stack_name|lower == "odp" %}/odp/apps/${odp.version}{% else %}/hdp/apps/${hdp.version}{% endif %}/sqoop/sqoop.tar.gz",
+  "templeton.sqoop.home" : "sqoop.tar.gz/sqoop",
+  "templeton.sqoop.path" : "sqoop.tar.gz/sqoop/bin/sqoop",
+  "templeton.storage.class" : "org.apache.hive.hcatalog.templeton.tool.ZooKeeperStorage",
+  "templeton.streaming.jar" : "hdfs://{% if ambari_stack_name|lower == "odp" %}/odp/apps/${odp.version}{% else %}/hdp/apps/${hdp.version}{% endif %}/mapreduce/hadoop-streaming.jar",
+  "templeton.zookeeper.hosts" : "{% for host in zookeeper_quorum %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}",
+  {% if cluster_services.HIVE is defined %}
+	"hadoop.proxyuser.http.groups": "*",
+	"hadoop.proxyuser.http.hosts": "{{ all['WEBHCAT_SERVER'] | join(',') }}",{% endif %}
+  "webhcat.proxyuser.hue.groups" : "*",
+  "webhcat.proxyuser.hue.hosts" : "*"
+}
+}
+}
+}

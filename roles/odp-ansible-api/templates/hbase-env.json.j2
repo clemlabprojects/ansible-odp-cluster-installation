@@ -1,0 +1,30 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "hbase-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { 
+        "content" : {{ hbaseenvcontent | to_json }},{% raw %}
+        "hbase.atlas.hook" : "true",
+        "hbase_regionserver_xmn_max" : "4000",
+        "hbase_user" : "hbase",
+        "hbase_max_direct_memory_size" : "",
+        "hbase_master_heapsize" : "4096",
+        "hbase_regionserver_xmn_ratio" : "0.12",
+        "hbase_java_io_tmpdir" : "/tmp",
+        "hbase_user_nproc_limit" : "16000",
+        "hbase_pid_dir" : "/var/run/hbase",
+        "hbase_user_keytab" : "/etc/security/keytabs/hbase.headless.keytab",
+        "hbase_log_dir" : "/var/log/hbase",
+        "hbase_regionserver_heapsize" : "4096",
+				"hbase_parallel_gc_threads": "8",
+        "hbase_user_nofile_limit" : "32000",{% endraw %}
+				{% if cluster_services.PHOENIX is defined %}
+				"phoenix_sql_enabled" : "true"
+				{% else %}
+				"phoenix_sql_enabled" : "false"
+				{% endif %}
+			}
+		}
+	}
+}

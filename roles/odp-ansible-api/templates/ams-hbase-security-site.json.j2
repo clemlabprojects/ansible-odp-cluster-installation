@@ -1,0 +1,27 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ams-hbase-security-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "ams.zookeeper.keytab" : "",
+        "ams.zookeeper.principal" : "",
+        "hadoop.security.authentication" : "",
+        "hbase.coprocessor.master.classes" : "",
+        "hbase.coprocessor.region.classes" : "",
+        "hbase.master.kerberos.principal" : "",
+        "hbase.master.keytab.file" : "",
+        "hbase.myclient.keytab" : "",
+        "hbase.myclient.principal" : "",
+        "hbase.regionserver.kerberos.principal" : "",
+        "hbase.regionserver.keytab.file" : "",
+        "hbase.security.authentication" : "",
+        "hbase.security.authorization" : "",
+        "hbase.zookeeper.property.authProvider.1" : "",
+        "hbase.zookeeper.property.jaasLoginRenew" : "",
+        "hbase.zookeeper.property.kerberos.removeHostFromPrincipal" : "",
+        "hbase.zookeeper.property.kerberos.removeRealmFromPrincipal" : ""{% endraw %}
+      }
+    }
+  }
+}

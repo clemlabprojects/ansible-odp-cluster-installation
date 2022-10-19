@@ -1,0 +1,22 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ams-hbase-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { 
+        "content" : {{ amshbaseenvcontent | to_json }},{% raw %}
+        "hbase_classpath_additional" : "",
+        "hbase_log_dir" : "/var/log/ambari-metrics-collector",
+        "hbase_master_heapsize" : "1024",
+        "hbase_master_maxperm_size" : "128",
+        "hbase_master_xmn_size" : "256",
+        "hbase_pid_dir" : "/var/run/ambari-metrics-collector/",
+        "hbase_regionserver_heapsize" : "512",
+        "hbase_regionserver_shutdown_timeout" : "30",
+        "hbase_regionserver_xmn_ratio" : "0.2",
+        "max_open_files_limit" : "32768",
+        "regionserver_xmn_size" : "128"{% endraw %}
+      }
+    }
+  }
+}

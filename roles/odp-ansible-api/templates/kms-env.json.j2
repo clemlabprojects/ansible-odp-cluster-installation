@@ -1,0 +1,23 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "kms-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "create_db_user" : "false",
+        "hsm_partition_password" : "",
+        "kms_group" : "kms",
+        "kms_log_dir" : "/var/log/ranger/kms",
+				{% if cluster_services.RANGER is defined and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL and cluster_services.RANGER_KMS is defined and cluster_services.RANGER_KMS.SSL is defined and cluster_services.RANGER_KMS.SSL %}
+        "kms_port" : "9393",
+				{% else %}
+				"kms_port" : "9292",
+				{% endif %}
+        "kms_user" : "kms",
+        "ranger_kms_max_heap_size": "1024",
+        "ranger_kms_pid_dir" : "/var/run/ranger_kms",{% raw %}
+				"content": "#!/bin/bash\n\n# Licensed to the Apache Software Foundation (ASF) under one\n# or more contributor license agreements.  See the NOTICE file\n# distributed with this work for additional information\n# regarding copyright ownership.  The ASF licenses this file\n# to you under the Apache License, Version 2.0 (the\n# \"License\"); you may not use this file except in compliance\n# with the License.  You may obtain a copy of the License at\n#\n#  http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n\n# Set Ranger KMS specific environment variables here.\n\nexport JAVA_HOME={{java_home}}\nexport RANGER_KMS_LOG_DIR={{kms_log_dir}}\nexport RANGER_KMS_PID_DIR_PATH={{ranger_kms_pid_dir}}\nexport KMS_USER={{kms_user}}\nranger_kms_max_heap_size={{ranger_kms_max_heap_size}}m\n{% if security_enabled %}\nexport JAVA_OPTS=\" ${JAVA_OPTS} -Dzookeeper.sasl.client.username={{zookeeper_principal_primary}} \"\n{% endif %}\n"{% endraw %}
+      }
+    }
+  }
+}

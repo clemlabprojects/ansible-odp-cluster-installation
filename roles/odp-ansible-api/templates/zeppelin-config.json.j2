@@ -1,0 +1,38 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "zeppelin-config",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+					"zeppelin.notebook.dir" : "notebook",
+          "zeppelin.websocket.max.text.message.size" : "1024000",
+          "zeppelin.notebook.homescreen.hide" : "false",
+          "zeppelin.interpreters" : "org.apache.zeppelin.spark.SparkInterpreter,org.apache.zeppelin.spark.PySparkInterpreter,org.apache.zeppelin.spark.SparkSqlInterpreter,org.apache.zeppelin.spark.DepInterpreter,org.apache.zeppelin.markdown.Markdown,org.apache.zeppelin.angular.AngularInterpreter,org.apache.zeppelin.shell.ShellInterpreter,org.apache.zeppelin.jdbc.JDBCInterpreter,org.apache.zeppelin.phoenix.PhoenixInterpreter,org.apache.zeppelin.livy.LivySparkInterpreter,org.apache.zeppelin.livy.LivyPySparkInterpreter,org.apache.zeppelin.livy.LivySparkRInterpreter,org.apache.zeppelin.livy.LivySparkSQLInterpreter",
+          "zeppelin.notebook.s3.user" : "user",
+          "zeppelin.server.port" : "9995",
+					{% if cluster_services.ZEPPELIN.SSL is defined and cluster_services.ZEPPELIN.SSL %}
+					"zeppelin.ssl" : "true",
+					"zeppelin.server.ssl.port" : "9995",
+					"zeppelin.ssl.key.manager.password": "{{ssl_keystore_password}}",
+					"zeppelin.ssl.truststore.type" : "JKS",
+					"zeppelin.ssl.keystore.path" : "{{ssl_keystore_path}}",
+					"zeppelin.ssl.keystore.password" : "{{ssl_keystore_password}}",
+					"zeppelin.ssl.keystore.type" : "JKS",
+					"zeppelin.ssl.truststore.path" : "{{ssl_truststore_path}}",					
+					"zeppelin.ssl.truststore.password" : "{{ssl_truststore_password}}",					
+					{% else %}
+					"zeppelin.ssl" : "false",
+					{% endif %}
+          "zeppelin.notebook.homescreen" : " ",
+          "zeppelin.notebook.storage" : "org.apache.zeppelin.notebook.repo.VFSNotebookRepo",
+          "zeppelin.interpreter.connect.timeout" : "30000",
+          "zeppelin.anonymous.allowed" : "true",
+          "zeppelin.interpreter.dir" : "interpreter",
+          "zeppelin.notebook.s3.bucket" : "zeppelin",
+          "zeppelin.server.allowed.origins" : "*",
+          "zeppelin.server.addr" : "0.0.0.0",
+          "zeppelin.ssl.client.auth" : "false"
+			}
+    }
+  }
+}

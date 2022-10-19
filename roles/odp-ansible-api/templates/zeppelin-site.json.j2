@@ -1,0 +1,49 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "zeppelin-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+				  "zeppelin.anonymous.allowed": "false",
+				  "zeppelin.config.fs.dir": "conf",
+				  "zeppelin.config.storage.class": "org.apache.zeppelin.storage.FileSystemConfigStorage",
+				  "zeppelin.interpreter.config.upgrade": "true",
+				  "zeppelin.interpreter.connect.timeout": "30000",
+				  "zeppelin.interpreter.dir": "interpreter",
+				  "zeppelin.interpreter.group.order": "spark,angular,jdbc,livy,md,sh",
+				  "zeppelin.notebook.dir": "notebook",
+				  "zeppelin.notebook.homescreen": " ",
+				  "zeppelin.notebook.homescreen.hide": "false",
+				  "zeppelin.notebook.public": "false",
+				  "zeppelin.notebook.s3.bucket": "zeppelin",
+				  "zeppelin.notebook.s3.user": "user",
+				  "zeppelin.notebook.storage": "org.apache.zeppelin.notebook.repo.GitNotebookRepo",
+				  "zeppelin.server.addr": "0.0.0.0",
+				  "zeppelin.server.allowed.origins": "*",
+				  "zeppelin.server.port": "9995",
+					{% if cluster_services.ZEPPELIN.SSL is defined and cluster_services.ZEPPELIN.SSL %}
+					"zeppelin.ssl" : "true",
+					"zeppelin.server.ssl.port" : "9995",
+					"zeppelin.ssl.key.manager.password": "{{ssl_keystore_password}}",
+					"zeppelin.ssl.truststore.type" : "JKS",
+					"zeppelin.ssl.keystore.path" : "{{ssl_keystore_path}}",
+					"zeppelin.ssl.keystore.password" : "{{ssl_keystore_password}}",
+					"zeppelin.ssl.keystore.type" : "JKS",
+					"zeppelin.ssl.truststore.path" : "{{ssl_truststore_path}}",
+					"zeppelin.ssl.truststore.password" : "{{ssl_truststore_password}}",
+					{% else %}
+					"zeppelin.ssl" : "false",
+					"zeppelin.ssl.key.manager.password": "change me",
+					"zeppelin.ssl.keystore.password": "change me",
+					"zeppelin.ssl.keystore.path": "conf/keystore",
+					"zeppelin.ssl.keystore.type": "JKS",
+					"zeppelin.ssl.truststore.password": "change me",
+					"zeppelin.ssl.truststore.path": "conf/truststore",
+					"zeppelin.ssl.truststore.type": "JKS",
+					{% endif %}
+				  "zeppelin.ssl.client.auth": "false",
+				  "zeppelin.websocket.max.text.message.size": "1024000"
+			}
+    }
+  }
+}

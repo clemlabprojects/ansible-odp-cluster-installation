@@ -1,0 +1,32 @@
+{
+  "Clusters":
+    {
+      "desired_configs":
+        {
+          "type":"yarn-env",
+          "tag":"{{ range(00000000, 99999999) | random }}",
+          "properties":{
+              "apptimelineserver_heapsize" : "1024",
+              "content" : {{ yarnenvcontent | to_json }},
+              "is_supported_yarn_ranger" : "true",
+              "min_user_id" : "1000",
+              "nodemanager_heapsize" : "1024",
+              "resourcemanager_heapsize" : "1024",
+              "service_check.queue.name" : "default",
+              "registry.dns.bind-port": "53",
+              {% if cgroups_enable %}
+      				"yarn_cgroups_enabled" : "true",
+      				{% else %}
+      				"yarn_cgroups_enabled" : "false",
+      				{% endif %}
+              "yarn_heapsize" : "1024",
+              "yarn_log_dir_prefix" : "/var/log/hadoop-yarn",
+              "yarn_pid_dir_prefix" : "/var/run/hadoop-yarn",
+              "yarn_user" : "yarn",
+              "yarn_ats_user": "yarn",
+              "yarn_user_nofile_limit" : "32768",
+              "yarn_user_nproc_limit" : "65536"
+      }
+    }
+  }
+}

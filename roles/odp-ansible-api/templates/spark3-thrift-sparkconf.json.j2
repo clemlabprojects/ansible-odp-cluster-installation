@@ -1,0 +1,30 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "spark3-thrift-sparkconf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "spark.driver.extraLibraryPath" : "{{spark_hadoop_lib_native}}",
+        "spark.dynamicAllocation.enabled" : "true",
+        "spark.dynamicAllocation.initialExecutors" : "0",
+        "spark.dynamicAllocation.maxExecutors" : "10",
+        "spark.dynamicAllocation.minExecutors" : "0",
+        "spark.eventLog.dir" : "{{spark_history_dir}}",
+        "spark.eventLog.enabled" : "true",
+        "spark.executor.extraLibraryPath" : "{{spark_hadoop_lib_native}}",
+        "spark.hadoop.cacheConf" : "false",
+        "spark.history.fs.logDirectory" : "{{spark_history_dir}}",
+        "spark.history.provider" : "org.apache.spark.deploy.history.FsHistoryProvider",
+        "spark.master" : "{{spark_thrift_master}}",
+        "spark.scheduler.allocation.file" : "{{spark_conf}}/spark3-thrift-fairscheduler.xml",
+        "spark.scheduler.mode" : "FAIR",
+        "spark.shuffle.service.enabled" : "true",
+				"spark.yarn.stagingDir" : "/tmp/spark/staging",
+        "spark.yarn.executor.failuresValidityInterval" : "2h",
+        "spark.yarn.maxAppAttempts" : "1",
+        "spark.yarn.queue" : "default"
+        {% endraw %}
+      }
+    }
+  }
+}

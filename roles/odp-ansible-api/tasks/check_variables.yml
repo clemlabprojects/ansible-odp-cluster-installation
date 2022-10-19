@@ -1,0 +1,3 @@
+---
+- fail: msg="Need to define vdf_path or vdf_url to continue"
+  when: vdf_path is not defined or vdf_url is not defined

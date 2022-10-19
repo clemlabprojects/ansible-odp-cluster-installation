@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<repository-version xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="version_definition.xsd">
+  <release>
+    <type>STANDARD</type>
+    <stack-id>ODP-1.0</stack-id>
+    <version>1.0.1.0</version>
+    <build>93</build>
+    <compatible-with>3\.\d+\.\d+\.\d+</compatible-with>
+    <release-notes>http://example.com</release-notes>
+    <display>ODP-1.0.1.0</display>
+  </release>
+  <manifest>
+    <service id="PIG-0160" name="PIG" version="0.16.0"/>
+    <service id="OOZIE-431" name="OOZIE" version="4.3.1"/>
+    <service id="RANGER-200" name="RANGER" version="2.0.0"/>
+    <service id="RANGER_KMS-200" name="RANGER_KMS" version="2.0.0"/>
+    <service id="SPARK2-245" name="SPARK2" version="2.4.5"/>
+    <service id="ATLAS-100" name="ATLAS" version="1.0.0"/>
+    <service id="STORM-121" name="STORM" version="1.2.1"/>
+    <service id="DRUID-0121" name="DRUID" version="0.12.1"/>
+    <service id="HIVE-312" name="HIVE" version="3.1.2"/>
+    <service id="KNOX-140" name="KNOX" version="1.4.0"/>
+    <service id="TEZ-092" name="TEZ" version="0.9.2"/>
+    <service id="HDFS-320" name="HDFS" version="3.2.0"/>
+    <service id="YARN-320" name="YARN" version="3.2.0"/>
+    <service id="MAPREDUCE2-320" name="MAPREDUCE2" version="3.2.0"/>
+    <service id="ACCUMULO-170" name="ACCUMULO" version="1.7.0"/>
+    <service id="KAFKA-111" name="KAFKA" version="2.5.0"/>
+    <service id="SQOOP-147" name="SQOOP" version="1.4.7"/>
+    <service id="HBASE-224" name="HBASE" version="2.2.4"/>
+    <service id="ZEPPELIN-080" name="ZEPPELIN" version="0.8.0"/>
+    <service id="ZOOKEEPER-355" name="ZOOKEEPER" version="3.5.5"/>
+    <service id="NIFI-1114" name="NIFI" version="1.11.4"/>
+    <service id="NIFI_REGISTRY-070" name="NIFI_REGISTRY" version="0.7.0"/>
+  </manifest>
+  <available-services/>
+  <repository-info>
+    <os family="redhat7">
+      <package-version>*</package-version>
+      <repo>
+        <baseurl>http://10.0.2.2/ODP</baseurl>
+        <repoid>ODP-1.0</repoid>
+        <reponame>ODP-1.0</reponame>
+        <unique>true</unique>
+      </repo>
+      <repo>
+        <baseurl>http://10.0.2.2/HDP-UTILS-1.1.0.21/</baseurl>
+        <repoid>ODP-UTILS-1.1.0.22</repoid>
+        <reponame>ODP-UTILS</reponame>
+        <unique>false</unique>
+      </repo>
+    </os>
+  </repository-info>
+</repository-version>

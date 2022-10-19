@@ -1,0 +1,33 @@
+{
+  "Clusters":
+  {
+    "desired_configs":
+      {
+        "type":"hadoop-env",
+        "tag":"{{ range(00000000, 99999999) | random }}",
+        "properties":
+          {
+            "content" : {{ hadoopenvcontent | to_json }},{% raw %}
+            "dtnode_heapsize" : "2048m",
+            "hadoop_heapsize" : "1024",
+            "hadoop_pid_dir_prefix" : "/var/run/hadoop",
+            "hadoop_root_logger" : "INFO,RFA",
+            "hdfs_log_dir_prefix" : "/var/log/hadoop",
+            "hdfs_tmp_dir" : "/tmp",
+            "hdfs_user" : "hdfs",
+            "hdfs_user_nofile_limit" : "128000",
+            "hdfs_user_nproc_limit" : "65536",
+            "namenode_backup_dir" : "/tmp/upgrades",
+            "namenode_heapsize" : "2048m",
+            "namenode_opt_maxnewsize" : "384m",
+            "namenode_opt_maxpermsize" : "256",
+            "namenode_opt_newsize" : "384m",
+            "namenode_opt_permsize" : "128",
+            "nfsgateway_heapsize" : "1024",{% endraw %}
+            "dfs_ha_initial_namenode_active": "{{ all['NAMENODE'][0] }}",
+            "dfs_ha_initial_namenode_standby": "{{ all['NAMENODE'][1] }}",
+            "proxyuser_group" : "users"
+          }
+      }
+  }
+}

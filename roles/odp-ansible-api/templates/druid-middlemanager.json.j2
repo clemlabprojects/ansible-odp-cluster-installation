@@ -1,0 +1,23 @@
+{ "Clusters": {
+		"desired_configs": {
+			"type": "druid-middlemanager",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        {% raw %}
+        "druid.indexer.fork.property.hadoop.mapreduce.map.java.opts": "-Duser.timezone=UTC -Dfile.encoding=UTF-8",
+        "druid.indexer.fork.property.hadoop.mapreduce.reduce.java.opts": "-Duser.timezone=UTC -Dfile.encoding=UTF-8",
+        "druid.indexer.runner.javaOpts": "-server -Xmx2g -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager {% endraw %}-D{% if ambari_stack_name|lower == "odp" %}odp.version{% else %}hdp.version{% endif %}{% raw %}={{stack_version}} -Dhadoop.mapreduce.job.classloader=true",
+        "druid.indexer.runner.startPort": "8100",
+        "druid.indexer.task.baseTaskDir": "/apps/druid/tasks",
+        "druid.indexer.task.hadoopWorkingPath": "/tmp/druid-indexing",
+        "druid.port": "8091",
+        "druid.processing.buffer.sizeBytes": "256000000",
+        "druid.processing.numThreads": "2",
+        "druid.server.http.numThreads": "50",
+        "druid.service": "druid/middlemanager",
+        "druid.worker.capacity": "3"
+        {% endraw %}
+  		}
+		}
+	}
+}

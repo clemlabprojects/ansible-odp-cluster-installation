@@ -1,0 +1,89 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "application-properties",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+			  "atlas.audit.hbase.tablename": "ATLAS_ENTITY_AUDIT_EVENTS",
+			  "atlas.audit.hbase.zookeeper.quorum": "{% for host in zookeeper_quorum %}{{ host }}{% if not loop.last %},{% endif %}{% endfor %}",
+			  "atlas.audit.zookeeper.session.timeout.ms": "60000",
+				{% raw %}
+			  "atlas.auth.policy.file": "{{conf_dir}}/policy-store.txt",
+			  "atlas.authentication.keytab": "/etc/security/keytabs/atlas.service.keytab",
+			  "atlas.authentication.method.file": "true",
+			  "atlas.authentication.method.file.filename": "{{conf_dir}}/users-credentials.properties",
+				{% endraw %}
+			  "atlas.authentication.method.kerberos": "false",
+			  "atlas.authentication.method.ldap": "false",
+			  "atlas.authentication.method.ldap.ad.base.dn": "",
+			  "atlas.authentication.method.ldap.ad.bind.dn": "",
+			  "atlas.authentication.method.ldap.ad.bind.password": "",
+			  "atlas.authentication.method.ldap.ad.default.role": "ROLE_USER",
+			  "atlas.authentication.method.ldap.ad.domain": "",
+			  "atlas.authentication.method.ldap.ad.referral": "ignore",
+			  "atlas.authentication.method.ldap.ad.url": "",
+			  "atlas.authentication.method.ldap.ad.user.searchfilter": "(sAMAccountName={0})",
+			  "atlas.authentication.method.ldap.base.dn": "",
+			  "atlas.authentication.method.ldap.bind.dn": "",
+			  "atlas.authentication.method.ldap.bind.password": "",
+			  "atlas.authentication.method.ldap.default.role": "ROLE_USER",
+			  "atlas.authentication.method.ldap.groupRoleAttribute": "cn",
+			  "atlas.authentication.method.ldap.groupSearchBase": "",
+			  "atlas.authentication.method.ldap.groupSearchFilter": "",
+			  "atlas.authentication.method.ldap.referral": "ignore",
+			  "atlas.authentication.method.ldap.type": "ldap",
+			  "atlas.authentication.method.ldap.url": "",
+			  "atlas.authentication.method.ldap.user.searchfilter": "",
+			  "atlas.authentication.method.ldap.userDNpattern": "uid=",
+			  "atlas.authentication.principal": "atlas",
+			  {% raw %}"atlas.cluster.name": "{{cluster_name}}",{% endraw %}
+			  "atlas.graph.index.search.solr.mode": "cloud",
+			  "atlas.graph.index.search.solr.zookeeper-url": "{% for host in zookeeper_quorum %}{{ host }}:2181/infra-solr{% if not loop.last %},{% endif %}{% endfor %}",
+			  "atlas.graph.storage.backend": "hbase",
+			  "atlas.graph.storage.hbase.table": "atlas_titan",
+			  "atlas.graph.storage.hostname": "{% for host in zookeeper_quorum %}{{ host }}{% if not loop.last %},{% endif %}{% endfor %}",
+				{% if cluster_services.KAFKA is defined %}
+				"atlas.kafka.bootstrap.servers": "{% for host in all['KAFKA_BROKER'] %}{{ host }}:6667{% if not loop.last %},{% endif %}{% endfor %}",
+	      {% else %}
+				"atlas.kafka.bootstrap.servers": "localhost:6667",
+				{% endif %}
+			  "atlas.kafka.enable.auto.commit": "false",
+			  "atlas.kafka.hook.group.id": "atlas",
+			  "atlas.kafka.session.timeout.ms": "30000",
+			  "atlas.kafka.zookeeper.connect": "localhost:2181",
+			  "atlas.kafka.zookeeper.connection.timeout.ms": "30000",
+			  "atlas.kafka.zookeeper.session.timeout.ms": "60000",
+			  "atlas.kafka.zookeeper.sync.time.ms": "20",
+			  "atlas.lineage.schema.query.Table": "Table where __guid='%s'\\, columns",
+			  "atlas.lineage.schema.query.hive_table": "hive_table where __guid='%s'\\, columns",
+			  "atlas.notification.create.topics": "true",
+			  "atlas.notification.embedded": "false",
+			  "atlas.notification.replicas": "1",
+			  "atlas.notification.topics": "ATLAS_HOOK,ATLAS_ENTITIES",
+			  "atlas.proxyusers": "",
+				{% if cluster_services.ATLAS.SSL is defined and cluster_services.HIVE.SSL %}
+				"atlas.enableTLS": "true",
+				"atlas.rest.address": "https://{{all['ATLAS_SERVER'][0]}}:21443",
+				"cert.stores.credential.provider.path": "jceks://file/etc/atlas/conf/credential.jceks",
+				"keystore.file": "{{ssl_keystore_path}}",
+				"keystore.password": "{{ssl_keystore_password}}",
+				"truststore.file": "{{ssl_truststore_path}}",
+				"truststore.password": "{{ssl_truststore_password}}",
+				"client.auth.enabled": "false",
+				{% else %}
+				"atlas.enableTLS": "false",
+				"atlas.rest.address": "http://{{all['ATLAS_SERVER'][0]}}:21000",
+				{% endif %}
+			  "atlas.server.bind.address": "0.0.0.0",
+			  "atlas.server.http.port": "21000",
+			  "atlas.server.https.port": "21443",
+			  "atlas.solr.kerberos.enable": "false",
+			  "atlas.ssl.exclude.protocols": "TLSv1,TLSv1.1",
+			  "atlas.sso.knox.browser.useragent": "",
+			  "atlas.sso.knox.enabled": "false",
+			  "atlas.sso.knox.providerurl": "",
+			  "atlas.sso.knox.publicKey": ""
+			}
+    }
+  }
+}

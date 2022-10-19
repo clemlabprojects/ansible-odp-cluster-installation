@@ -1,0 +1,11 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "storm-atlas-application",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { 
+				"atlas.hook.storm.numRetries": "3"
+			}
+		}
+	}
+}

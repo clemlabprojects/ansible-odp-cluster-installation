@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "zeppelin-logsearch-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "component_mappings" : "ZEPPELIN_MASTER:zeppelin",
+        "content" : "\n{\n  \"input\":[\n    {\n      \"type\":\"zeppelin\",\n      \"rowtype\":\"service\",\n      \"path\":\"{{default('/configurations/zeppelin-env/zeppelin_log_dir', '/var/log/zeppelin')}}/zeppelin-zeppelin-*.log\"\n    }\n   ],\n  \"filter\":[\n    {\n      \"filter\":\"grok\",\n      \"conditions\":{\n        \"fields\":{\n          \"type\":[\n            \"zeppelin\"\n          ]\n         }\n       },\n      \"log4j_format\":\"\",\n      \"multiline_pattern\":\"^(%{SPACE}%{LOGLEVEL:level}%{SPACE}\\\\[%{TIMESTAMP_ISO8601:logtime}\\\\])\",\n      \"message_pattern\":\"(?m)^%{SPACE}%{LOGLEVEL:level}%{SPACE}\\\\[%{TIMESTAMP_ISO8601:logtime}\\\\]%{SPACE}\\\\(\\\\{{\"{\"}}%{DATA:thread_name}\\\\{{\"}\"}}%{SPACE}%{JAVAFILE:file}\\\\[%{JAVAMETHOD:method}\\\\]:%{INT:line_number}\\\\)%{SPACE}-%{SPACE}%{GREEDYDATA:log_message}\",\n      \"post_map_values\":{\n        \"logtime\":{\n          \"map_date\":{\n            \"target_date_pattern\":\"yyyy-MM-dd HH:mm:ss,SSS\"\n          }\n         }\n       }\n     }\n   ]\n }\n    ",
+        "service_name" : "Zeppelin"{% endraw %}
+      }
+    }
+  }
+}

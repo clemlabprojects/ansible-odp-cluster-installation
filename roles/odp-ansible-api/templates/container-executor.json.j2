@@ -1,0 +1,23 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "container-executor",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "cgroup_root": "/sys/fs/cgroup",
+			  "content": "{#\n# Licensed to the Apache Software Foundation (ASF) under one\n# or more contributor license agreements.  See the NOTICE file\n# distributed with this work for additional information\n# regarding copyright ownership.  The ASF licenses this file\n# to you under the Apache License, Version 2.0 (the\n# \"License\"); you may not use this file except in compliance\n# with the License.  You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#}\n\n#/*\n# * Licensed to the Apache Software Foundation (ASF) under one\n# * or more contributor license agreements.  See the NOTICE file\n# * distributed with this work for additional information\n# * regarding copyright ownership.  The ASF licenses this file\n# * to you under the Apache License, Version 2.0 (the\n# * \"License\"); you may not use this file except in compliance\n# * with the License.  You may obtain a copy of the License at\n# *\n# *     http://www.apache.org/licenses/LICENSE-2.0\n# *\n# * Unless required by applicable law or agreed to in writing, software\n# * distributed under the License is distributed on an \"AS IS\" BASIS,\n# * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# * See the License for the specific language governing permissions and\n# * limitations under the License.\n# */\nyarn.nodemanager.local-dirs={{nm_local_dirs}}\nyarn.nodemanager.log-dirs={{nm_log_dirs}}\nyarn.nodemanager.linux-container-executor.group={{yarn_executor_container_group}}\nbanned.users=hdfs,yarn,mapred,bin\nmin.user.id={{min_user_id}}\n\n{{ '[docker]' }}\n  module.enabled={{docker_module_enabled}}\n  docker.binary={{docker_binary}}\n  docker.allowed.capabilities={{docker_allowed_capabilities}}\n  docker.allowed.devices={{docker_allowed_devices}}\n  docker.allowed.networks={{docker_allowed_networks}}\n  docker.allowed.ro-mounts={{nm_local_dirs}},{{docker_allowed_ro_mounts}}\n  docker.allowed.rw-mounts={{nm_local_dirs}},{{nm_log_dirs}},{{docker_allowed_rw_mounts}}\n  docker.privileged-containers.enabled={{docker_privileged_containers_enabled}}\n  docker.trusted.registries={{docker_trusted_registries}}\n  docker.allowed.volume-drivers={{docker_allowed_volume_drivers}}\n\n{{ '[gpu]' }}\n  module.enabled={{gpu_module_enabled}}\n\n{{ '[cgroups]' }}\n  root={{cgroup_root}}\n  yarn-hierarchy={{yarn_hierarchy}}",
+			  "docker_allowed_devices": "",
+			  "docker_allowed_ro-mounts": "",
+			  "docker_allowed_rw-mounts": "",
+			  "docker_allowed_volume-drivers": "",
+			  "docker_binary": "/usr/bin/docker",
+			  "docker_module_enabled": "false",
+			  "docker_privileged-containers_enabled": "false",
+			  "docker_trusted_registries": "",
+			  "gpu_module_enabled": "false",
+			  "min_user_id": "1000",
+			  "yarn_hierarchy": "yarn" {% endraw %}
+      }
+    }
+  }
+}

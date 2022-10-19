@@ -1,0 +1,18 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ams-ssl-server",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "ssl.server.keystore.keypassword" : "changeit",
+        "ssl.server.keystore.location" : "/etc/security/serverKeys/keystore.jks",
+        "ssl.server.keystore.password" : "changeit",
+        "ssl.server.keystore.type" : "jks",
+        "ssl.server.truststore.location" : "/etc/security/serverKeys/all.jks",
+        "ssl.server.truststore.password" : "changeit",
+        "ssl.server.truststore.reload.interval" : "10000",
+        "ssl.server.truststore.type" : "jks"{% endraw %}
+      }
+    }
+  }
+}

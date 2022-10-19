@@ -1,0 +1,28 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "dbks-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "hadoop.kms.blacklist.DECRYPT_EEK" : "hdfs",
+        "ranger.db.encrypt.key.password" : "{{ rangerkms_encryption_key }}",
+        "ranger.ks.hsm.enabled" : "false",
+        "ranger.ks.hsm.partition.name" : "par19",
+        "ranger.ks.hsm.partition.password" : "changeit",
+        "ranger.ks.hsm.partition.password.alias" : "ranger.kms.hsm.partition.password",
+        "ranger.ks.hsm.type" : "LunaProvider",{% raw %}
+        "ranger.ks.jdbc.sqlconnectorjar" : "{{ews_lib_jar_path}}",
+        "ranger.ks.jpa.jdbc.credential.alias" : "ranger.ks.jdbc.password",
+        "ranger.ks.jpa.jdbc.credential.provider.path" : "/etc/ranger/kms/rangerkms.jceks",
+        "ranger.ks.jpa.jdbc.dialect" : "{{jdbc_dialect}}",{% endraw %}
+        "ranger.ks.jpa.jdbc.driver" : {% if database_type == "mysql" %}"com.mysql.jdbc.Driver"{% elif database_type == "postgresql" %}"org.postgresql.Driver"{% endif %},
+        "ranger.ks.jpa.jdbc.password" : "{{ database_rangerkms_user_password }}",
+        "ranger.ks.jpa.jdbc.url" : "jdbc:{{ database_type }}://{{ database_server }}:{{ database_port }}/{{ database_rangerkms }}",
+        "ranger.ks.jpa.jdbc.user" : "{{ database_rangerkms_user }}",
+        "ranger.ks.kerberos.keytab" : "",
+        "ranger.ks.kerberos.principal" : "",
+        "ranger.ks.masterkey.credential.alias" : "ranger.ks.masterkey.password"
+      }
+    }
+  }
+}

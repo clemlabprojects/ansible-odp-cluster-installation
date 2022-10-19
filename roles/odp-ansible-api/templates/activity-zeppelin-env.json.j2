@@ -1,0 +1,11 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "activity-zeppelin-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "activity-zeppelin-env-content" : "#!/bin/bash\n\n# Copyright (c) 2011-2017, Hortonworks Inc.  All rights reserved.\n# Except as expressly permitted in a written agreement between you\n# or your company and Hortonworks, Inc, any use, reproduction,\n# modification, redistribution, sharing, lending or other exploitation\n# of all or any part of the contents of this file is strictly prohibited.\n\n\nexport JAVA_HOME={{java_home}}\n# Additional jvm options. for example, export ZEPPELIN_JAVA_OPTS=\"-Dspark.executor.memory=8g -Dspark.cores.max=16\"\nexport ZEPPELIN_JAVA_OPTS=\"{% endraw %}-D{% if ambari_stack_name|lower == "odp" %}odp.version={% raw %}{{odp_version}}{% endraw %}{% else %}hdp.version={% raw %}{{hdp_version}}{% endraw %}{% endif %}{% raw %}-Dlog.file.name=activity-explorer.log -DSmartSenseActivityExplorer\"      \t\t\n# export ZEPPELIN_INTP_MEM       \t\t# zeppelin interpreter process jvm mem options. Default = ZEPPELIN_MEM\n# export ZEPPELIN_INTP_JAVA_OPTS \t\t# zeppelin interpreter process jvm options. Default = ZEPPELIN_JAVA_OPTS\n\nexport RUN_AS_USER={{run_as_user}}\nexport ZEPPELIN_MEM=\" -Xms256m -Xmx1024m -XX:MaxPermSize=256m\"\nexport ZEPPELIN_LOG_DIR={{activity_log_dir}}\nexport ZEPPELIN_PID_DIR=/var/run/smartsense-activity-explorer\nexport ZEPPELIN_WAR_TEMPDIR=/var/lib/smartsense/activity-explorer/webapp\nexport ZEPPELIN_NOTEBOOK_DIR=/var/lib/smartsense/activity-explorer/notebook\nexport ZEPPELIN_CLASSPATH=\"/etc/ams-hbase/conf:${ZEPPELIN_CLASSPATH}\"\nexport CLASSPATH=${ZEPPELIN_CLASSPATH}" {% endraw %}
+      }
+    }
+  }
+}

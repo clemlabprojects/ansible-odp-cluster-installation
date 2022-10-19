@@ -1,0 +1,26 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "storm-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { 
+				"content": {{ stormenv | to_json }},
+				"jmxremote_port": "56431",
+				"nimbus_keytab": null,
+				"nimbus_principal_name": null,
+				"nimbus_seeds_supported": "true",
+				"storm.atlas.hook": "false",
+				"storm_keytab": null,
+				"storm_log_dir": "/var/log/storm",
+				"storm_logs_supported": "true",
+				"storm_pid_dir": "/var/run/storm",
+				"storm_principal_name": null,
+				"storm_ui_keytab": null,
+				"storm_ui_principal_name": null,
+				"storm_user": "storm",
+				"storm_user_nofile_limit": "128000",
+				"storm_user_nproc_limit": "65536"
+			}
+		}
+	}
+}

@@ -1,0 +1,54 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "spark3-defaults",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+				"spark.sql.warehouse.dir" : "/apps/spark/warehouse",
+        "spark.driver.extraLibraryPath" : "{{spark_hadoop_lib_native}}",
+        "spark.eventLog.dir" : "hdfs:///spark3-history/",
+        "spark.eventLog.enabled" : "true",
+        "spark.executor.extraLibraryPath" : "{{spark_hadoop_lib_native}}",{% endraw %}
+        "spark.history.fs.logDirectory" : "hdfs:///spark3-history/",
+        "spark.history.kerberos.keytab" : "none",
+        "spark.history.kerberos.principal" : "none",
+				{% if cluster_services.SPARK3 is defined and cluster_services.SPARK3.SSL is defined and cluster_services.SPARK3.SSL %}
+				"spark.ssl.enabled" : "true",
+				"spark.ssl.historyServer.port" : "18482", {# need to be "spark.history.ui.port" + 400 #}
+				"spark.ssl.keyPassword" : "{{ ssl_keystore_password }}",
+				"spark.ssl.keyStore" : "{{ ssl_keystore_path }}",
+				"spark.ssl.keyStorePassword" : "{{ ssl_keystore_password }}",
+				"spark.ssl.protocol" : "TLS",
+				"spark.ssl.trustStore" : "{{ ssl_truststore_path }}",
+				"spark.ssl.trustStorePassword" : "{{ ssl_truststore_password }}",
+				"spark.ui.https.enabled" : "true",
+				"spark.io.encryption.enabled" : "true",
+				"spark.encrypted.shuffle" : "true",
+				{% else %}
+				"spark.ui.https.enabled" : "false",
+				"spark.io.encryption.enabled" : "false",
+				"spark.encrypted.shuffle" : "false",
+				{% endif %}
+				"spark.io.encryption.keySizeBits" : "128",
+				"spark.io.encryption.keygen.algorithm" : "HmacSHA1",
+				"spark.authenticate.enableSaslEncryption" : "true",
+				"spark.authenticate" : "true",
+				"spark.encrypted.shuffle" : "true",
+				"spark.job.encrypted-intermediate-data" : "true",
+				"spark.security.crypto.cipher.suite" : "AES/CTR/NoPadding",
+				"spark.security.crypto.codec.classes.aes.ctr.nopadding" : "org.apache.spark.crypto.JceAesCtrCryptoCodec",
+        "spark.history.provider" : "org.apache.spark.deploy.history.FsHistoryProvider",
+        "spark.history.ui.port" : "18082",
+        "spark.yarn.historyServer.address" : {% raw %}"{{spark_history_server_host}}:{{spark_history_ui_port}}",{% endraw %}
+        "spark.yarn.queue" : "default"
+      },
+			"properties_attributes": {
+				"password": {
+					"spark.ssl.keyPassword": "true",
+					"spark.ssl.keyStorePassword": "true",
+					"spark.ssl.trustStorePassword": "true"
+				}
+			}
+    }
+  }
+}

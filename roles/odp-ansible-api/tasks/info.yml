@@ -1,0 +1,12 @@
+# Gather system information about disk, memory, cpus to compute YARN/Mapreduce TEZ Settings
+
+- name: DISK Info - Length
+  shell: > df
+  register: result
+  with_item:
+    - filesystem
+    - total
+    - used
+    - available
+    - available_pourcent
+    - mountpoint

@@ -1,0 +1,54 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+					{% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3 %}
+					"content" : {{ rangerenvcontent | to_json }},
+					{% endif %}
+					"xasecure.audit.destination.hdfs.dir" : "hdfs://{% if cluster_services.HDFS.HA is defined and cluster_services.HDFS.HA %}{{ cluster_name }}{% else %}{{ first_namenode }}:8020{% endif %}/ranger/audit",
+					"xasecure.audit.destination.hdfs" : "true",
+	        "admin_password" : "{{ranger_admin_password}}",
+	        "admin_username" : "admin",
+	        "create_db_dbuser" : "false",
+	        "is_external_solrCloud_enabled" : "false",
+	        "is_external_solrCloud_kerberos" : "false",
+	        "is_nested_groupsync_enabled" : "false",
+					{% if cluster_services.AMBARI_INFRA is defined or cluster_services.AMBARI_INFRA_SOLR is defined %}
+	        "xasecure.audit.destination.solr" : "true",
+	        "is_solrCloud_enabled" : "true",
+					{% else %}
+	        "xasecure.audit.destination.solr" : "false",
+	        "is_solrCloud_enabled" : "false",
+					{% endif %}
+	        "ranger-atlas-plugin-enabled" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.ATLAS is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.ATLAS %}Yes{% else %}No{% endif %}",
+	        "ranger-hbase-plugin-enabled" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HBASE is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HBASE %}Yes{% else %}No{% endif %}",
+	        "ranger-hdfs-plugin-enabled" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HDFS is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HDFS %}Yes{% else %}No{% endif %}",
+	        "ranger-hive-plugin-enabled" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE %}Yes{% else %}No{% endif %}",
+	        "ranger-kafka-plugin-enabled" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.KAFKA is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.KAFKA %}Yes{% else %}No{% endif %}",
+	        "ranger-knox-plugin-enabled" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.KNOX is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.KNOX %}Yes{% else %}No{% endif %}",
+	        "ranger-nifi-plugin-enabled" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.NIFI is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.NIFI %}Yes{% else %}No{% endif %}",
+					"ranger-nifi-registry-plugin-enabled" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.NIFI_REGISTRY is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.NIFI_REGISTRY %}Yes{% else %}No{% endif %}",
+	        "ranger-storm-plugin-enabled" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.STORM is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.STORM %}Yes{% else %}No{% endif %}",
+	        "ranger-yarn-plugin-enabled" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.YARN is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.YARN %}Yes{% else %}No{% endif %}",
+	        "ranger_admin_log_dir" : "/var/log/ranger/admin",
+					"admin_password": "{{ranger_admin_password}}",
+	        "ranger_admin_password" : "{{ranger_admin_password}}",
+					"rangerusersync_user_password": "{{rangerusersync_user_password | default('rangerusersync123') }}",
+					"rangertagsync_user_password": "{{rangertagsync_user_password | default('rangertagsync123') }}",
+					"keyadmin_user_password": "{{keyadmin_user_password | default('keyadmin123') }}",
+	        "ranger_admin_username" : "amb_ranger_admin",
+	        "ranger_group" : "ranger",
+	        "ranger_pid_dir" : "/var/run/ranger",
+	        "ranger_solr_collection_name" : "ranger_audits",
+	        "ranger_solr_config_set" : "ranger_audits",
+	        "ranger_solr_replication_factor" : "1",
+	        "ranger_solr_shards" : "1",
+	        "ranger_user" : "ranger",
+	        "ranger_usersync_log_dir" : "/var/log/ranger/usersync",
+	        "xml_configurations_supported" : "true",
+					}
+		}
+	}
+}

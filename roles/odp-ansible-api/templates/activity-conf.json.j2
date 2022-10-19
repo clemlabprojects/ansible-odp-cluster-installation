@@ -1,0 +1,22 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "activity-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "activity.explorer.user" : "activity_explorer",
+        "global.activity.analyzer.user" : "activity_analyzer",
+        "global.activity.processing.parallelism" : "8",
+        "global.activity.processor.pool.max.wait.seconds" : "60",
+        "hdfs.activity.watcher.enabled" : "true",
+        "mr_job.activity.watcher.enabled" : "true",
+        "mr_job.max.job.size.mb.for.parallel.execution" : "500",
+        "phoenix.sink.batch.size" : "5000",
+        "phoenix.sink.flush.interval.seconds" : "3600",
+        "tez_job.activity.watcher.enabled" : "true",
+        "tez_job.tmp.dir" : "/var/lib/smartsense/activity-analyzer/tez/tmp/",
+        "yarn_app.activity.watcher.enabled" : "true" {% endraw %}
+      }
+    }
+  }
+}

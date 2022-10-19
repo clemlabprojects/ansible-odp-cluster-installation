@@ -1,0 +1,77 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}-plugin-properties",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+				"ranger-{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}-plugin-enabled" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] %}Yes{% else %}No{% endif %}",
+				"REPOSITORY_CONFIG_USERNAME" : "{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}",
+				{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER.PLUGIN[in_services] and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.TWOWAY is defined and cluster_services.RANGER.TWOWAY %}
+				"common.name.for.certificate" : "{{ ranger_plugin_keystore_alias }}",
+				{% else %}
+				"common.name.for.certificate" : "",
+				{% endif %}
+        "external_admin_password" : "{{ranger_admin_password}}",
+        "external_admin_username" : "admin",
+        "external_ranger_admin_password" : "{{ranger_admin_password}}",
+        "external_ranger_admin_username" : "amb_ranger_admin",
+        "hadoop.rpc.protection" : "authentication",
+        "policy_user" : "ambari-qa",
+				{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "HDFS" %}
+				"dfs.nameservices": "{{ cluster_name }}",
+				"dfs.ha.namenodes.{{ cluster_name }}" : "nn1,nn2",
+				"dfs.namenode.rpc-address.{{ cluster_name }}.nn1": "{{ all['NAMENODE'][0] }}:8020",
+	      "dfs.namenode.rpc-address.{{ cluster_name }}.nn2" : "{{ all['NAMENODE'][1] }}:8020",
+				"dfs.client.failover.proxy.provider.{{ cluster_name }}" : "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider",
+				{% endif %}
+				{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "NIFI" %}
+				{% if cluster_services.NIFI.SSL is defined and cluster_services.NIFI.SSL %}
+				"nifi.authentication": "SSL",
+				"nifi.ssl.use.default.context": "false",
+				"nifi.ssl.keystore" : "{{ ssl_keystore_path }}",
+				"nifi.ssl.keystoreType" : "JKS",
+				"nifi.ssl.keystorePassword" : "{{ ssl_keystore_password }}",
+				"nifi.ssl.truststore" : "{{ ssl_truststore_path }}",
+				"nifi.ssl.truststoreType" : "JKS",
+				"nifi.ssl.truststorePassword" : "{{ ssl_truststore_password }}",
+				"owner.for.certificate": "",
+				{% else %}
+				"nifi.authentication": "NONE",
+				"nifi.ssl.keystore" : "",
+				"nifi.ssl.keystoreType" : "JKS",
+				"nifi.ssl.keystorePassword" : "",
+				"nifi.ssl.truststore" : "",
+				"nifi.ssl.truststoreType" : "JKS",
+				"nifi.ssl.truststorePassword" : "",
+				"owner.for.certificate": "",
+				{% endif %}
+				{% endif %}
+				{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "NIFI_REGISTRY" %}
+				{% if cluster_services.NIFI_REGISTRY.SSL is defined and cluster_services.NIFI_REGISTRY.SSL %}
+				"nifi.registry.authentication": "SSL",
+				"nifi.registry.ssl.use.default.context": "false",
+				"nifi.registry.ssl.keystore" : "{{ ssl_keystore_path }}",
+				"nifi.registry.ssl.keystoreType" : "JKS",
+				"nifi.registry.ssl.keystorePassword" : "{{ ssl_keystore_password }}",
+				"nifi.registry.ssl.truststore" : "{{ ssl_truststore_path }}",
+				"nifi.registry.ssl.truststoreType" : "JKS",
+				"nifi.registry.ssl.truststorePassword" : "{{ ssl_truststore_password }}",
+				"owner.for.certificate": "",
+				{% else %}
+				"nifi.registry.authentication": "NONE",
+				"nifi.registry.ssl.keystore" : "",
+				"nifi.registry.ssl.keystoreType" : "JKS",
+				"nifi.registry.ssl.keystorePassword" : "",
+				"nifi.registry.ssl.truststore" : "",
+				"nifi.registry.ssl.truststoreType" : "JKS",
+				"nifi.registry.ssl.truststorePassword" : "",
+				"owner.for.certificate": "",
+				{% endif %}
+				{% endif %}
+				{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "KAFKA" %}"zookeeper.connect" : "{% for host in zookeeper_quorum %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}",{% endif %}
+        {%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "HIVE" %}"jdbc.driverClassName" : "org.apache.hive.jdbc.HiveDriver",{% endif %}
+				"REPOSITORY_CONFIG_PASSWORD" : "{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}"
+      }
+    }
+}
+}

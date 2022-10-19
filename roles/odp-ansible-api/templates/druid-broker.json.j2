@@ -1,0 +1,28 @@
+{	"Clusters": {
+		"desired_configs": {
+			"type": "druid-broker",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+				{% if cluster_services.DRUID.SSL is defined and cluster_services.DRUID.SSL %}
+				"hive.server2.use.SSL" : "true",
+				"druid.server.https.keyStorePath": "{{ssl_keystore_path}}",
+				"druid.server.https.keyStorePassword": "{{ssl_keystore_password}}",
+				{% endif %}
+        "druid.broker.cache.populateCache": "true",
+        "druid.broker.cache.useCache": "true",
+        "druid.broker.http.numConnections": "20",
+        "druid.cache.sizeInBytes": "10000000",
+        "druid.cache.type": "local",
+        "druid.port": "8082",
+        "druid.processing.buffer.sizeBytes": "1073741824",
+        "druid.processing.numMergeBuffers": "2",
+        "druid.processing.numThreads": "2",
+        "druid.server.http.numThreads": "50",
+        "druid.service": "druid/broker"
+								
+
+			
+  		}
+		}
+	}
+}

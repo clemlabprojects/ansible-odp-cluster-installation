@@ -1,0 +1,181 @@
+all:
+  ACTIVITY_ANALYZER:
+      - master1.habibiz
+  ACTIVITY_EXPLORER:
+      - master1.habibiz
+  APP_TIMELINE_SERVER:
+      - master2.habibiz
+  ATLAS_CLIENT:
+      - master1.habibiz
+      - master2.habibiz
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  ATLAS_SERVER:
+      - master2.habibiz
+  DATANODE:
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  HBASE_CLIENT:
+      - admin1.habibiz
+      - master1.habibiz
+      - master2.habibiz
+  HBASE_MASTER:
+      - master1.habibiz
+      - master2.habibiz
+  HBASE_REGIONSERVER:
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  HCAT:
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  HDFS_CLIENT:
+      - master1.habibiz
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  MYCLUSTER:
+      - admin1.habibiz
+      - master1.habibiz
+      - master2.habibiz
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  HISTORYSERVER:
+      - master2.habibiz
+  HIVE_CLIENT:
+      - master1.habibiz
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  HIVE_METASTORE:
+      - master1.habibiz
+  HIVE_SERVER:
+      - master1.habibiz
+      - master2.habibiz
+      - worker1.habibiz
+  HST_AGENT:
+      - master1.habibiz
+      - master2.habibiz
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  HST_SERVER:
+      - master1.habibiz
+  INFRA_SOLR:
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  INFRA_SOLR_CLIENT:
+      - master1.habibiz
+      - master2.habibiz
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  JOURNALNODE:
+      - master1.habibiz
+      - master2.habibiz
+      - worker1.habibiz
+  KAFKA_BROKER:
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  KNOX_GATEWAY:
+      - admin1.habibiz
+  MAPREDUCE2_CLIENT:
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  METRICS_COLLECTOR:
+      - master2.habibiz
+  METRICS_GRAFANA:
+      - master2.habibiz
+  METRICS_MONITOR:
+      - master1.habibiz
+      - master2.habibiz
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  NAMENODE:
+      - master1.habibiz
+      - master2.habibiz
+  NODEMANAGER:
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  OOZIE_CLIENT:
+      - master1.habibiz
+      - master2.habibiz
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  OOZIE_SERVER:
+      - master1.habibiz
+  PIG:
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  RANGER_ADMIN:
+      - master1.habibiz
+  RANGER_KMS_SERVER:
+      - master1.habibiz
+  RANGER_USERSYNC:
+      - master1.habibiz
+  RESOURCEMANAGER:
+      - master1.habibiz
+      - master2.habibiz
+  SECONDARY_NAMENODE:
+      - master2.habibiz
+  SLIDER:
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  SPARK2_CLIENT:
+      - admin1.habibiz
+      - master1.habibiz
+      - master2.habibiz
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  SPARK2_JOBHISTORYSERVER:
+      - master2.habibiz
+  SPARK2_THRIFTSERVER:
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  SQOOP:
+      - master1.habibiz
+      - master2.habibiz
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  TEZ_CLIENT:
+      - admin1.habibiz
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  WEBHCAT_SERVER:
+      - master1.habibiz
+      - master2.habibiz
+  YARN_CLIENT:
+      - master1.habibiz
+      - master2.habibiz
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  ZEPPELIN_MASTER:
+      - master2.habibiz
+  ZKFC:
+      - master1.habibiz
+      - master2.habibiz
+  ZOOKEEPER_CLIENT:
+      - worker1.habibiz
+      - worker2.habibiz
+      - worker3.habibiz
+  ZOOKEEPER_SERVER:
+      - master1.habibiz
+      - master2.habibiz
+      - worker1.habibiz

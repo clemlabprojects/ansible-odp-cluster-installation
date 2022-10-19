@@ -1,0 +1,28 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-kms-policymgr-ssl",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+				{% if cluster_services.RANGER is defined and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL and cluster_services.RANGER_KMS is defined and cluster_services.RANGER_KMS.SSL is defined and cluster_services.RANGER_KMS.SSL and cluster_services.RANGER.TWOWAY is defined and cluster_services.RANGER.TWOWAY %}
+				"xasecure.policymgr.clientssl.keystore" : "{{ ranger_plugin_keystore_path }}",
+				"xasecure.policymgr.clientssl.truststore" : "{{ ssl_truststore_path }}",
+				"xasecure.policymgr.clientssl.keystore.password" : "{{ ranger_plugin_keystore_password }}",
+				"xasecure.policymgr.clientssl.truststore.password" : "{{ ssl_truststore_password }}",
+				{% elif cluster_services.RANGER is defined and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL and cluster_services.RANGER_KMS is defined and cluster_services.RANGER_KMS.SSL is defined and cluster_services.RANGER_KMS.SSL %}
+				"xasecure.policymgr.clientssl.keystore" : "{{ ssl_keystore_path }}",
+				"xasecure.policymgr.clientssl.truststore" : "{{ ssl_truststore_path }}",
+				"xasecure.policymgr.clientssl.keystore.password" : "{{ ssl_keystore_password }}",
+				"xasecure.policymgr.clientssl.truststore.password" : "{{ ssl_truststore_password }}",
+				{% else %}
+        "xasecure.policymgr.clientssl.keystore" : "/usr/hdp/current/ranger-kms/conf/ranger-plugin-keystore.jks",
+        "xasecure.policymgr.clientssl.keystore.password" : "changeit",
+        "xasecure.policymgr.clientssl.truststore" : "/usr/hdp/current/ranger-kms/conf/ranger-plugin-truststore.jks",
+        "xasecure.policymgr.clientssl.truststore.password" : "changeit",
+				{% endif %} {% raw %}
+        "xasecure.policymgr.clientssl.truststore.credential.file" : "jceks://file{{credential_file}}",
+        "xasecure.policymgr.clientssl.keystore.credential.file" : "jceks://file{{credential_file}}" {% endraw %}
+      }
+    }
+  }
+}

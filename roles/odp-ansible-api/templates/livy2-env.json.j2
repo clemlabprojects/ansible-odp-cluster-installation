@@ -1,0 +1,16 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "livy2-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "content" : "\n            #!/usr/bin/env bash\n\n            # - SPARK_HOME      Spark which you would like to use in livy\n            # - SPARK_CONF_DIR  Directory containing the Spark configuration to use.\n            # - HADOOP_CONF_DIR Directory containing the Hadoop / YARN configuration to use.\n            # - LIVY_LOG_DIR    Where log files are stored.  (Default: ${LIVY_HOME}/logs)\n            # - LIVY_PID_DIR    Where the pid file is stored. (Default: /tmp)\n            # - LIVY_SERVER_JAVA_OPTS  Java Opts for running livy server (You can set jvm related setting here, like jvm memory/gc algorithm and etc.)\n            export SPARK_HOME=/usr/hdp/current/spark2-client\n            export SPARK_CONF_DIR=/etc/spark2/conf\n            export JAVA_HOME={{java_home}}\n            export HADOOP_CONF_DIR=/etc/hadoop/conf\n            export LIVY_LOG_DIR={{livy2_log_dir}}\n            export LIVY_PID_DIR={{livy2_pid_dir}}\n            export LIVY_SERVER_JAVA_OPTS=\"-Xmx2g\"",
+        "livy2_group" : "livy",
+        "livy2_log_dir" : "/var/log/livy2",
+        "livy2_pid_dir" : "/var/run/livy2",
+        "livy2_user" : "livy",
+        "spark_home" : "/usr/hdp/current/spark2-client" {% endraw %}
+      }
+    }
+  }
+}

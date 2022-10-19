@@ -1,0 +1,28 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "nifi-ambari-config",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "nifi.ambari_reporting_enabled" : "true",
+        "nifi.ambari_reporting_frequency" : "1 mins",
+        "nifi.config.dir" : "{nifi_install_dir}/conf",
+        "nifi.content.repository.dir.default" : "/var/lib/nifi/content_repository",
+        "nifi.database.dir" : "/var/lib/nifi/database_repository",
+        "nifi.flow.config.dir" : "{nifi_internal_dir}/conf",
+        "nifi.flowfile.repository.dir" : "/var/lib/nifi/flowfile_repository",
+        "nifi.initial_mem" : "512m",
+        "nifi.internal.dir" : "/var/lib/nifi",
+        "nifi.max_mem" : "512m",
+        "nifi.nifi_znode" : "/nifi",
+        "nifi.node.port" : "9090",
+        "nifi.node.protocol.port" : "9088",
+        "nifi.node.ssl.port" : "9091",
+        "nifi.provenance.repository.dir.default" : "/var/lib/nifi/provenance_repository",
+        "nifi.sensitive.props.key" : "test12345678",
+				"nifi.security.encrypt.configuration.password" : "test12345678",
+        "nifi.state.dir" : "{nifi_internal_dir}/state/local"
+      } {% endraw %}
+    }
+  }
+}

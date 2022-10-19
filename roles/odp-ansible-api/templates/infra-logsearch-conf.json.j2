@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "infra-logsearch-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "component_mappings" : "INFRA_SOLR:infra_solr",
+        "content" : "\n{\n  \"input\":[\n    {\n      \"type\":\"infra_solr\",\n      \"rowtype\":\"service\",\n      \"path\":\"{{default('/configurations/infra-solr-env/infra_solr_log_dir', '/var/log/ambari-infra-solr')}}/solr.log\"\n    }\n  ],\n  \"filter\":[\n    {\n      \"filter\":\"grok\",\n      \"conditions\":{\n        \"fields\":{\n          \"type\":[\n            \"infra_solr\"\n          ]\n        }\n      },\n      \"log4j_format\":\"\",\n      \"multiline_pattern\":\"^(%{TIMESTAMP_ISO8601:logtime})\",\n      \"message_pattern\":\"(?m)^%{TIMESTAMP_ISO8601:logtime}%{SPACE}\\\\[%{DATA:thread_name}\\\\]%{SPACE}%{LOGLEVEL:level}%{SPACE}%{GREEDYDATA:log_message}\",\n      \"post_map_values\":{\n        \"logtime\":{\n          \"map_date\":{\n            \"target_date_pattern\":\"yyyy-MM-dd HH:mm:ss,SSS\"\n          }\n        }\n      }\n    }\n  ]\n}",
+        "service_name" : "Infra"{% endraw %}
+      }
+    }
+  }
+}

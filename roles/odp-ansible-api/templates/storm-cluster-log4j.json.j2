@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "storm-cluster-log4j",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { 
+				"content": {{ stormclusterlog4j2 | to_json }},
+				"storm_a1_maxbackupindex": "9",
+				"storm_a1_maxfilesize": "100"
+			}
+		}
+	}
+}

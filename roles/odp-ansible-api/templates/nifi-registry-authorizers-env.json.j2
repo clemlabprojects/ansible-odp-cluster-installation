@@ -1,0 +1,11 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "nifi-registry-authorizers-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "content" : {{ nifiregistryenvcontent | to_json }}
+				}
+    }
+  }
+}

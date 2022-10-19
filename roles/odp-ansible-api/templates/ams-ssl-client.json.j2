@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ams-ssl-client",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "ssl.client.truststore.location" : "/etc/security/clientKeys/all.jks",
+        "ssl.client.truststore.password" : "changeit",
+        "ssl.client.truststore.type" : "jks"{% endraw %}
+      }
+    }
+  }
+}

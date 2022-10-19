@@ -1,0 +1,14 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "activity-zeppelin-shiro",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "main.securityManager.sessionManager" : "$sessionManager",
+        "main.securityManager.sessionManager.globalSessionTimeout" : "86400000",
+        "main.sessionManager" : "org.apache.shiro.web.session.mgt.DefaultWebSessionManager",
+        "users.admin" : "changeit" {% endraw %}
+      }
+    }
+  }
+}

@@ -1,0 +1,241 @@
+---
+- name: Create empty cluster
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}"
+    method: POST
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: '{"Clusters": {"cluster_name": "{{ cluster_name }}", "version":"{{ ambari_stack_name }}-{{ ambari_stack_version }}"}}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: create_cluster
+  no_log: False
+  ignore_errors: True
+
+- name: Cluster already exists
+  pause: prompt='Please confirm you want to continue cluster {{ cluster_name }} already installed ! Press return to continue. Press Ctrl+c and then "a" to abort'
+  when: create_cluster.status == 409
+
+- name: Error on cluster creation
+  pause: prompt='Something went wrong with creation of cluster {{ cluster_name }}. Do you want to continue? Press return to continue. Press Ctrl+c and then "a" to abort'
+  when: create_cluster.status not in [200,201,202,409]
+
+- name: Get stack_features
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ ambari_stack_version }}/configurations/stack_features"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: getstackfeatures
+
+- name: Get stack_packages
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ ambari_stack_version }}/configurations/stack_packages"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: getstackpackages
+
+- name: Copy VDF repository
+  template: >
+   src={{vdf_source}}
+   dest=/tmp/repo.xml
+  when: vdf_path is defined and vdf_path != ""
+
+- name: Load local VDF repository
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/version_definitions"
+    method: POST
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: '{"VersionDefinition": {"version_url": "file:/tmp/repo.xml"}}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: register_vdf_local
+  no_log: True
+  ignore_errors: True
+  when: vdf_path is defined and vdf_path != ""
+
+- name: Local VDF already exists
+  pause: prompt='Please confirm you want to continue, VDF repository already installed ! Press return to continue. Press Ctrl+c and then "a" to abort'
+  when: vdf_path is defined and vdf_path != "" and register_vdf_local is defined and register_vdf_local != "" and register_vdf_local.status == 500
+
+- name: Load remote VDF repository
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/version_definitions"
+    method: POST
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: '{"VersionDefinition": {"version_url": "{{ vdf_url }}"}}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: register_vdf_remote
+  no_log: True
+  ignore_errors: True
+  when: vdf_url is defined and vdf_url != ""
+
+- name: Remote VDF already exists
+  pause: prompt='Please confirm you want to continue, VDF repository already installed ! Press return to continue. Press Ctrl+c and then "a" to abort'
+  when: vdf_url is defined and vdf_url != "" and register_vdf_remote is defined and register_vdf_remote != "" and register_vdf_remote.status == 500
+
+- name: Get VDF repository URL
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/version_definitions/1"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202,404
+    return_content: yes
+  register: testvdf
+
+- name: Get repository URL
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/version_definitions/1/operating_systems/{{ item.OperatingSystems.os_type }}"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202,404
+    return_content: yes
+  register: testreposurl
+  with_items:
+    - "{{ testvdf.json.operating_systems }}"
+
+- name: Set fact with repositories
+  set_fact:
+    repos_url_list: "{{ item.json.repositories }}"
+  with_items:
+    - "{{ testreposurl.results }}"
+
+- name: Update repository URL
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ item.Repositories.stack_name }}/versions/{{ item.Repositories.stack_version }}/repository_versions/1"
+    method: PUT
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: "{{ lookup('template','templates/repository_versions/update_repo.json.j2') }}"
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202,404
+    return_content: no
+  with_items:
+    - "{{ repos_url_list }}"
+
+- name: Load RedHat Satellite/Spacewalk
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{stack_version}}/repository_versions/1"
+    method: PUT
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: "{{ lookup('template','templates/repository_versions/{{ stack_version_id }}.json.j2') }}"
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  register: register_satellite_repo
+  ignore_errors: True
+  when: sattelite_repo
+
+# ######### Ansible BUG (or bad behaviour) replacing the string "admin" by "*****". Need to replace asterisks before injecting #########
+- name: Transfer cluster-env
+  template: >
+   src=templates/cluster-env.json.j2
+   dest=/tmp/cluster-env.json
+
+- name: Replace asterisks
+  shell: sed -i.bak "s/[\x2a]\{8\}/admin/g" /tmp/cluster-env.json
+######################################################################################################################################
+
+- name: Slurp cluster-env
+  slurp:
+    src: /tmp/cluster-env.json
+  register: cluster_env
+
+- name: Load default cluster-env configuration
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}"
+    method: PUT
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: "{{ cluster_env['content'] | b64decode }}"
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  # when: create_cluster.status != 409
+
+- name: Copy templates beforce injection
+  template:
+    src: "{{ item }}.json.j2"
+    dest: "/tmp/{{ item }}.json"
+  with_items:
+   - "{{ base_cluster.conf }}"
+
+- name: Load default configuration
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}"
+    method: PUT
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: "{{ lookup('template','templates/{{ item }}.json.j2') }}"
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  with_items:
+   - "{{ base_cluster.conf }}"
+  when: create_cluster.status != 409
+
+- name: Activate cluster
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}"
+    method: PUT
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    body: '{"Clusters":{"provisioning_state":"INSTALLED"}}'
+    body_format: json
+    validate_certs: no
+    status_code: 200,201,202
+    return_content: yes
+  #when: create_cluster.status != 409

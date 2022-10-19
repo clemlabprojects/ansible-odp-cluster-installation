@@ -1,0 +1,74 @@
+---
+########### Check ambari-agent install/configuration #######
+- name: Fix params_linux.py for HDFS in HDP 3.x
+  block:
+    - name: Copy template params_linux.py
+      copy:
+        src: templates/ambari/params_linux.py
+        dest: /var/lib/ambari-server/resources/stacks/{{ ambari_stack_name }}/3.0/services/HDFS/package/scripts/params_linux.py
+    - name: Copy template zkfc_slave.py
+      copy:
+        src: templates/ambari/zkfc_slave.py
+        dest: /var/lib/ambari-server/resources/stacks/{{ ambari_stack_name }}/3.0/services/HDFS/package/scripts/zkfc_slave.py
+  when: ambari_stack_version >= 3 and ambari_stack_name == 'HDP' and inventory_hostname == ambari_server_hostname
+
+- lineinfile:
+    path: /etc/ambari-agent/conf/ambari-agent.ini
+    regexp: '^hostname='
+    line: 'hostname={{ ambari_server_hostname }}'
+  register: checkambariagent
+####################################################
+
+######## Fix failed installation due to TLS version in Ambari-agent ########
+- lineinfile:
+    path: /etc/ambari-agent/conf/ambari-agent.ini
+    insertafter: '\[security\]'
+    line: 'force_https_protocol=PROTOCOL_TLSv1_2'
+  register: fixambari
+#####################################################
+
+##############Fix ambari ############################
+- name: fix error "no package found"
+  replace:
+    path: /usr/lib/ambari-agent/lib/resource_management/libraries/script/script.py
+    regexp: 'package_version = None'
+    replace: '#package_version = None'
+
+- name: fix error "package **** not supported by this version of the stack-select tool"
+  lineinfile:
+    path: /usr/lib/ambari-agent/lib/resource_management/libraries/script/script.py
+    regexp: "package_regex = name.replace"
+    line: "    package_regex = name.replace(STACK_VERSION_PLACEHOLDER, '(\\d|{0})+'.format(package_delimiter))"
+#####################################################
+
+##############Fix ambari ############################
+- name: fix threadpool
+  replace:
+    path: /etc/ambari-agent/conf/ambari-agent.ini
+    regexp: '^agent.threadpool.size.max='
+    replace: 'agent.threadpool.size.max=120'
+  register: fixambari2
+#####################################################
+
+##############Install client on all nodes // ########
+- name: Ensure krb client is installed
+  yum:
+    name: ['openldap-clients', 'krb5-workstation']
+    state: present
+    update_cache: yes
+    disable_gpg_check: yes
+  when: cluster_services.KERBEROS is defined
+#####################################################
+
+#####################################################
+- name: Restart service "Ambari Agent"
+  systemd:
+    state: restarted
+    name: ambari-agent
+
+- name: Restart service "Ambari Server"
+  systemd:
+    state: restarted
+    name: ambari-server
+  when: inventory_hostname == ambari_server_hostname
+#####################################################

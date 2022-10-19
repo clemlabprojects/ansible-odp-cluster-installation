@@ -1,0 +1,21 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "infra-solr-security-json",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { 
+        "content" : {{ infrasolrsecurityjsoncontent | to_json }},{% raw %}
+        "infra_solr_ranger_audit_service_users" : "{default_ranger_audit_users}",{% endraw %}
+        "infra_solr_role_atlas" : "atlas_user",
+        "infra_solr_role_dev" : "dev",
+        "infra_solr_role_logfeeder" : "logfeeder_user",
+        "infra_solr_role_logsearch" : "logsearch_user",
+        {% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3.0 %}
+        "infra_solr_security_manually_managed" : "false",
+        {% endif %}
+        "infra_solr_role_ranger_admin" : "ranger_admin_user",
+        "infra_solr_role_ranger_audit" : "ranger_audit_user"
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+# Note FreeIPA Client should be already installed and configured on the host
+- name: Wait FreeIPA Server Available
+  shell: echo '{{ipaadmin_password}}' | kinit admin
+  register: wait_master
+  until: wait_master.rc == 0
+  retries: "360"
+  delay: 10
+
+## Create a new principal to be used for ambari kerberos administration
+- name: Check Ambari Admin Prinicipal Exist
+  shell: echo '{{ipaadmin_password}}' | kinit admin; ipa user-find {{ipa_ambari_principal}}
+  register: principal_exist
+  ignore_errors: True
+
+- name: Create Ambari Admin Principal
+  shell: >
+    echo -n '{{ipa_ambari_password}}' | ipa user-add {{ipa_ambari_principal}} --first={{ipa_ambari_firstname}} --last={{ipa_ambari_lastname}} --password
+  when: principal_exist.rc == 1
+
+# Create a role and and give it privilege to manage users and services
+
+- name: Check Ambari Admin Role Exist
+  shell: echo '{{ipaadmin_password}}' | kinit admin; ipa role-find {{ipa_ambari_role}}
+  register: role_exist
+  ignore_errors: True
+
+- name: Create Ambari Admin Principal
+  shell: >
+    ipa role-add {{ipa_ambari_role}}
+  when: role_exist.rc == 1
+
+- name: Add User Administrators Privileges
+  shell: >
+    ipa role-add-privilege {{ipa_ambari_role}} --privileges="User Administrators"
+  ignore_errors: True
+
+- name: Add Service Administrators Privileges
+  shell: >
+    ipa role-add-privilege {{ipa_ambari_role}} --privileges="Service Administrators"
+  ignore_errors: True
+
+- name: Add Service Administrators Privileges
+  shell: >
+    ipa role-add-member {{ipa_ambari_role}} --users={{ipa_ambari_principal}}
+  ignore_errors: True
+
+
+- name: Generate expiration date for freeip password
+  shell: date -d "+60 days" '+%Y%m%d%H%M%SZ'
+  register: generated_date_pwd
+
+- name: Change Password Expiration Date
+  shell:  ipa user-mod {{ipa_ambari_principal}} --setattr=krbPasswordExpiration={{generated_date_pwd.stdout}}
+
+- name: Check principal successul
+  shell: echo '{{ipa_ambari_password}}' | kinit {{ipa_ambari_principal}}
+

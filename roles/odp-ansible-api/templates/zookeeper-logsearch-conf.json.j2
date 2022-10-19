@@ -1,0 +1,11 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "zookeeper-logsearch-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+			"content": "\n{\n  \"input\":[\n    {\n     \"type\":\"zookeeper\",\n     \"rowtype\":\"service\",\n     \"path\":\"{{default('/configurations/zookeeper-env/zk_log_dir', '/var/log/zookeeper')}}/zookeeper*.log\"\n    }\n  ],\n  \"filter\":[\n   {\n      \"filter\":\"grok\",\n      \"conditions\":{\n        \"fields\":{\"type\":[\"zookeeper\"]}\n      },\n     \"log4j_format\":\"%d{ISO8601} - %-5p [%t:%C{1}@%L] - %m%n\",\n     \"multiline_pattern\":\"^(%{TIMESTAMP_ISO8601:logtime})\",\n     \"message_pattern\":\"(?m)^%{TIMESTAMP_ISO8601:logtime}%{SPACE}-%{SPACE}%{LOGLEVEL:level}%{SPACE}\\\\[%{DATA:thread_name}\\\\@%{INT:line_number}\\\\]%{SPACE}-%{SPACE}%{GREEDYDATA:log_message}\",\n     \"post_map_values\": {\n       \"logtime\": {\n         \"map_date\":{\n           \"target_date_pattern\":\"yyyy-MM-dd HH:mm:ss,SSS\"\n         }\n       }\n     }\n    }\n   ]\n}\n    "
+			} {% endraw %}
+		}
+	}
+}

@@ -1,0 +1,21 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "kms-properties",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "DB_FLAVOR" : "{% if database_type == "mysql" %}MYSQL{% elif database_type == "postgresql" %}POSTGRES{% endif %}",
+        "KMS_MASTER_KEY_PASSWD" : "{{ rangerkms_master_key }}",
+        "REPOSITORY_CONFIG_PASSWORD" : "keyadmin",
+        "REPOSITORY_CONFIG_USERNAME" : "keyadmin", {% raw %}
+        "SQL_CONNECTOR_JAR" : "{{driver_curl_target}}",{% endraw %}
+        "db_host" : "{{ database_server }}:{{ database_port }}",
+        "db_name" : "{{ database_rangerkms }}",
+        "db_password" : "{{ database_rangerkms_user_password }}",
+        "db_root_password" : "",
+        "db_root_user" : "root",
+        "db_user" : "{{ database_rangerkms_user }}"
+      }
+    }
+  }
+}

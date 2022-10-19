@@ -1,0 +1,23 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "gateway-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+				 {% raw %}
+			  "gateway.httpclient.maxConnections" : "512",
+				"java.security.auth.login.config" : "/etc/knox/conf/krb5JAASLogin.conf",
+				"sun.security.krb5.debug" : "false",
+				"gateway.hadoop.kerberos.secured" : "false",
+				"gateway.gateway.conf.dir" : "deployments",
+				"gateway.httpclient.connectionTimeout" : "20000",
+				"gateway.path" : "gateway",
+				"gateway.websocket.feature.enabled" : "{{websocket_support}}",
+				"gateway.port" : "8443",
+				"gateway.httpclient.socketTimeout" : "20000",
+				"java.security.krb5.conf" : "/etc/krb5.conf"
+				{% endraw %}
+			}
+		}
+	}
+}

@@ -1,0 +1,25 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-kms-audit",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "ranger.plugin.kms.ambari.cluster.name" : "{{cluster_name}}",
+        "xasecure.audit.destination.hdfs" : "true",
+        "xasecure.audit.destination.hdfs.batch.filespool.dir" : "/var/log/ranger/kms/audit/hdfs/spool", {% endraw %}
+        "xasecure.audit.destination.hdfs.dir" : "{% if cluster_services.HDFS.HA is defined and cluster_services.HDFS.HA %}{{ cluster_name }}{% else %}{{ first_namenode }}:8020{% endif %}/ranger/audit",
+        "xasecure.audit.destination.solr" : "false",
+        "xasecure.audit.destination.solr.batch.filespool.dir" : "/var/log/ranger/kms/audit/solr/spool",
+        "xasecure.audit.is.enabled" : "true",
+				"xasecure.audit.destination.db" : "false",
+        "xasecure.audit.provider.summary.enabled" : "false",
+        {% if cluster_services.AMBARI_INFRA is defined or cluster_services.AMBARI_INFRA_SOLR is defined %}
+        "xasecure.audit.destination.solr.zookeepers" : "{% for host in zookeeper_quorum %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/infra-solr",
+        "xasecure.audit.destination.solr" : "true"
+        {% else %}
+        "xasecure.audit.destination.solr" : "false"
+        {% endif %}
+      }
+    }
+  }
+}

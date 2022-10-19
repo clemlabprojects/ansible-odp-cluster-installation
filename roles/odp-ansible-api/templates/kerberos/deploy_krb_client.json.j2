@@ -1,0 +1,14 @@
+{
+  "RequestInfo":{
+    "query":"Hosts/host_name.in({%- for hosts in groups.all %}{{ hosts }}{% if not loop.last %},{% endif %}{% endfor -%})"
+  },
+  "Body":{
+    "host_components":[
+    {
+      "HostRoles":{
+        "component_name":"KERBEROS_CLIENT"
+      }
+    }
+    ]
+  }
+}

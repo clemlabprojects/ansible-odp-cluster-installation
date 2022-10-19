@@ -1,0 +1,22 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "nifi-registry-ambari-ssl-config",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "content" : "\n            <!-- Provide the identity (typically a DN) of NiFi nodes. -->\n\n            <!--\n            <property name=\"NiFi Identity 1\"></property>\n            <property name=\"NiFi Identity 2\"></property>\n            <property name=\"NiFi Identity 3\"></property>\n            <property name=\"NiFi Identity 4\"></property>\n            -->",
+        "nifi.registry.initial.admin.identity" : "",
+        "nifi.registry.security.keyPasswd" : "",
+        "nifi.registry.security.keystore" : "{{nifi_registry_config_dir}}/keystore.jks",
+        "nifi.registry.security.keystorePasswd" : "",
+        "nifi.registry.security.keystoreType" : "",
+        "nifi.registry.security.needClientAuth" : "false",
+        "nifi.registry.security.truststore" : "{{nifi_registry_config_dir}}/truststore.jks",
+        "nifi.registry.security.truststorePasswd" : "",
+        "nifi.registry.security.truststoreType" : "",
+        "nifi.registry.ssl.isenabled" : "false",
+        "nifi.toolkit.tls.regenerate" : "false"
+      }{% endraw %}
+    }
+  }
+}

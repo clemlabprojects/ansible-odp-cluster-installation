@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "knox-logsearch-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+			"component_mappings" : "KNOX_GATEWAY:knox_gateway,knox_cli,knox_ldap",
+			"content" : "\n{\n  \"input\":[\n    {\n      \"type\":\"knox_gateway\",\n      \"rowtype\":\"service\",\n      \"path\":\"/var/log/knox/gateway.log\"\n    },\n    {\n      \"type\":\"knox_cli\",\n      \"rowtype\":\"service\",\n      \"path\":\"/var/log/knox/knoxcli.log\"\n    },\n    {\n      \"type\":\"knox_ldap\",\n      \"rowtype\":\"service\",\n      \"path\":\"/var/log/knox/ldap.log\"\n    }\n   ],\n  \"filter\":[\n    {\n      \"filter\":\"grok\",\n      \"conditions\":{\n        \"fields\":{\n          \"type\":[\n            \"knox_gateway\",\n            \"knox_cli\",\n            \"knox_ldap\"\n          ]\n\n        }\n       },\n      \"log4j_format\":\"%d{ISO8601} %-5p %c{2} (%F:%M(%L)) - %m%n\",\n      \"multiline_pattern\":\"^(%{TIMESTAMP_ISO8601:logtime})\",\n      \"message_pattern\":\"(?m)^%{TIMESTAMP_ISO8601:logtime}%{SPACE}%{LOGLEVEL:level}%{SPACE}%{JAVACLASS:logger_name}%{SPACE}\\\\(%{JAVAFILE:file}:%{JAVAMETHOD:method}\\\\(%{INT:line_number}\\\\)\\\\)%{SPACE}-%{SPACE}%{GREEDYDATA:log_message}\",\n      \"post_map_values\":{\n        \"logtime\":{\n          \"map_date\":{\n            \"target_date_pattern\":\"yyyy-MM-dd HH:mm:ss,SSS\"\n          }\n         }\n       }\n     }\n   ]\n }\n    ",
+			"service_name" : "Knox"
+			}
+		}
+	}
+}

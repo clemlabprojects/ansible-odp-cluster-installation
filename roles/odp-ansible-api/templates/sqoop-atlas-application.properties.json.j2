@@ -1,0 +1,12 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "sqoop-atlas-application.properties",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "atlas.jaas.KafkaClient.option.renewTicket" : "true",
+        "atlas.jaas.KafkaClient.option.useTicketCache" : "true" {% endraw %}
+      }
+    }
+  }
+}

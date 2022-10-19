@@ -1,0 +1,14 @@
+{ "Clusters": {
+		"desired_configs": {
+			"type": "druid-logrotate",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+      {% raw %}
+      "content": "\n    {{druid_log_dir}}/*.log {\n        copytruncate\n        rotate {{druid_log_maxbackupindex}}\n        daily\n        nocompress\n        missingok\n        notifempty\n        create 660 druid users\n        dateext\n        dateformat -%Y-%m-%d-%s\n        size {{druid_log_maxfilesize}}M\n        }\n      ",
+      "druid_log_maxbackupindex": "7",
+      "druid_log_maxfilesize": "256"
+      {% endraw %}
+  		}
+		}
+	}
+}

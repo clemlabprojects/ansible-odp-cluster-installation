@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "admin-topology",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+				{% raw %}
+				"content" : "\n    <topology>\n\n        <gateway>\n\n             <provider>\n                <role>authentication</role>\n                <name>ShiroProvider</name>\n                <enabled>true</enabled>\n                <param>\n                    <name>sessionTimeout</name>\n                    <value>30</value>\n                </param>\n                <param>\n                    <name>main.ldapRealm</name>\n                    <value>org.apache.hadoop.gateway.shirorealm.KnoxLdapRealm</value>\n                </param>\n                <param>\n                    <name>main.ldapRealm.userDnTemplate</name>\n                    <value>uid={0},ou=people,dc=hadoop,dc=apache,dc=org</value>\n                </param>\n                <param>\n                    <name>main.ldapRealm.contextFactory.url</name>\n                    <value>ldap://{{knox_host_name}}:33389</value>\n                </param>\n                <param>\n                    <name>main.ldapRealm.contextFactory.authenticationMechanism</name>\n                    <value>simple</value>\n                </param>\n                <param>\n                    <name>urls./**</name>\n                    <value>authcBasic</value>\n                </param>\n            </provider>\n\n            <provider>\n                <role>authorization</role>\n                <name>AclsAuthz</name>\n                <enabled>true</enabled>\n                <param>\n                    <name>knox.acl</name>\n                    <value>admin;*;*</value>\n                </param>\n            </provider>\n\n            <provider>\n                <role>identity-assertion</role>\n                <name>Default</name>\n                <enabled>true</enabled>\n            </provider>\n\n        </gateway>\n\n        <service>\n            <role>KNOX</role>\n        </service>\n\n    </topology>\n\n    "
+				{% endraw %}
+			}
+		}
+	}
+}

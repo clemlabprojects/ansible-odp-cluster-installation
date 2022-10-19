@@ -1,0 +1,12 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "mapred-queue-acls",
+			"tag": "{{ range(00000000, 99999999) | random }}", {% raw %}
+			"properties": {
+				"mapred.queue.default.acl-submit-job": "*",
+				"mapred.queue.default.acl-administer-jobs": "*"
+			}
+		}
+	}
+}{% endraw %}

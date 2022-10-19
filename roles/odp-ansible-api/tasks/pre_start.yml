@@ -1,0 +1,11 @@
+---
+######## Ranger Admin and KMS 2-Way SSL Fix ########
+## Check https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.5/bk_security/content/configure_ambari_ranger_ssl_public_ca_certs_plugins_hdfs.html
+- lineinfile:
+    path: /usr/{{ ambari_stack_name|lower }}/current/ranger-admin/ews/ranger-admin-services.sh
+    regexp: '^JAVA_OPTS='
+    line: 'JAVA_OPTS=" ${JAVA_OPTS} -XX:MaxPermSize=256m -Xmx1024m -Xms1024m -Djavax.net.ssl.trustStore={{ ssl_truststore_path }} -Djavax.net.ssl.trustStorePassword={{ ssl_truststore_password }} "'
+  when: cluster_services.RANGER is defined and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL and cluster_services.RANGER.TWOWAY is defined and cluster_services.RANGER.TWOWAY
+  become: yes
+  delegate_to: "{{ all['RANGER_ADMIN'][0] }}"
+####################################################

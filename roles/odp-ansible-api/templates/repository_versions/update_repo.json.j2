@@ -1,0 +1,26 @@
+{
+  "RepositoryVersions":{
+     "display_name":"{{ testvdf.json.VersionDefinition.display_name }}",
+     "id":1,
+     "repository_version":"{{ testvdf.json.VersionDefinition.repository_version }}"
+  },
+  "operating_systems":[
+     { {% for data in testreposurl.results %}
+        "href":"{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ data.json.OperatingSystems.stack_version }}/repository_versions/1/operating_systems/{{ data.json.OperatingSystems.os_type }}",
+        "OperatingSystems":{
+           "os_type":"{{ data.json.OperatingSystems.os_type }}" {% endfor %}
+        },
+        "repositories":[ {% for repositories in repos_url_list %}
+           {
+              "href":"{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ repositories.Repositories.stack_version }}/repository_versions/1/operating_systems/{{ repositories.Repositories.os_type }}/repositories/{{ repositories.Repositories.repo_id }}",
+              "Repositories":{
+                 "base_url":"{% if 'UTIL' not in repositories.Repositories.repo_id %}{{ repos_url }}{% else %}{{ repos_url_utils }}{% endif %}",
+                 "os_type":"{{ repositories.Repositories.os_type }}",
+                 "repo_id":"{{ repositories.Repositories.repo_id }}",
+                 "repo_name":"{{ ambari_stack_name }}"
+              }
+           }{% if not loop.last %},{% endif %}{% endfor %}
+        ]
+     }
+  ]
+}

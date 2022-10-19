@@ -1,0 +1,19 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "hst-agent-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "agent.loglevel" : "INFO",
+        "agent.tmp_dir" : "/var/lib/smartsense/hst-agent/data/tmp",{% endraw %}
+        "agent.version" : "{{ hst_agent_version }}",{% raw %}
+        "bundle.logs_to_capture" : "(.*).log$,(.*).out$,(.*).err$",
+        "security.anonymization.max.heap" : "2048",
+        "server.connection_retry_count" : "100",
+        "server.connection_retry_interval" : "10",
+        "upload.retry_count" : "100",
+        "upload.retry_interval" : "15" {% endraw %}
+      }
+    }
+  }
+}
