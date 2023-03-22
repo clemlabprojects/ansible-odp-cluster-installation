@@ -610,6 +610,15 @@ services:
             ha: ['OOZIE_SERVER']
             client: ['OOZIE_CLIENT']
         packages: ['oozie-client','oozie-server','oozie_{{ build_stack_version }}','falcon_{{ build_stack_version }}']
+  - name: OZONE
+    smoketest: ['OZONE_SERVICE_CHECK']
+    - name: ODP
+      version: 1.0
+      conf: [ 'ozone-core-site.json.j2', 'ozone-env.json.j2', 'ozone-log4j-datanode.json.j2', 'ozone-log4j-om.json.j2', 'ozone-log4j-properties.json.j2', 'ozone-log4j-recon.json.j2', 'ozone-log4j-s3g.json.j2', 'ozone-log4j-scm.json.j2', 'ozone-site.json.j2', 'ranger-ozone-audit.json.j2', 'ranger-ozone-plugin-properties.json.j2', 'ranger-ozone-policymgr-ssl.json.j2', 'ranger-ozone-security.json.j2', 'ssl-client-datanode.json.j2', 'ssl-client-om.json.j2', 'ssl-client-recon.json.j2', 'ssl-client-s3g.json.j2', 'ssl-client-scm.json.j2', 'ssl-client.json.j2', 'ssl-server-datanode.json.j2', 'ssl-server-om.json.j2', 'ssl-server-recon.json.j2', 'ssl-server-s3g.json.j2', 'ssl-server-scm.json.j2']
+      components:
+        - noha: ['OZONE_STORAGE_CONTAINER_MANAGER','OZONE_MANAGER','OZONE_DATANODE','OZONE_RECON','OZONE_S3_GATEWAY']
+          ha: ['OZONE_MANAGER','OZONE_STORAGE_CONTAINER_MANAGER']
+          client: ['OZONE_CLIENT']
   - name: ATLAS
     smoketest: ['']
     stacks:
