@@ -527,7 +527,7 @@ services:
     stacks:
       - name: ODP
         version: 1.0
-        conf: ['livy2-conf', 'livy2-env', 'livy2-log4j-properties', 'livy2-spark-blacklist', 'spark3-defaults', 'spark3-env', 'spark3-hive-site-override', 'spark3-log4j-properties', 'spark3-logsearch-conf', 'spark3-metrics-properties', 'spark3-thrift-fairscheduler', 'spark3-thrift-sparkconf']
+        conf: ['livy3-conf', 'livy3-env', 'livy3-log4j-properties', 'livy3-spark-blacklist', 'spark3-defaults', 'spark3-env', 'spark3-hive-site-override', 'spark3-log4j-properties', 'spark3-logsearch-conf', 'spark3-metrics-properties', 'spark3-thrift-fairscheduler', 'spark3-thrift-sparkconf']
         components:
           - noha: ['LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
             ha: ['LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
