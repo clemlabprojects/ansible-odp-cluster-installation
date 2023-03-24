@@ -1,0 +1,12 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "livy2-spark-blacklist",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "content" : "\n            #\n            # Configuration override / blacklist. Defines a list of properties that users are not allowed\n            # to override when starting Spark sessions.\n            #\n            # This file takes a list of property names (one per line). Empty lines and lines starting with \"#\"\n            # are ignored.\n            #\n\n            # Disallow overriding the master and the deploy mode.\n            spark.master\n            spark.submit.deployMode\n\n            # Disallow overriding the location of Spark cached jars.\n            spark.yarn.jar\n            spark.yarn.jars\n            spark.yarn.archive\n\n            # Don't allow users to override the RSC timeout.\n            livy.rsc.server.idle_timeout"
+        {% endraw %}
+      }
+    }
+  }
+}
