@@ -1,12 +1,21 @@
 {
-  "ranger.plugin.ozone.ambari.cluster.name": "{{cluster_name}}",
-  "xasecure.audit.destination.hdfs": "true",
-  "xasecure.audit.destination.hdfs.batch.filespool.dir": "/var/log/hadoop/ozone/audit/hdfs/spool",
-  "xasecure.audit.destination.hdfs.dir": "hdfs://NAMENODE_HOSTNAME:8020/ranger/audit",
-  "xasecure.audit.destination.solr": "false",
-  "xasecure.audit.destination.solr.batch.filespool.dir": "/var/log/hadoop/ozone/audit/solr/spool",
-  "xasecure.audit.destination.solr.urls": "",
-  "xasecure.audit.destination.solr.zookeepers": "NONE",
-  "xasecure.audit.is.enabled": "true",
-  "xasecure.audit.provider.summary.enabled": "false"
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-ozone-audit",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+        "ranger.plugin.ozone.ambari.cluster.name": "{{cluster_name}}",
+        "xasecure.audit.destination.hdfs": "true",
+        "xasecure.audit.destination.hdfs.batch.filespool.dir": "/var/log/hadoop/ozone/audit/hdfs/spool",
+        "xasecure.audit.destination.hdfs.dir": "hdfs://NAMENODE_HOSTNAME:8020/ranger/audit",
+        "xasecure.audit.destination.solr": "false",
+        "xasecure.audit.destination.solr.batch.filespool.dir": "/var/log/hadoop/ozone/audit/solr/spool",
+        "xasecure.audit.destination.solr.urls": "",
+        "xasecure.audit.destination.solr.zookeepers": "NONE",
+        "xasecure.audit.is.enabled": "true",
+        "xasecure.audit.provider.summary.enabled": "false"
+       {% endraw %}
+      }
+    }
+  }
 }

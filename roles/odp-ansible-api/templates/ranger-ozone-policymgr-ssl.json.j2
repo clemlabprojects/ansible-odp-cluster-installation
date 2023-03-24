@@ -1,8 +1,18 @@
 {
-  "xasecure.policymgr.clientssl.keystore": "{{stack_root}}/current/ozone-client/conf/ranger-plugin-keystore.jks",
-  "xasecure.policymgr.clientssl.keystore.credential.file": "jceks://file{{credential_file}}",
-  "xasecure.policymgr.clientssl.keystore.password": "myKeyFilePassword",
-  "xasecure.policymgr.clientssl.truststore": "{{stack_root}}/current/ozone-client/conf/ranger-plugin-truststore.jks",
-  "xasecure.policymgr.clientssl.truststore.credential.file": "jceks://file{{credential_file}}",
-  "xasecure.policymgr.clientssl.truststore.password": "changeit"
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-ozone-policymgr-ssl",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        {% raw %}
+        "xasecure.policymgr.clientssl.keystore": "{{stack_root}}/current/ozone-client/conf/ranger-plugin-keystore.jks",
+        "xasecure.policymgr.clientssl.keystore.credential.file": "jceks://file{{credential_file}}",
+        "xasecure.policymgr.clientssl.keystore.password": "myKeyFilePassword",
+        "xasecure.policymgr.clientssl.truststore": "{{stack_root}}/current/ozone-client/conf/ranger-plugin-truststore.jks",
+        "xasecure.policymgr.clientssl.truststore.credential.file": "jceks://file{{credential_file}}",
+        "xasecure.policymgr.clientssl.truststore.password": "changeit"
+        {% endraw %}
+      }
+    }
+  }
 }

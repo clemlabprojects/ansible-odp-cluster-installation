@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ssl-client",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+				"ssl.client.truststore.location": "/etc/hadoop/conf/truststore.jks",
+				"ssl.client.truststore.password": "changeit",
+				"ssl.client.truststore.type": "jks"
+				}
+		}
+	}
+}

@@ -1,9 +1,20 @@
+
 {
-  "ranger.plugin.ozone.policy.cache.dir": "/etc/ranger/{{repo_name}}/policycache",
-  "ranger.plugin.ozone.policy.pollIntervalMs": "30000",
-  "ranger.plugin.ozone.policy.rest.ssl.config.file": "/etc/hadoop/conf/ranger-policymgr-ssl.xml",
-  "ranger.plugin.ozone.policy.rest.url": "{{policymgr_mgr_url}}",
-  "ranger.plugin.ozone.policy.source.impl": "org.apache.ranger.admin.client.RangerAdminRESTClient",
-  "ranger.plugin.ozone.service.name": "{{repo_name}}",
-  "xasecure.add-hadoop-authorization": "true"
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-ozone-security",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        {% raw %}
+        "ranger.plugin.ozone.policy.cache.dir": "/etc/ranger/{{repo_name}}/policycache",
+        "ranger.plugin.ozone.policy.pollIntervalMs": "30000",
+        "ranger.plugin.ozone.policy.rest.ssl.config.file": "/etc/hadoop/conf/ranger-policymgr-ssl.xml",
+        "ranger.plugin.ozone.policy.rest.url": "{{policymgr_mgr_url}}",
+        "ranger.plugin.ozone.policy.source.impl": "org.apache.ranger.admin.client.RangerAdminRESTClient",
+        "ranger.plugin.ozone.service.name": "{{repo_name}}",
+        "xasecure.add-hadoop-authorization": "true"
+        {% endraw %}
+      }
+    }
+  }
 }
