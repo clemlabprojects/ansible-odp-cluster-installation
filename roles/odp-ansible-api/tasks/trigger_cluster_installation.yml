@@ -10,7 +10,7 @@
     force_basic_auth: yes
     user: "{{ ambari_username }}"
     password: "{{ ambari_password }}"
-    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
     body: '{"RequestInfo": {"context" :"Installing Services API"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}'
     body_format: json
     validate_certs: no
@@ -25,7 +25,7 @@
     force_basic_auth: yes
     user: "{{ ambari_username }}"
     password: "{{ ambari_password }}"
-    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
     status_code: 200,201,202
     validate_certs: no
     return_content: yes

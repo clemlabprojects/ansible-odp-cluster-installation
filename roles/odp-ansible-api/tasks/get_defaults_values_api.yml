@@ -7,7 +7,7 @@
     force_basic_auth: yes
     user: "{{ ambari_username }}"
     password: "{{ ambari_password }}"
-    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
     body_format: json
     validate_certs: no
     status_code: 200,201,202
@@ -29,7 +29,7 @@
     force_basic_auth: yes
     user: "{{ ambari_username }}"
     password: "{{ ambari_password }}"
-    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
     body_format: json
     validate_certs: no
     status_code: 200,201,202
@@ -45,7 +45,7 @@
     force_basic_auth: yes
     user: "{{ ambari_username }}"
     password: "{{ ambari_password }}"
-    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
     body_format: json
     validate_certs: no
     status_code: 200,201,202
@@ -67,7 +67,7 @@
     force_basic_auth: yes
     user: "{{ ambari_username }}"
     password: "{{ ambari_password }}"
-    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
     body_format: json
     validate_certs: no
     status_code: 200,201,202
@@ -90,7 +90,7 @@
         force_basic_auth: yes
         user: "{{ ambari_username }}"
         password: "{{ ambari_password }}"
-        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
         body_format: json
         validate_certs: no
         status_code: 200,201,202
@@ -115,7 +115,7 @@
         force_basic_auth: yes
         user: "{{ ambari_username }}"
         password: "{{ ambari_password }}"
-        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
         body_format: json
         validate_certs: no
         status_code: 200,201,202
@@ -164,7 +164,7 @@
         force_basic_auth: yes
         user: "{{ ambari_username }}"
         password: "{{ ambari_password }}"
-        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
         body_format: json
         validate_certs: no
         status_code: 200,201,202
@@ -199,7 +199,7 @@
         force_basic_auth: yes
         user: "{{ ambari_username }}"
         password: "{{ ambari_password }}"
-        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
         body_format: json
         validate_certs: no
         status_code: 200,201,202
@@ -232,7 +232,7 @@
     force_basic_auth: yes
     user: "{{ ambari_username }}"
     password: "{{ ambari_password }}"
-    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
     body_format: json
     validate_certs: no
     status_code: 200,201,202
@@ -256,7 +256,7 @@
     force_basic_auth: yes
     user: "{{ ambari_username }}"
     password: "{{ ambari_password }}"
-    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
     body_format: json
     validate_certs: no
     status_code: 200,201,202
@@ -295,7 +295,7 @@
         force_basic_auth: yes
         user: "{{ ambari_username }}"
         password: "{{ ambari_password }}"
-        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
         body_format: json
         validate_certs: no
         status_code: 200,201,202
