@@ -9,7 +9,7 @@
           {
             "content" : {{ hadoopenvcontent | to_json }},{% raw %}
             "dtnode_heapsize" : "2048m",
-            "hadoop_heapsize" : "1024",
+            "hadoop_heapsize" : "2048",
             "hadoop_pid_dir_prefix" : "/var/run/hadoop",
             "hadoop_root_logger" : "INFO,RFA",
             "hdfs_log_dir_prefix" : "/var/log/hadoop",
@@ -18,7 +18,7 @@
             "hdfs_user_nofile_limit" : "128000",
             "hdfs_user_nproc_limit" : "65536",
             "namenode_backup_dir" : "/tmp/upgrades",
-            "namenode_heapsize" : "2048m",
+            "namenode_heapsize" : "4096m",
             "namenode_opt_maxnewsize" : "384m",
             "namenode_opt_maxpermsize" : "256",
             "namenode_opt_newsize" : "384m",

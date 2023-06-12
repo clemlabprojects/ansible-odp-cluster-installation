@@ -10,6 +10,7 @@
 					"xasecure.audit.destination.hdfs.dir" : "hdfs://{% if cluster_services.HDFS.HA is defined and cluster_services.HDFS.HA %}{{ cluster_name }}{% else %}{{ first_namenode }}:8020{% endif %}/ranger/audit",
 					"xasecure.audit.destination.hdfs" : "true",
 	        "admin_password" : "{{ranger_admin_password}}",
+			"rangerlookup_password": "{{ranger_admin_password}}",
 	        "admin_username" : "admin",
 	        "create_db_dbuser" : "false",
 	        "is_external_solrCloud_enabled" : "false",

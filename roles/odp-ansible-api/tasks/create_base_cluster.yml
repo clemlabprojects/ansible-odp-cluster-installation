@@ -65,7 +65,7 @@
     force_basic_auth: yes
     user: "{{ ambari_username }}"
     password: "{{ ambari_password }}"
-    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
     body: '{"VersionDefinition": {"version_url": "file:/tmp/repo.xml"}}'
     body_format: json
     validate_certs: no
@@ -87,7 +87,7 @@
     force_basic_auth: yes
     user: "{{ ambari_username }}"
     password: "{{ ambari_password }}"
-    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
+    headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
     body: '{"VersionDefinition": {"version_url": "{{ vdf_url }}"}}'
     body_format: json
     validate_certs: no
@@ -115,6 +115,10 @@
     status_code: 200,201,202,404
     return_content: yes
   register: testvdf
+
+- name: debug
+  debug:
+    msg: "{{testvdf}}"
 
 - name: Get repository URL
   uri:
