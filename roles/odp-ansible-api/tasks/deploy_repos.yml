@@ -24,12 +24,17 @@
 - template:
     src: templates/repository_versions/hdp.repo.j2
     dest: /etc/yum.repos.d/hdp.repo
-  when: hdp_repo_path is not defined and ambari_stack_name|lower != 'odp'
+  when: hdp_repo_path is not defined and ambari_stack_name|lower != 'odp' and ansible_distribution != 'Ubuntu'
 
 - template:
     src: templates/repository_versions/odp.repo.j2
     dest: /etc/yum.repos.d/odp.repo
-  when: hdp_repo_path is not defined and ambari_stack_name|lower == 'odp'
+  when: hdp_repo_path is not defined and ambari_stack_name|lower == 'odp' and ansible_distribution != 'Ubuntu'
+
+- template:
+    src: templates/repository_versions/odp.list.j2
+    dest: /etc/apt/sources.list.d/odp.list
+  when: hdp_repo_path is not defined and ambari_stack_name|lower == 'odp' and ansible_distribution == 'Ubuntu'
 
 # - copy:
 #     src: "{{hdp_repo_path}}"
@@ -38,11 +43,19 @@
 
 - name: Ensure software is installed (yum)
   yum: name="hdp-select" state=present update_cache=yes disable_gpg_check=yes
-  when: ambari_stack_name|lower != 'odp'
+  when: ambari_stack_name|lower != 'odp' and ansible_distribution != 'Ubuntu'
 
 - name: Ensure software is installed (yum)
   yum: name="odp-select" state=present update_cache=yes disable_gpg_check=yes
-  when: ambari_stack_name|lower == 'odp'
+  when: ambari_stack_name|lower == 'odp' and ansible_distribution != 'Ubuntu'
+
+- name: Ensure software is installed (apt)
+  package: name="odp-select-{{stack_version_flattened}}" state=present
+  when: ambari_stack_name|lower == 'odp' and ansible_distribution == 'Ubuntu'
+
+- name: Ensure Hadoop Client software is installed (apt)
+  package: name="hadoop-{{stack_version_flattened}}-hdfs" state=present
+  when: ambari_stack_name|lower == 'odp' and ansible_distribution == 'Ubuntu'
 ####################################################
 
 ####### Install HDP dependencies ###############
@@ -73,5 +86,5 @@
     - yum:
         name: "{{ listrpms|join(',') }},zip"
         state: present
-  when: preinstall_system_packages is defined and preinstall_system_packages
+  when: preinstall_system_packages is defined and preinstall_system_packages  and ansible_distribution != 'Ubuntu'
 ###################################################

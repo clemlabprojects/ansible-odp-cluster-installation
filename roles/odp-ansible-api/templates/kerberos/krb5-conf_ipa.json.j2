@@ -8,7 +8,7 @@
           "domains":"",
           "manage_krb5_conf": "{{ ambari_manage_krb5_conf | default('true') | lower }}",
           "conf_dir":"/etc",
-          "content" : "{{'\n[libdefaults]\n   renew_lifetime = 7d\n   rdns = false\n   forwardable = true\n   default_realm = {{realm}}\n   ticket_lifetime = 24h\n   dns_lookup_realm = false\n   dns_lookup_kdc = false\n   udp_preference_limit = 0\n   default_ccache_name = FILE:/tmp/krb5cc_%{uid}\n   # default_tgs_enctypes = aes des3-cbc-sha1 rc4 des-cbc-md5\n   # default_tkt_enctypes = aes des3-cbc-sha1 rc4 des-cbc-md5\n    
+          "content" : "{{'\n[libdefaults]\n   renew_lifetime = 7d\n   rdns = false\n   forwardable = true\n   default_realm = {{realm}}\n   ticket_lifetime = 24h\n   dns_lookup_realm = false\n   dns_lookup_kdc = false\n   udp_preference_limit = 0\n   default_ccache_name = FILE:/tmp/krb5cc_%{uid}\n   default_tgs_enctypes = aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96\n   default_tkt_enctypes = aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96\n    
 {% if domains %}
 [domain_realm]
 {%- for domain in domains.split(\',\') %}
@@ -59,7 +59,7 @@
       			"case_insensitive_username_rules": "false",
       			"container_dn": "",
       			"create_ambari_principal": "true",
-      			"encryption_types": "aes des3-cbc-sha1 rc4 des-cbc-md5",
+      			"encryption_types": "aes128-cts-hmac-sha256-128 aes256-cts-hmac-sha384-192 aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96",
       			"executable_search_paths": "/usr/bin, /usr/kerberos/bin, /usr/sbin, /usr/lib/mit/bin, /usr/lib/mit/sbin",
       			"group": "ambari-managed-principals",
       			"install_packages": "true",

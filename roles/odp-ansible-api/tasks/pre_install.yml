@@ -57,7 +57,16 @@
     state: present
     update_cache: yes
     disable_gpg_check: yes
-  when: cluster_services.KERBEROS is defined
+  when: cluster_services.KERBEROS is defined and ansible_distribution != 'Ubuntu'
+#####################################################
+
+
+##############Install client on all nodes // ########
+- name: Ensure krb client is installed
+  package:
+    name: ['libnss-ldap', 'libpam-ldap', 'ldap-utils', 'krb5-user']
+    state: present
+  when: cluster_services.KERBEROS is defined and ansible_distribution == 'Ubuntu'
 #####################################################
 
 #####################################################
@@ -72,3 +81,14 @@
 #     name: ambari-server
 #   when: inventory_hostname == ambari_server_hostname
 #####################################################
+
+## fix debian package
+- name: ensure hive-hcatalog conf.dist exists
+  file:
+    path: /etc/hive-webhcat/conf.dist
+    state: directory
+
+- name: ensure hive-webhcat conf.dist exists
+  file:
+    path: /etc/hive-webhcat/conf.dist
+    state: directory

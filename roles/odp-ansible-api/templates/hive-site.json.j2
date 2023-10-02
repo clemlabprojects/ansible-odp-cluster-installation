@@ -121,7 +121,7 @@
         "hive.prewarm.numcontainers" : "3",
         "hive.security.authenticator.manager" : "org.apache.hadoop.hive.ql.security.ProxyUserAuthenticator",
         "hive.security.authorization.enabled" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE %}true{% else %}false{% endif %}",
-        "hive.security.authorization.manager" : "org.apache.hadoop.hive.ql.security.authorization.plugin.sqlstd.SQLStdConfOnlyAuthorizerFactory",
+        "hive.security.authorization.manager" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE %}org.apache.ranger.authorization.hive.authorizer.RangerHiveAuthorizerFactory{% else %}"org.apache.hadoop.hive.ql.security.authorization.plugin.sqlstd.SQLStdConfOnlyAuthorizerFactory"{% endif %}",
         "hive.security.metastore.authenticator.manager" : "org.apache.hadoop.hive.ql.security.HadoopDefaultMetastoreAuthenticator",
         "hive.security.metastore.authorization.auth.reads" : "true",
         "hive.security.metastore.authorization.manager" : "org.apache.hadoop.hive.ql.security.authorization.StorageBasedAuthorizationProvider",

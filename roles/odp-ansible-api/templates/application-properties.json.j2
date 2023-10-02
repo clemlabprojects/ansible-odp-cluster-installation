@@ -38,7 +38,7 @@
 			  "atlas.authentication.principal": "atlas",
 			  {% raw %}"atlas.cluster.name": "{{cluster_name}}",{% endraw %}
 			  "atlas.graph.index.search.solr.mode": "cloud",
-			  "atlas.graph.index.search.solr.zookeeper-url": "{% for host in zookeeper_quorum %}{{ host }}:2181/infra-solr{% if not loop.last %},{% endif %}{% endfor %}",
+			  "atlas.graph.index.search.solr.zookeeper-url": "{% for host in zookeeper_quorum %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/infra-solr",
 			  "atlas.graph.storage.backend": "hbase",
 			  "atlas.graph.storage.hbase.table": "atlas_titan",
 			  "atlas.graph.storage.hostname": "{% for host in zookeeper_quorum %}{{ host }}{% if not loop.last %},{% endif %}{% endfor %}",

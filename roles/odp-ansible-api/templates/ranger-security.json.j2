@@ -10,7 +10,7 @@
         "ranger.plugin.{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}.policy.rest.url" : "http://{{ all['RANGER_ADMIN'][0] }}:6080",
 				{% endif %}
         "ranger.plugin.{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}.policy.pollIntervalMs" : "30000",
-        "ranger.plugin.{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}.policy.source.impl" : "org.apache.ranger.admin.client.RangerAdminRESTClient",
+        "ranger.plugin.{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}.policy.source.impl" : "{% if in_services == "KNOX" %}org.apache.ranger.admin.client.RangerAdminJersey2RESTClient{% else %}{% endif %}org.apache.ranger.admin.client.RangerAdminRESTClient",
 				"ranger.plugin.{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}.policy.cache.dir" : {% raw %}"/etc/ranger/{{repo_name}}/policycache",{% endraw %}
         "ranger.plugin.{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}.service.name" : {% raw %}"{{repo_name}}",{% endraw %}
 				{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "YARN" %}

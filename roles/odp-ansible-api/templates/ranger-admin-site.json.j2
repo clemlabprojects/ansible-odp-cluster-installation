@@ -4,6 +4,7 @@
 			"type": "ranger-admin-site",
 			"tag": "{{ range(00000000, 99999999) | random }}",
 			"properties": {
+        "ranger.admin.login.autolock.enabled": "false",
 				"ranger.externalurl": "http://{{ all['RANGER_ADMIN'][0] }}:6080",
 				"ranger.jpa.jdbc.driver": {% if database_type == "mysql" %}"com.mysql.jdbc.Driver"{% elif database_type == "postgresql" %}"org.postgresql.Driver"{% endif %},
 				"ranger.jpa.jdbc.url": "jdbc:{{ database_type }}://{{ database_server }}:{{ database_port }}/{{ database_ranger }}?createDatabaseIfNotExist=true",
