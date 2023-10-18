@@ -40,8 +40,11 @@
 				"hadoop.proxyuser.HTTP.groups": "*",
 				"hadoop.proxyuser.hive.hosts": "{{ all['HIVE_SERVER'] | join(',') }}",
 				"hadoop.proxyuser.hive.groups": "*",{% endif %}
-				{% if cluster_services.SPARK is defined %}
-				"hadoop.proxyuser.livy.hosts" : "{{ all['SPARK2_THRIFTSERVER'] | join(',') }}",
+				{% if cluster_services.ZEPPELIN is defined %}
+				"hadoopproxyuser.zeppelin.hosts" : "*",
+				"hadoop.proxyuser.zeppelin.groups" : "*",{% endif %}
+				{% if (cluster_services.SPARK2 is defined) or (cluster_services.SPARK3 is defined) %}
+				"hadoopproxyuser.livy.hosts" : "*",
 				"hadoop.proxyuser.livy.groups" : "*",{% endif %}
 				{% if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN is defined and cluster_services.RANGER.PLUGIN.HIVE is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE %}"hadoop.proxyuser.hive.hosts": "{% for hiveserver in all['HIVE_SERVER'] %}{{ hiveserver }}{% if not loop.last %},{% endif %}{% endfor %}",{% endif %}
 				"hadoop.security.auth_to_local": "DEFAULT",

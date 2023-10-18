@@ -35,7 +35,9 @@
         "leader.imbalance.per.broker.percentage" : "10",
         "listeners" : "PLAINTEXT://localhost:6667",
         "log.cleanup.interval.mins" : "10",
-        "log.dirs" : "/kafka-logs",
+        {% endraw %}
+        "log.dirs" : "{% for dir in kafka_log_dirs %}{{ dir }}{% if not loop.last %},{% endif %}{% endfor %}",
+        {% raw %}
         "log.index.interval.bytes" : "4096",
         "log.index.size.max.bytes" : "10485760",
         "log.retention.bytes" : "-1",

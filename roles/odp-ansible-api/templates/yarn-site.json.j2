@@ -29,7 +29,7 @@
   "yarn.node-labels.fs-store.root-dir" : "/system/yarn/node-labels",
   "yarn.nodemanager.address" : "0.0.0.0:45454",
   "yarn.nodemanager.admin-env" : "MALLOC_ARENA_MAX=$MALLOC_ARENA_MAX",
-  "yarn.nodemanager.aux-services" : "mapreduce_shuffle{% if cluster_services.SPARK2 is defined and cluster_services.SPARK2 %},spark2_shuffle{% endif %}{% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3 %}{% raw %},{{timeline_collector}}{% endraw %}{% endif%}",
+  "yarn.nodemanager.aux-services" : "mapreduce_shuffle{% if cluster_services.SPARK2 is defined and cluster_services.SPARK2 %},spark2_shuffle{% endif %}{% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3 and all['YARN_TIMELINE_READER'] is %}{% raw %},{{timeline_collector}}{% endraw %}{% endif%}",
   "yarn.nodemanager.aux-services.mapreduce_shuffle.class" : "org.apache.hadoop.mapred.ShuffleHandler",
   "yarn.nodemanager.aux-services.spark2_shuffle.class" : "org.apache.spark.network.yarn.YarnShuffleService",
   "yarn.nodemanager.aux-services.spark2_shuffle.classpath" : "{% raw %}{{stack_root}}{% endraw %}/current/spark2-client/yarn/*",
@@ -107,7 +107,7 @@
   "yarn.timeline-service.hbase.configuration.file": "file://{{yarn_hbase_conf_dir}}/hbase-site.xml",
   "yarn.timeline-service.hbase.coprocessor.jar.hdfs.location": "{{yarn_timeline_jar_location}}",
   {% endraw %}
-  "yarn.timeline-service.versions" : "1.5f,2.0f",
+  "yarn.timeline-service.versions" : "1.5f{% if and all['YARN_TIMELINE_READER'] is defined %},2.0f{% endif %}",
   "yarn.webapp.api-service.enable" : "true",
   "yarn.webapp.ui2.enable" : "true",
   {% endif %}
@@ -189,7 +189,7 @@
   "yarn.timeline-service.store-class" : "org.apache.hadoop.yarn.server.timeline.EntityGroupFSTimelineStore",
   "yarn.timeline-service.ttl-enable" : "true",
   "yarn.timeline-service.ttl-ms" : "2678400000",
-  "yarn.timeline-service.version" : "2.0f",
+  "yarn.timeline-service.version" : "1.5f",
   "yarn.timeline-service.webapp.address" : "{{ all['APP_TIMELINE_SERVER'][0] }}:8188",
   "yarn.timeline-service.webapp.https.address" : "{{ all['APP_TIMELINE_SERVER'][0] }}:8190"
 }
