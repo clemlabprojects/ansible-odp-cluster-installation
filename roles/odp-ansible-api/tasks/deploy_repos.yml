@@ -31,11 +31,6 @@
     dest: /etc/yum.repos.d/odp.repo
   when: hdp_repo_path is not defined and ambari_stack_name|lower == 'odp' and ansible_distribution != 'Ubuntu'
 
-- template:
-    src: templates/repository_versions/odp.list.j2
-    dest: /etc/apt/sources.list.d/odp.list
-  when: hdp_repo_path is not defined and ambari_stack_name|lower == 'odp' and ansible_distribution == 'Ubuntu'
-
 # - copy:
 #     src: "{{hdp_repo_path}}"
 #     dest: /etc/yum.repos.d/hdp.repo

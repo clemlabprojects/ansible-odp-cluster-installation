@@ -27,6 +27,8 @@ ipa_ambari_principal: hadoopadmin
 ipa_ambari_firstname: Hadoop
 ipa_ambari_lastname: Admin
 ipa_ambari_role: hadoopadminrole
+kafka_log_dirs: 
+  - /kafka/log-dirs
 ipa_do_creation: False
 cgroups_enable: False
 capacity_scheduler_file: 'capacity-scheduler'
@@ -528,9 +530,9 @@ services:
             client: ['']
       - name: ODP
         version: 1.2
-        conf: ['ranger-admin-site', 'ranger-env', 'admin-properties', 'admin-log4j', 'ranger-ugsync-site', 'usersync-log4j', 'ranger-solr-configuration']
+        conf: ['ranger-admin-site', 'ranger-env', 'admin-properties', 'admin-log4j', 'ranger-ugsync-site', 'usersync-log4j', 'ranger-solr-configuration', 'ranger-tagsync-site']
         components:
-          - noha: ['RANGER_ADMIN', 'RANGER_USERSYNC']
+          - noha: ['RANGER_ADMIN', 'RANGER_USERSYNC', 'RANGER_TAGSYNC']
             ha: ['']
             client: ['']
   - name: AMBARI_METRICS
@@ -711,10 +713,10 @@ services:
             client: ['SPARK3_CLIENT']
       - name: ODP
         version: 1.2
-        conf: ['livy3-conf', 'livy3-env', 'livy3-log4j-properties', 'livy3-spark-blacklist', 'spark3-defaults', 'spark3-env', 'spark3-hive-site-override', 'spark3-log4j-properties', 'spark3-metrics-properties', 'spark3-thrift-fairscheduler', 'spark3-thrift-sparkconf']
+        conf: ['spark3-livy2-client-conf','spark3-livy2-conf', 'spark3-livy2-env', 'spark3-livy2-log4j-properties', 'spark3-livy2-spark-blacklist', 'spark3-defaults', 'spark3-env', 'spark3-hive-site-override', 'spark3-log4j-properties', 'spark3-metrics-properties', 'spark3-thrift-fairscheduler', 'spark3-thrift-sparkconf']
         components:
-          - noha: ['LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
-            ha: ['LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
+          - noha: ['SPARK3_LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
+            ha: ['SPARK3_LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
             client: ['SPARK3_CLIENT']
   - name: SPARK2
     smoketest: ['SPARK2_SERVICE_CHECK']

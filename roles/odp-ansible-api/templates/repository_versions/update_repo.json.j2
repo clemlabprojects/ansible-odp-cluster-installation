@@ -17,7 +17,7 @@
                  "base_url":"{% if 'UTIL' not in repositories.Repositories.repo_id %}{{ repos_url }}{% else %}{{ repos_url_utils }}{% endif %}",
                  "os_type":"{{ repositories.Repositories.os_type }}",
                  "repo_id":"{{ repositories.Repositories.repo_id }}",
-                 "repo_name":"{{ ambari_stack_name }}"
+                 "repo_name":"{{ ambari_stack_name }}{% if 'UTIL' in repositories.Repositories.repo_id %}{{ repos_url }}-UTILS{% endif %}"
               }
            }{% if not loop.last %},{% endif %}{% endfor %}
         ]

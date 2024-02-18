@@ -8,7 +8,7 @@
   "yarn.acl.enable" : "false",
   {% endif %}
   "yarn.admin.acl" : "yarn",
-  {% raw %}"yarn.application.classpath": "$HADOOP_CONF_DIR,{{hadoop_home}}/*,{{hadoop_home}}/lib/*,{{stack_root}}/current/hadoop-hdfs-client/*,{{stack_root}}/current/hadoop-hdfs-client/lib/*,{{stack_root}}/current/hadoop-yarn-client/*,{{stack_root}}/current/hadoop-yarn-client/lib/*",{% endraw%}
+  {% raw %}"yarn.application.classpath": "$HADOOP_CONF_DIR,{{hadoop_home}}/*,{{hadoop_home}}/lib/*,{{stack_root}}/current/hadoop-hdfs-client/*,{{stack_root}}/current/hadoop-hdfs-client/lib/*,{{stack_root}}/current/hadoop-yarn-client/*,{{stack_root}}/current/hadoop-yarn-client/lib/*,{{stack_root}}/current/hadoop-client/share/hadoop/common/lib/*"{% endraw %},
   "yarn.client.nodemanager-connect.max-wait-ms" : "60000",
   "yarn.client.nodemanager-connect.retry-interval-ms" : "10000",
   {% if cluster_services.YARN.SSL is defined and cluster_services.YARN.SSL %}
@@ -29,7 +29,7 @@
   "yarn.node-labels.fs-store.root-dir" : "/system/yarn/node-labels",
   "yarn.nodemanager.address" : "0.0.0.0:45454",
   "yarn.nodemanager.admin-env" : "MALLOC_ARENA_MAX=$MALLOC_ARENA_MAX",
-  "yarn.nodemanager.aux-services" : "mapreduce_shuffle{% if cluster_services.SPARK2 is defined and cluster_services.SPARK2 %},spark2_shuffle{% endif %}{% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3 and all['YARN_TIMELINE_READER'] is %}{% raw %},{{timeline_collector}}{% endraw %}{% endif%}",
+  "yarn.nodemanager.aux-services" : "mapreduce_shuffle{% if cluster_services.SPARK2 is defined and cluster_services.SPARK2 %},spark2_shuffle{% endif %}{% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3 and all['YARN_TIMELINE_READER'] is defined%}{% raw %},{{timeline_collector}}{% endraw %}{% endif%}",
   "yarn.nodemanager.aux-services.mapreduce_shuffle.class" : "org.apache.hadoop.mapred.ShuffleHandler",
   "yarn.nodemanager.aux-services.spark2_shuffle.class" : "org.apache.spark.network.yarn.YarnShuffleService",
   "yarn.nodemanager.aux-services.spark2_shuffle.classpath" : "{% raw %}{{stack_root}}{% endraw %}/current/spark2-client/yarn/*",
@@ -107,7 +107,7 @@
   "yarn.timeline-service.hbase.configuration.file": "file://{{yarn_hbase_conf_dir}}/hbase-site.xml",
   "yarn.timeline-service.hbase.coprocessor.jar.hdfs.location": "{{yarn_timeline_jar_location}}",
   {% endraw %}
-  "yarn.timeline-service.versions" : "1.5f{% if and all['YARN_TIMELINE_READER'] is defined %},2.0f{% endif %}",
+  "yarn.timeline-service.versions" : "1.5f{% if all['YARN_TIMELINE_READER'] is defined %},2.0f{% endif %}",
   "yarn.webapp.api-service.enable" : "true",
   "yarn.webapp.ui2.enable" : "true",
   {% endif %}
