@@ -54,7 +54,7 @@
 				"hbase.regionserver.info.port" : "60030",
 				"replication.source.ratio" : "0.25",
 				"zookeeper.znode.parent" : "/hbase-unsecure",
-				{% if cluster_services.HDFS.HA is defined and cluster_services.HDFS.HA %}"hbase.rootdir" : "hdfs://{{ cluster_name }}/apps/hbase/data",{% else %}"hbase.rootdir" :  "hdfs://{{ first_namenode }}:8020",{% endif %}
+				{% if cluster_services.HDFS.HA is defined and cluster_services.HDFS.HA %}"hbase.rootdir" : "hdfs://{{ cluster_name }}/apps/hbase/data",{% else %}"hbase.rootdir" :  "/apps/hbase/data",{% endif %}
 				"hbase.cluster.distributed" : "true",
 				"hbase.master.hfilecleaner.ttl" : "3600000",
 				"hbase.client.primaryCallTimeout.multiget" : "10000",

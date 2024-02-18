@@ -70,16 +70,16 @@
 #####################################################
 
 #####################################################
-# - name: Restart service "Ambari Agent"
-#   systemd:
-#     state: restarted
-#     name: ambari-agent
+- name: Restart service "Ambari Agent"
+  systemd:
+    state: restarted
+    name: ambari-agent
 
-# - name: Restart service "Ambari Server"
-#   systemd:
-#     state: restarted
-#     name: ambari-server
-#   when: inventory_hostname == ambari_server_hostname
+- name: Restart service "Ambari Server"
+  systemd:
+    state: restarted
+    name: ambari-server
+  when: inventory_hostname == ambari_server_hostname
 #####################################################
 
 ## fix debian package
