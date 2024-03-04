@@ -33,7 +33,6 @@
         "kafka.timeline.metrics.truststore.type" : "{{metric_truststore_type}}",
         "leader.imbalance.check.interval.seconds" : "300",
         "leader.imbalance.per.broker.percentage" : "10",
-        "listeners" : "PLAINTEXT://localhost:6667",
         "log.cleanup.interval.mins" : "10",
         {% endraw %}
         "log.dirs" : "{% for dir in kafka_log_dirs %}{{ dir }}{% if not loop.last %},{% endif %}{% endfor %}",
@@ -80,7 +79,25 @@
         "zookeeper.connect" : "{% for host in zookeeper_quorum %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}",
         "zookeeper.connection.timeout.ms" : "25000",
         "zookeeper.session.timeout.ms" : "30000",
-        "zookeeper.sync.time.ms" : "2000"
+        "zookeeper.sync.time.ms" : "2000",
+				{% if cluster_services.KAFKA.SSL is defined %}
+				"ssl.keystore.location": "{{ssl_keystore_path}}",
+				"ssl.keystore.password": "{{ssl_keystore_password}}",
+        "ssl.key.password": "{{ssl_keystore_password}}",
+				"ssl.truststore.location": "{{ssl_truststore_path}}",
+				"ssl.truststore.password": "{{ssl_truststore_password}}",
+          {% if cluster_services.KERBEROS is defined %}
+            "listeners" : "PLAINTEXT://localhost:6667,SASL_SSL://localhost:9094, SASL_PLAINTEXT://localhost:9093, SSL://localhost:9092"
+          {% else %}
+            "listeners" : "PLAINTEXT://localhost:6667,SSL://localhost:9092"
+          {% endif %}
+				{% else %}
+          {% if cluster_services.KERBEROS is defined %}
+            "listeners" : "PLAINTEXT://localhost:6667,SASL_PLAINTEXT://localhost:9093"
+          {% else %}
+            "listeners" : "PLAINTEXT://localhost:6667"
+          {% endif %}
+				{% endif %}
       }
     }
   }
