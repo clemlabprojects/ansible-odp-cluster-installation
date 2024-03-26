@@ -1,0 +1,27 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "hue-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { 
+          "create_db_dbuser": "false",
+          "db_root_password": "",
+          "db_root_user": "root",
+          "hue_admin_password": "{{hue_admin_user_password}}",
+          "hue_admin_username": "admin",
+          "hue_database": "{{ database_type | upper}}",
+          "hue_group": "hue",
+          "hue_log_dir": "/var/log/hue",
+          "hue_pid_dir": "/var/run/hue",
+          "hue_privelege_user_jdbc_url": "jdbc:{{ database_type }}://{{ database_server }}:{{ database_port }}/{{ hue_database }}",
+          {% if cluster_services.ATLAS.SSL is defined and cluster_services.HIVE.SSL %}
+            "hue_ssl_enabled": "true",
+          {% else %}
+            "hue_ssl_enabled": "false",
+          {% endif %}
+          "hue_submit_to": "true",
+          "hue_user": "hue"
+      }
+    }
+  }
+}

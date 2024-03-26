@@ -1,0 +1,54 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "hue-ini-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { 
+          "hue.jpa.jdbc.driver": "com.mysql.jdbc.Driver",
+          "hue_app_blacklist": "spark,zookeeper,impala,search,pig,sqoop,security",
+          "hue_backend": "desktop.auth.backend.AllowFirstUserDjangoBackend",
+          "hue_base_dn": "dc=clemlab,dc=com",
+          "hue_beeswax_hive_server_host": "localhost",
+          "hue_beeswax_hive_server_port": "10001",
+          "hue_beeswax_server_conn_timeout": "120",
+          "hue_bind_dn": "cn=hue_search_dn,ou=user,dc=clemlab,dc=com",
+          "hue_bind_password": "hue123",
+          "hue_cherrypy_server_threads": "50",
+          "hue_collect_usage": "false",
+          "hue_cookie_password": "huecookie123",
+          "hue_create_users_on_login": "true",
+          "hue_default_site_encoding": "utf",
+          "hue_django_debug_mode": "false",
+          "hue_group_member_attr": "member",
+          "hue_group_name_attr": "sAMAccountName",
+          "hue_http_500_debug_mode": "false",
+          "hue_http_port": "8888",
+          "hue_idle_session_timeout": "-1",
+          "hue_kerberos_ccache_path": "/var/run/hue/hue_krb5_ccache",
+          "hue.jpa.jdbc.url": "jdbc:{{ database_type }}://{{ database_server }}:{{ database_port }}/{{ hue_database }}",
+          "hue_db_host": "{{ database_server }}",
+          "hue_db_name": "{{ hue_database }}",
+          "hue_db_password": "{{ hue_database_user_password }}",
+          "hue_db_port": "{{ database_port }}",
+          "hue_db_username": "{{ hue_database_user }}",
+          "hue_ldap_url": "ldap://{{kdc_server}}",
+          "hue_log_redaction_file": "/etc/hue/conf/redaction-rules.json",
+          "hue_nt_domain": "{{kerberos_realm}}",
+          "hue_remote_data_dir": "/user/hue/jobsub",
+          "hue_search_bind_authentication": "false",
+          {% if cluster_services.HUE.SSL is defined and cluster_services.HUE.SSL %}
+          "hue_ssl_cert_chain": "{{security_ssl_cacert_path}}",
+          "hue_ssl_certificate": "{{security_ssl_cert_folder}}/{{all['HUE_SERVER'][0]}}.cert.pem ",
+          "hue_ssl_private_key": "{{security_ssl_cert_folder}}/{{all['HUE_SERVER'][0]}}.key.pem ",
+          {% endif %}
+          "hue_ssl_validate": "true",
+          "hue_test_ldap_group": "users",
+          "hue_time_zone": "America/Los_Angeles",
+          "hue_use_x_forwarded_host": "true",
+          "hue_user_augmentor": "desktop.auth.backend.DefaultUserAugmentor",
+          "hue_user_name_attr": "sAMAccountName",
+          "remote_data_dir": "/user/hue/jobsub"
+      }
+    }
+  }
+}

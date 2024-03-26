@@ -483,6 +483,16 @@ services:
             ha: ['HIVE_SERVER', 'HIVE_METASTORE']
             client: ['HIVE_CLIENT']
         packages: ['hive_{{ build_stack_version }}', 'hive_{{ build_stack_version }}-hcatalog']
+  - name: HUE
+    smoketest: ['HUE_SERVICE_CHECK']
+    stacks:
+      - name: ODP
+        version: 1.2
+        conf: ['hue-env', 'hue-ini-conf','hue-ini-template']
+        components:
+          - noha: ['HUE_SERVER']
+            ha: []
+            client: ['']
   - name: RANGER
     smoketest: ['RANGER_SERVICE_CHECK']
     stacks:
