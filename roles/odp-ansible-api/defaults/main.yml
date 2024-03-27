@@ -725,8 +725,8 @@ services:
         version: 1.2
         conf: ['spark3-livy2-client-conf','spark3-livy2-conf', 'spark3-livy2-env', 'spark3-livy2-log4j-properties', 'spark3-livy2-spark-blacklist', 'spark3-defaults', 'spark3-env', 'spark3-hive-site-override', 'spark3-log4j-properties', 'spark3-metrics-properties', 'spark3-thrift-fairscheduler', 'spark3-thrift-sparkconf']
         components:
-          - noha: ['SPARK3_LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
-            ha: ['SPARK3_LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
+          - noha: ['LIVY2_SERVER','SPARK3_LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
+            ha: ['LIVY2_SERVER','SPARK3_LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
             client: ['SPARK3_CLIENT']
   - name: SPARK2
     smoketest: ['SPARK2_SERVICE_CHECK']
