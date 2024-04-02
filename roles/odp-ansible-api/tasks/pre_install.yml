@@ -92,3 +92,13 @@
   file:
     path: /etc/hive-webhcat/conf.dist
     state: directory
+
+- name: install Hue python3 dependencies [RHEL8]
+  package:
+    name: ['python38-devel','python38-libs','python38-setuptools','python38-pip', 'python38-pip-wheel', 'python38-psycopg2']
+  when: all['HUE_SERVER'] is defined and inventory_hostname in all['HUE_SERVER'] and ( (ansible_distribution == "CentOS" or ansible_distribution == "Rocky" or ansible_distribution == "RedHat" or ansible_distribution == "AlmaLinux" or ansible_distribution == "RedHat") and ansible_distribution_major_version == '8')
+
+- name: install Hue python3 dependencies [RHEL9]
+  package:
+    name: ['python3.11-devel','python3.11-libs','python3.11-setuptools','python3.11-pip', 'python3.11-pip-wheel', 'python3.11-psycopg2']
+  when: all['HUE_SERVER'] is defined and inventory_hostname in all['HUE_SERVER'] and ( (ansible_distribution == "CentOS" or ansible_distribution == "Rocky" or ansible_distribution == "RedHat" or ansible_distribution == "AlmaLinux" or ansible_distribution == "RedHat") and ansible_distribution_major_version == '9')
