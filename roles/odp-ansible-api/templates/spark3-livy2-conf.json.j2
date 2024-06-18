@@ -7,13 +7,13 @@
         "livy.environment" : "production",
         "livy.impersonation.enabled" : "true",
         "livy.repl.enableHiveContext" : "true",
-        "livy.server.csrf_protection.enabled" : "true",
+        "livy.server.csrf-protection.enabled" : "true",
         "livy.server.port" : "8998",
         "livy.server.recovery.mode" : "recovery",
         "livy.server.recovery.state-store" : "filesystem",
         "livy.server.recovery.state-store.url" : "/livy2-recovery",
         "livy.server.session.timeout" : "3600000",
-        "livy.spark.master" : "yarn-cluster" {% endraw %}
+        "livy.spark.master" : "yarn" {% endraw %}
       }
     }
   }

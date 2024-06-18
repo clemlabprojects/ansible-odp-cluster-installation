@@ -1,0 +1,19 @@
+# Note FreeIPA Client should be already installed and configured on the host
+- name: Wait FreeIPA Server Available
+  shell: echo '{{openkrb_admin_principal_password}}' | kinit '{{openkrb_admin_principal}}'
+  register: wait_master
+  until: wait_master.rc == 0
+  retries: "360"
+  delay: 10
+
+- name: Check Ambari Admin Prinicipal Exist
+  shell: echo '{{openkrb_hdpadm_admin_password}}' | kinit '{{openkrb_hdpadm_admin_user}}'
+  register: principal_exist
+  ignore_errors: True
+
+- name: Create Kerberos Principal on MIT KDC
+  shell: >
+    echo -n '{{openkrb_admin_principal_password}}' | kadmin -q "addprinc -pw {{openkrb_hdpadm_admin_password}} {{openkrb_hdpadm_admin_user}}"
+  when: principal_exist.rc != 0
+  ## Create a new principal to be used for ambari kerberos administration
+

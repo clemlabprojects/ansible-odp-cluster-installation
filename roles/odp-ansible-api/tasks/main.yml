@@ -38,6 +38,9 @@
 - import_tasks: create_freeipa_ambari_admin.yml
   when: cluster_services.KERBEROS is defined and kdc_type == 'ipa' and ipa_do_creation
 
+- import_tasks: create_mitkdc_ambari_admin.yml
+  when: cluster_services.KERBEROS is defined and kdc_type == 'mit-kdc' and ipa_do_creation
+
 - import_tasks: enable_kerberos.yml
   when: cluster_services.KERBEROS is defined and inventory_hostname == ambari_server_hostname
 

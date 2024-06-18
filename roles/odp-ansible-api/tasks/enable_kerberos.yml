@@ -291,7 +291,7 @@
 
 - name: Wait for KERBEROS to be fully installed on the cluster
   uri:
-   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/requests/{{ add_kerberos_client_configuration.json.Requests.id }}"
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/requests/{{ (add_kerberos_client_configuration.content|from_json).Requests.id }}"
    method: GET
    force_basic_auth: yes
    user: "{{ ambari_username }}"
