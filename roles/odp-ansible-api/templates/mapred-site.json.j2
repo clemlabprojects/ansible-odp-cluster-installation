@@ -3,7 +3,7 @@
   "mapreduce.jobhistory.http.policy" : "HTTPS_ONLY",
   "mapreduce.ssl.enabled" : "true",
   "mapreduce.shuffle.ssl.enabled" : "false",
-  "mapreduce.jobhistory.webapp.https.address" : "https://{{ all['HISTORYSERVER'][0] }}:19889",
+  "mapreduce.jobhistory.webapp.https.address" : "{{ all['HISTORYSERVER'][0] }}:19889",
   {% else %}
   "mapreduce.jobhistory.http.policy" : "HTTP_ONLY",
   {% endif %}
