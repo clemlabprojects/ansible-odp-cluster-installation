@@ -27,6 +27,7 @@ ipa_ambari_principal: hadoopadmin
 ipa_ambari_firstname: Hadoop
 ipa_ambari_lastname: Admin
 ipa_ambari_role: hadoopadminrole
+kerberos_lookup_realm_dns: True
 kafka_log_dirs: 
   - /kafka/log-dirs
 ipa_do_creation: False
@@ -59,10 +60,10 @@ services:
             client: ['HDFS_CLIENT']
       - name: ODP
         version: 1.2
-        conf: ['core-site', 'hdfs-site', 'hadoop-env', 'hdfs-log4j', 'ssl-client', 'ssl-server', 'hadoop-policy', 'viewfs-mount-table']
+        conf: ['core-site', 'hdfs-site', 'hadoop-env', 'hdfs-log4j', 'ssl-client', 'ssl-server', 'hadoop-policy', 'viewfs-mount-table', 'httpfs-site', 'httpfs-env']
         components:
-          - noha: ['NAMENODE', 'SECONDARY_NAMENODE', 'DATANODE']
-            ha: ['NAMENODE', 'ZKFC', 'DATANODE', 'JOURNALNODE']
+          - noha: ['NAMENODE', 'SECONDARY_NAMENODE', 'DATANODE', 'HTTPFS_GATEWAY']
+            ha: ['NAMENODE', 'ZKFC', 'DATANODE', 'JOURNALNODE', 'HTTPFS_GATEWAY']
             client: ['HDFS_CLIENT']
       - name: HDP
         version: 2.5
@@ -399,8 +400,8 @@ services:
         version: 1.2
         conf: ['hbase-site', 'hbase-env', 'hbase-policy', 'hbase-log4j', 'hbase-logsearch-conf']
         components:
-          - noha: ['HBASE_MASTER', 'HBASE_REGIONSERVER']
-            ha: ['HBASE_MASTER', 'HBASE_REGIONSERVER']
+          - noha: ['HBASE_MASTER', 'HBASE_REGIONSERVER','HBASE_THRIFTSERVER']
+            ha: ['HBASE_MASTER', 'HBASE_REGIONSERVER','HBASE_THRIFTSERVER']
             client: ['HBASE_CLIENT']
       - name: HDP
         version: 2.5
@@ -483,6 +484,30 @@ services:
             ha: ['HIVE_SERVER', 'HIVE_METASTORE']
             client: ['HIVE_CLIENT']
         packages: ['hive_{{ build_stack_version }}', 'hive_{{ build_stack_version }}-hcatalog']
+  - name: FLINK
+    smoketest: ['FLINK_SERVICE_CHECK']
+    stacks:
+      - name: ODP
+        version: 1.0
+        conf: ['flink-conf', 'flink-env', 'flink-log4j-console', 'flink-log4j-console.properties', 'flink-log4j-historyserver', 'flink-log4j', 'flink-logback-rest']
+        components:
+          - noha: ['FLINK_JOBHISTORYSERVER']
+            ha: []
+            client: ['FLINK_CLIENT']
+      - name: ODP
+        version: 1.1
+        conf: ['flink-conf', 'flink-env', 'flink-log4j-console', 'flink-log4j-console.properties', 'flink-log4j-historyserver', 'flink-log4j', 'flink-logback-rest']
+        components:
+          - noha: ['FLINK_JOBHISTORYSERVER']
+            ha: []
+            client: ['FLINK_CLIENT']
+      - name: ODP
+        version: 1.2
+        conf: ['flink-conf', 'flink-env', 'flink-log4j-console', 'flink-log4j-console.properties', 'flink-log4j-historyserver', 'flink-log4j', 'flink-logback-rest']
+        components:
+          - noha: ['FLINK_JOBHISTORYSERVER']
+            ha: []
+            client: ['FLINK_CLIENT']
   - name: HUE
     smoketest: ['HUE_SERVICE_CHECK']
     stacks:
@@ -1045,7 +1070,7 @@ services:
             client: ['']
       - name: ODP
         version: 1.2
-        conf: ['topology','admin-topology','gateway-log4j','gateway-site', 'knox-env', 'knoxsso-topology', 'ldap-log4j', 'users-ldif']
+        conf: ['topology','admin-topology','gateway-log4j', 'gateway-log4j2', 'gateway-site', 'knox-env', 'knoxsso-topology', 'ldap-log4j', 'users-ldif']
         components:
           - noha: ['KNOX_GATEWAY']
             ha: ['KNOX_GATEWAY']

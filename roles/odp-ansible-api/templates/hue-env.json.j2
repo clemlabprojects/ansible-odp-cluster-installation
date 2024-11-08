@@ -9,7 +9,11 @@
           "db_root_user": "root",
           "hue_admin_password": "{{hue_admin_user_password}}",
           "hue_admin_username": "admin",
-          "hue_database": "{{ database_type | upper}}",
+          {% if database_type == 'postgresql' %}
+            "hue_database": "POSTGRES",
+          {% else %}
+            "hue_database": "{{ database_type | upper}}",
+          {% endif %}
           "hue_group": "hue",
           "hue_log_dir": "/var/log/hue",
           "hue_pid_dir": "/var/run/hue",

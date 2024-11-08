@@ -1,0 +1,77 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "flink-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "execution.checkpointing.externalized-checkpoint-retention": "DELETE_ON_CANCELLATION",
+        "execution.checkpointing.interval": "3min",
+        "execution.checkpointing.max-concurrent-checkpoints": "1",
+        "execution.checkpointing.min-pause": "0",
+        "execution.checkpointing.mode": "EXACTLY_ONCE",
+        "execution.checkpointing.timeout": "10min",
+        {% if cluster_services.HDFS.HA is defined and cluster_services.HDFS.HA %}"fs.default-scheme" : "hdfs://{{ cluster_name }}/apps/odp/flink/completed-jobs/",{% else %}"fs.default-scheme" :  "{{all['NAMENODE'][0]}}",{% endif %}
+        "high-availability": "zookeeper",
+        "high-availability.storageDir": "/apps/odp/flink/ha",
+        "high-availability.zookeeper.client.acl": "creator",
+        "high-availability.zookeeper.quorum": "{% for host in zookeeper_quorum %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}",
+        {% if cluster_services.HDFS.HA is defined and cluster_services.HDFS.HA %}"historyserver.archive.fs.dir" : "hdfs://{{ cluster_name }}/apps/odp/flink/completed-jobs/",{% else %}"historyserver.archive.fs.dir" :  "/apps/odp/flink/completed-jobs/",{% endif %}
+        "historyserver.archive.fs.refresh-interval": "10000",
+        "historyserver.web.address": "0.0.0.0",
+        "historyserver.web.port": "8082",
+        "io.tmp.dirs": "/tmp",
+        {% if cluster_services.HDFS.HA is defined and cluster_services.HDFS.HA %}"jobmanager.archive.fs.dir" : "hdfs://{{ cluster_name }}/apps/odp/flink/completed-jobs/",{% else %}"jobmanager.archive.fs.dir" :  "/apps/odp/flink/completed-jobs/",{% endif %}
+        "jobmanager.memory.process.size": "1024m",
+        "parallelism.default": "1",
+        "rest.address": "0.0.0.0",
+        "rest.bind-address": "0.0.0.0",
+        "rest.bind-port": "8080-8090",
+        "rest.port": "8081",
+        {% if cluster_services.FLINK.SSL is defined and cluster_services.FLINK.SSL %}
+				"security.ssl.historyserver.enabled": "true"
+        "security.ssl.historyserver.key-password": "{{ssl_keystore_password}}",
+        "security.ssl.historyserver.keystore": ""{{ssl_keystore_path}}",
+        "security.ssl.historyserver.keystore-password": "{{ssl_keystore_password}}",
+        "security.ssl.historyserver.truststore": "{{ssl_truststore_path}}",
+        "security.ssl.historyserver.truststore-password": "{{ssl_truststore_password}}",
+        "security.ssl.rest.enabled": "true",
+        "security.ssl.rest.key-password": "{{ssl_keystore_password}}",
+        "security.ssl.rest.keystore": ""{{ssl_keystore_path}}",
+        "security.ssl.rest.keystore-password": "{{ssl_keystore_password}}",
+        "security.ssl.rest.truststore": "{{ssl_truststore_path}}",
+        "security.ssl.rest.truststore-password": "{{ssl_truststore_password}}",
+				"atlas.rest.address": "https://{{all['ATLAS_SERVER'][0]}}:21443",
+				"cert.stores.credential.provider.path": "jceks://file/etc/atlas/conf/credential.jceks",
+				"keystore.file": "{{ssl_keystore_path}}",
+				"keystore.password": "{{ssl_keystore_password}}",
+				"truststore.file": "{{ssl_truststore_path}}",
+				"truststore.password": "{{ssl_truststore_password}}",
+				"client.auth.enabled": "false",
+				{% else %}
+				"security.ssl.historyserver.enabled": "false"
+        "security.ssl.historyserver.key-password": "",
+        "security.ssl.historyserver.keystore": "/etc/security/serverKeys/flink-historyserver-keystore.jks",
+        "security.ssl.historyserver.keystore-password": "",
+        "security.ssl.historyserver.truststore": "/etc/security/serverKeys/flink-historyserver-truststore.jks",
+        "security.ssl.historyserver.truststore-password": "",
+        "security.ssl.rest.enabled": "false",
+        "security.ssl.rest.key-password": "",
+        "security.ssl.rest.keystore": "/etc/security/serverKeys/flink-rest-keystore.jks",
+        "security.ssl.rest.keystore-password": "",
+        "security.ssl.rest.truststore": "/etc/security/serverKeys/flink-rest-truststore.jks",
+        "security.ssl.rest.truststore-password": "",
+				{% endif %}
+        "state.backend": "filesystem",
+        "state.backend.incremental": "false",
+        "state.checkpoints.dir": "/apps/odp/flink/flink-checkpoints",
+        "state.savepoints.dir": "/apps/odp/flink/flink-checkpoints",
+        "taskmanager.memory.process.size": "1024m",
+        "taskmanager.numberOfTaskSlots": "1",
+        "web.cancel.enable": "false",
+        "web.submit.enable": "false",
+        "zookeeper.sasl.login-context-name": "Client",
+        "zookeeper.sasl.service-name": "zookeeper"
+      }
+    }
+  }
+}

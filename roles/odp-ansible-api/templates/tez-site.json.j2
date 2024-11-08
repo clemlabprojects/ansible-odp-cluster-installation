@@ -21,7 +21,7 @@
         "tez.am.java.opts" : "-Xmx1024m",
         "tez.am.launch.cluster-default.cmd-opts" : "-server -Djava.net.preferIPv4Stack=true {% if ambari_stack_name|lower == "odp" %}-Dodp.version=${odp.version}{% else %}-Dhdp.version=${hdp.version}{% endif %}",
         {% raw %}
-        "tez.am.launch.cmd-opts" : "-XX:+PrintGCDetails -verbose:gc -XX:+PrintGCTimeStamps -XX:+UseNUMA -XX:+UseParallelGC{{heap_dump_opts}}",{% endraw %}
+        "tez.am.launch.cmd-opts" : "-XX:+PrintGCDetails -verbose:gc -XX:+PrintGCTimeStamps -XX:+UseNUMA -XX:+UseG1GC{{heap_dump_opts}}",{% endraw %}
         "tez.am.launch.env" : "LD_LIBRARY_PATH={% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/hadoop/lib/native:{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}{% raw %}/hadoop/lib/native/Linux-{{architecture}}-64:./tezlib/lib/native:./tezlib/lib/native/Linux-{{architecture}}-64",
         "tez.am.log.level" : "INFO",
         "tez.am.max.app.attempts" : "2",
@@ -60,7 +60,7 @@
         "tez.task.generate.counters.per.io" : "true",
         "tez.task.get-task.sleep.interval-ms.max" : "200",
         "tez.task.launch.cluster-default.cmd-opts" : "-server -Djava.net.preferIPv4Stack=true {% if ambari_stack_name|lower == "odp" %}-Dodp.version=${odp.version}{% else %}-Dhdp.version=${hdp.version}{% endif %}",{% raw %}
-        "tez.task.launch.cmd-opts" : "-XX:+PrintGCDetails -verbose:gc -XX:+PrintGCTimeStamps -XX:+UseNUMA -XX:+UseParallelGC{{heap_dump_opts}}",{% endraw %}
+        "tez.task.launch.cmd-opts" : "-XX:+PrintGCDetails -verbose:gc -XX:+PrintGCTimeStamps -XX:+UseNUMA -XX:+UseG1GC{{heap_dump_opts}}",{% endraw %}
         "tez.task.launch.env" : "LD_LIBRARY_PATH={% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/hadoop/lib/native:{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}{% raw %}/hadoop/lib/native/Linux-{{architecture}}-64:./tezlib/lib/native:./tezlib/lib/native/Linux-{{architecture}}-64",
         "tez.task.max-events-per-heartbeat" : "500",
         "tez.task.resource.memory.mb" : "1024",

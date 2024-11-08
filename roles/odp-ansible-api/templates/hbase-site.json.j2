@@ -13,6 +13,12 @@
 				"hbase.coprocessor.regionserver.classes": "",
 				"hbase.coprocessor.region.classes": "org.apache.hadoop.hbase.security.token.TokenProvider,org.apache.hadoop.hbase.security.access.SecureBulkLoadEndpoint",
 				{% endif %}
+				"hbase.thrift.minWorkerThreads" : "200",
+				"hbase.thrift.info.port" : "9095",
+				"hbase.thrift.support.proxyuser" : "true",
+				"hbase.thrift.info.bindAddress" : "0.0.0.0",
+				"hbase.thrift.security.qop": "auth-conf",
+				"hbase.regionserver.thrift.framed" : "false",
 				{% if cluster_services.PHOENIX is defined %}
 				"phoenix.query.timeoutMs" : "60000",
 				"phoenix.schema.mapSystemTablesToNamespace" : "true",
@@ -27,9 +33,21 @@
 				{% endif %}
 				{% if cluster_services.HBASE.SSL is defined %}
 				"hbase.ssl.enabled" : "true",
+				"hbase.thrift.ssl.enabled" : "true",
+				"hbase.thrift.ssl.keystore.store" : "{{ ssl_keystore_path | default('NONE')  }}",
+				"hbase.thrift.ssl.keystore.password" : "{{ ssl_keystore_password | default('NONE')  }}",
+				"hbase.thrift.ssl.keystore.keypassword" : "{{ ssl_keystore_password | default('NONE')  }}",
+				"hbase.thrift.ssl.keystore.type" : "jks",
 				{% else %}
 				"hbase.ssl.enabled" : "false",
+				"hbase.thrift.ssl.enabled" : "false",
 				{% endif %}
+				{% if cluster_services.HUE is defined %}
+				"hbase.regionserver.thrift.http" : "true",
+				{% else %}
+				"hbase.regionserver.thrift.http": "false",
+				{% endif %}
+				"hadoop.security.credential.provider.path": "localjceks://file//etc/hbase/conf/creds.localjceks",
 				"hbase.hregion.majorcompaction" : "604800000",
 				"hbase.hstore.compactionThreshold" : "3",
 				"hbase.security.authentication" : "simple",

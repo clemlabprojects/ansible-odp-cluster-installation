@@ -4,9 +4,9 @@
 #   import_tasks: check_variables.yml
 
 # Deploy HDP repository
-- name: Deploy HDP repository
-  # strategy: free
-  import_tasks: deploy_repos.yml
+# - name: Deploy HDP repository
+#   # strategy: free
+#   import_tasks: deploy_repos.yml
 
 # Actions beforce installing
 - name: Actions beforce installing

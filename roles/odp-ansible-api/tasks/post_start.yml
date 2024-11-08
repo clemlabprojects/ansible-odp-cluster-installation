@@ -57,7 +57,7 @@
     user: "{{ ambari_username }}"
     password: "{{ ambari_password }}"
     headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
-    body: '{"RequestInfo":{"command":"RESTART","context":"Restart all required services API","operation_level":"host_component"},"Requests/resource_filters":[{"hosts_predicate":"HostRoles/stale_configs=true&HostRoles/cluster_name={{ cluster_name }}"}]}'
+    body: '{"RequestInfo":{"command":"RESTART","context":"Restart All Services API","operation_level":"host_component"},"Requests/resource_filters":[{"hosts_predicate":"HostRoles/stale_configs=false&HostRoles/cluster_name={{ cluster_name }}"}]}'
     body_format: json
     validate_certs: no
     status_code: 200,201,202

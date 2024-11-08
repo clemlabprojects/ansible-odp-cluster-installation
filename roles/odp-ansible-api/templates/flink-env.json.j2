@@ -1,0 +1,19 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "flink-env",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { 
+        "flink_daemon_memory": "2048",
+        "flink_group": "flink",
+        "flink_historyserver_log4j_file_name": "flink-historyserver.log",
+        "flink_log4j_size": "250",
+        "flink_log_dir": "/var/log/flink",
+        "flink_memory_daemon": "2048",
+        "flink_pid_dir": "/var/run/flink",
+        "flink_root_logger": "INFO",
+        "flink_user": "flink"
+			}
+		}
+	}
+}

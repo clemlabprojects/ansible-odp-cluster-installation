@@ -26,7 +26,8 @@
             "nfsgateway_heapsize" : "1024",{% endraw %}
             "dfs_ha_initial_namenode_active": "{{ all['NAMENODE'][0] }}",
             "dfs_ha_initial_namenode_standby": "{{ all['NAMENODE'][1] }}",
-            "proxyuser_group" : "users"
+            "proxyuser_group" : "users",
+            "httpfs_user" : "httpfs"
           }
       }
   }

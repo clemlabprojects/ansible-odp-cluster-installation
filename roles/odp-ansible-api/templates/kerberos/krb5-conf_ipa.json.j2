@@ -8,7 +8,7 @@
           "domains":"",
           "manage_krb5_conf": "{{ ambari_manage_krb5_conf | default('true') | lower }}",
           "conf_dir":"/etc",
-          "content" : "{{'\n[libdefaults]\n   renew_lifetime = 7d\n   rdns = false\n   forwardable = true\n   default_realm = {{realm}}\n   ticket_lifetime = 24h\n   dns_lookup_realm = true\n   dns_lookup_kdc = true\n   udp_preference_limit = 0\n   default_ccache_name = FILE:/tmp/krb5cc_%{uid}\n   default_tgs_enctypes = aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96\n   default_tkt_enctypes = aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96\n    
+          "content" : "{{'\n[libdefaults]\n   renew_lifetime = 7d\n   rdns = false\n   forwardable = true\n   default_realm = {{realm}}\n   ticket_lifetime = 24h\n   dns_lookup_realm = {% if kerberos_lookup_realm_dns %} true {% else %} false {% endif %}\n   dns_lookup_kdc = {% if kerberos_lookup_realm_dns %} true {% else %} false {% endif %}\n   udp_preference_limit = 0\n   default_ccache_name = FILE:/tmp/krb5cc_%{uid}\n   default_tgs_enctypes = aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96\n   default_tkt_enctypes = aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96\n    
 {% if domains %}
 [domain_realm]
 {%- for domain in domains.split(\',\') %}
@@ -23,6 +23,7 @@
   {{realm}} = {
 {%- if master_kdc %}
     master_kdc = {{master_kdc|trim()}}
+    kdc = {{master_kdc|trim()}}
 {%- endif -%}
 {%- if kdc_hosts|int > 0 -%}
 {%- set kdc_host_list = kdc_hosts.split(\',\')  -%}

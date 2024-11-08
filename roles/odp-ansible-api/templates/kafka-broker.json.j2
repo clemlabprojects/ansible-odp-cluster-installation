@@ -21,7 +21,7 @@
         "kafka.ganglia.metrics.host" : "localhost",
         "kafka.ganglia.metrics.port" : "8671",
         "kafka.ganglia.metrics.reporter.enabled" : "true",{% endraw %}
-        "kafka.metrics.reporters" : "{% if cluster_services.AMBARI_METRICS is defined %}org.apache.hadoop.metrics2.sink.kafka.KafkaTimelineMetricsReporter{% endif %}",{% raw %}
+        "kafka.metrics.reporters" : "",{% raw %}
         "kafka.timeline.metrics.hosts" : "{{ams_collector_hosts}}",
         "kafka.timeline.metrics.maxRowCacheSize" : "10000",
         "kafka.timeline.metrics.port" : "{{metric_collector_port}}",

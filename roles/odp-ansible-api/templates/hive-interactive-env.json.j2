@@ -12,7 +12,7 @@
         "llap_extra_slider_opts" : "",
         "llap_headroom_space" : "12288",
         "llap_heap_size" : "0",
-        "llap_java_opts" : "-XX:+AlwaysPreTouch {% if java_version > 7 %}-Xss512k -XX:+UseG1GC -XX:TLABSize=8m -XX:+ResizeTLAB -XX:+UseNUMA -XX:+AggressiveOpts -XX:InitiatingHeapOccupancyPercent=40 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=200{% else %}-XX:+PrintGCDetails -verbose:gc -XX:+PrintGCTimeStamps -XX:+UseNUMA -XX:+UseParallelGC{% endif %}{{heap_dump_opts}}",
+        "llap_java_opts" : "-XX:+AlwaysPreTouch {% if java_version > 7 %}-Xss512k -XX:+UseG1GC -XX:TLABSize=8m -XX:+ResizeTLAB -XX:+UseNUMA -XX:+AggressiveOpts -XX:InitiatingHeapOccupancyPercent=40 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=200{% else %}-XX:+PrintGCDetails -verbose:gc -XX:+PrintGCTimeStamps -XX:+UseNUMA -XX:+UseG1GC{% endif %}{{heap_dump_opts}}",
         "llap_log_level" : "INFO",
         "num_llap_nodes" : "1",
         "num_llap_nodes_for_llap_daemons" : "1",

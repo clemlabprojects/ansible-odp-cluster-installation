@@ -1,0 +1,16 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "httpfs-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { 
+                "httpfs.authentication.kerberos.name.rules":"DEFAULT",
+				{% if cluster_services.HDFS.SSL is defined and cluster_services.HDFS.SSL %}
+				"httpfs.ssl.enabled" : "true"
+				{% else %}
+				"httpfs.ssl.enabled" : "false"
+				{% endif %}
+      }
+    }
+  }
+}

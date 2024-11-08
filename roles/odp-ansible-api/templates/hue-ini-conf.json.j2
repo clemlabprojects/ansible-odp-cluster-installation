@@ -40,8 +40,11 @@
           "hue_ssl_cert_chain": "{{security_ssl_cacert_path}}",
           "hue_ssl_certificate": "{{security_ssl_cert_folder}}/{{all['HUE_SERVER'][0]}}.cert.pem ",
           "hue_ssl_private_key": "{{security_ssl_cert_folder}}/{{all['HUE_SERVER'][0]}}.key.pem ",
+          "hue_ssl_enabled": "true",
+          "hue_ssl_validate": "false",
+          {% else %}
+          "hue_ssl_enabled": "false",
           {% endif %}
-          "hue_ssl_validate": "true",
           "hue_test_ldap_group": "users",
           "hue_time_zone": "America/Los_Angeles",
           "hue_use_x_forwarded_host": "true",

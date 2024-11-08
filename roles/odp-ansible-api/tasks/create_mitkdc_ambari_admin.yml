@@ -1,5 +1,5 @@
 # Note FreeIPA Client should be already installed and configured on the host
-- name: Wait FreeIPA Server Available
+- name: Wait Kerberos Server Available
   shell: echo '{{openkrb_admin_principal_password}}' | kinit '{{openkrb_admin_principal}}'
   register: wait_master
   until: wait_master.rc == 0

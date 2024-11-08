@@ -289,7 +289,7 @@
 - debug:
     var: add_kerberos_client_configuration
 
-- name: Wait for KERBEROS to be fully installed on the cluster
+- name: Wait for KERBEROS to be fully installed on the cluster (MIT-KDC)
   uri:
    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/requests/{{ (add_kerberos_client_configuration.content|from_json).Requests.id }}"
    method: GET
@@ -341,6 +341,10 @@
   register: add_kerberos_client_configuration_ipa
   failed_when: add_kerberos_client_configuration_ipa.status == '500' or add_kerberos_client_configuration_ipa.status == '404'
 
+- name: debug
+  debug:
+    var: add_kerberos_client_configuration_ipa
+
 - name: Add KERBEROS_CLIENT configuration (IPA)
   uri:
    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}"
@@ -357,9 +361,17 @@
   register: add_kerberos_client_configuration_ipa_req
   failed_when: add_kerberos_client_configuration_ipa_req.status == '500' or add_kerberos_client_configuration_ipa_req.status == '404'
 
+- name: debug
+  debug:
+    var: add_kerberos_client_configuration_ipa_req
+
+- name: debug
+  debug:
+    var: kdc_type
+
 - name: Wait for KERBEROS to be fully installed on the cluster (IPA)
   uri:
-   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/requests/{{ add_kerberos_client_configuration_ipa.json.Requests.id }}"
+   url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/requests/{{ add_kerberos_client_configuration_ipa.content | from_json | json_query('Requests.id') }}"
    method: GET
    force_basic_auth: yes
    user: "{{ ambari_username }}"
@@ -375,7 +387,7 @@
        (cluster_check_kerberos_install_ipa.content|from_json).Requests.request_status == 'ABORTED')
   retries: "{{ wait_timeout // 10 }}"
   delay: 30
-  when: kdc_type == 'ipa' and wait and add_kerberos_client_configuration_ipa_req is defined and (add_kerberos_client_configuration_ipa_req.content) != ""
+  when: kdc_type == 'ipa' and wait and add_kerberos_client_configuration_ipa is defined and (add_kerberos_client_configuration_ipa.content) != ""
 
 # - name: Regenerate keytabs
 #   uri:

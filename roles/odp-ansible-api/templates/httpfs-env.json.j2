@@ -1,0 +1,18 @@
+{
+  "Clusters":
+  {
+    "desired_configs":
+      {
+        "type":"httpfs-env",
+        "tag":"{{ range(00000000, 99999999) | random }}",
+        "properties":
+          {
+            "content" : {{ httpfsenvcontent | to_json }},{% raw %}
+            "httpfs_http_port" : "14000",
+            "httpfs_max_threads" : "1000",
+            "httpfs_max_header_size" : "65536",
+            "httpfs_max_request_size" : "104857600" {% endraw %}
+          }
+      }
+  }
+}
