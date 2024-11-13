@@ -97,7 +97,9 @@
           {% else %}
             "listeners" : "PLAINTEXT://localhost:6667"
           {% endif %}
-				{% endif %}
+				{% endif %},
+        "transaction.state.log.min.isr" : "2",
+        "transaction.state.log.replication.factor" : "3"
       }
     }
   }
