@@ -46,3 +46,4 @@ Vagrant:
 - Network Resolution
 - Certificates in keystore/truststore jks if you want to enable SSL
 
+Retaken from initial role https://github.com/yyounes75/hdp-ansible-api/
