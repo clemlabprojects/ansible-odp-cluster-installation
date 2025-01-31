@@ -51,6 +51,7 @@
         "phoenix.query.timeoutMs" : "300000",
         "phoenix.sequence.saltBuckets" : "2",
         "phoenix.spool.directory" : "${hbase.tmp.dir}/phoenix-spool",
+        "phoenix.mutate.maxSizeBytes" : "267386880",
         "zookeeper.session.timeout" : "120000",
         "zookeeper.session.timeout.localHBaseCluster" : "120000",{% endraw %}
         {% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3.0 %}

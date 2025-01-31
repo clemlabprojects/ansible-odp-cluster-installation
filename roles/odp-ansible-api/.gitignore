@@ -7,3 +7,5 @@ molecule.bck
 venv
 .yamllint
 files
+files/*.deb
+files/*.rpm

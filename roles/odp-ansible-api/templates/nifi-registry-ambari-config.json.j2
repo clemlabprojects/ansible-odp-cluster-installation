@@ -5,7 +5,7 @@
 			"tag": "{{ range(00000000, 99999999) | random }}",
 			"properties": { {% raw %}
         "nifi.registry.config.dir" : "{nifi_registry_install_dir}/conf",
-        "nifi.registry.database.dir" : "{nifi_registry_internal_dir}/database",
+        "nifi.registry.database.dir" : "/var/lib/nifi-registry/database",
         "nifi.registry.initial_mem" : "512m",
         "nifi.registry.internal.config.dir" : "{nifi_registry_internal_dir}/conf",
         "nifi.registry.internal.dir" : "/var/lib/nifi-registry",
