@@ -72,9 +72,14 @@
 #####################################################
 
 - name: Restart service "Ambari Agent"
-  command: ambari-agent restart
+  systemd:
+    name: ambari-agent
+    state: restarted
+
 
 - name: Restart service "Ambari Server"
-  command: ambari-server restart
+  systemd:
+    name: ambari-server
+    state: restarted
   when: inventory_hostname == ambari_server_hostname
 #####################################################

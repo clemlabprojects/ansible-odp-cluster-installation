@@ -65,6 +65,13 @@ services:
           - noha: ['NAMENODE', 'SECONDARY_NAMENODE', 'DATANODE', 'HTTPFS_GATEWAY']
             ha: ['NAMENODE', 'ZKFC', 'DATANODE', 'JOURNALNODE', 'HTTPFS_GATEWAY']
             client: ['HDFS_CLIENT']
+      - name: ODP
+        version: 1.3
+        conf: ['core-site', 'hdfs-site', 'hadoop-env', 'hdfs-log4j', 'ssl-client', 'ssl-server', 'hadoop-policy', 'viewfs-mount-table', 'httpfs-site', 'httpfs-env']
+        components:
+          - noha: ['NAMENODE', 'SECONDARY_NAMENODE', 'DATANODE', 'HTTPFS_GATEWAY']
+            ha: ['NAMENODE', 'ZKFC', 'DATANODE', 'JOURNALNODE', 'HTTPFS_GATEWAY']
+            client: ['HDFS_CLIENT']
       - name: HDP
         version: 2.5
         conf: ['core-site', 'hdfs-site', 'hadoop-env', 'hdfs-log4j', 'ssl-client', 'ssl-server', 'hadoop-policy', 'hdfs-logsearch-conf']
@@ -113,6 +120,12 @@ services:
             client: ['YARN_CLIENT']
       - name: ODP
         version: 1.2
+        conf: ['yarn-site', 'yarn-env', '{{capacity_scheduler_file}}', 'ssl-client', 'ssl-server', 'yarn-log4j', 'yarn-hbase-env', 'yarn-hbase-log4j', 'yarn-hbase-site', 'yarn-hbase-policy', 'resource-types', 'container-executor']
+        components:
+          - noha: ['RESOURCEMANAGER', 'NODEMANAGER', 'APP_TIMELINE_SERVER', 'TIMELINE_READER', 'YARN_REGISTRY_DNS']
+            ha: ['RESOURCEMANAGER', 'NODEMANAGER', 'APP_TIMELINE_SERVER', 'TIMELINE_READER', 'YARN_REGISTRY_DNS']
+      - name: ODP
+        version: 1.3
         conf: ['yarn-site', 'yarn-env', '{{capacity_scheduler_file}}', 'ssl-client', 'ssl-server', 'yarn-log4j', 'yarn-hbase-env', 'yarn-hbase-log4j', 'yarn-hbase-site', 'yarn-hbase-policy', 'resource-types', 'container-executor']
         components:
           - noha: ['RESOURCEMANAGER', 'NODEMANAGER', 'APP_TIMELINE_SERVER', 'TIMELINE_READER', 'YARN_REGISTRY_DNS']
@@ -166,6 +179,13 @@ services:
             client: ['MAPREDUCE2_CLIENT']
       - name: ODP
         version: 1.2
+        conf: ['mapred-site', 'mapred-env']
+        components:
+          - noha: ['HISTORYSERVER']
+            ha: ['']
+            client: ['MAPREDUCE2_CLIENT']
+      - name: ODP
+        version: 1.3
         conf: ['mapred-site', 'mapred-env']
         components:
           - noha: ['HISTORYSERVER']
@@ -248,6 +268,13 @@ services:
             client: ['TEZ_CLIENT']
       - name: ODP
         version: 1.2
+        conf: ['tez-env', 'tez-site']
+        components:
+          - noha: ['']
+            ha: ['']
+            client: ['TEZ_CLIENT']
+      - name: ODP
+        version: 1.3
         conf: ['tez-env', 'tez-site']
         components:
           - noha: ['']
@@ -350,6 +377,13 @@ services:
           - noha: ['ZOOKEEPER_SERVER']
             ha: ['']
             client: ['ZOOKEEPER_CLIENT']
+      - name: ODP
+        version: 1.3
+        conf: ['zoo.cfg', 'zookeeper-env', 'zookeeper-log4j']
+        components:
+          - noha: ['ZOOKEEPER_SERVER']
+            ha: ['']
+            client: ['ZOOKEEPER_CLIENT']
       - name: HDP
         version: 2.5
         conf: ['zoo.cfg', 'zookeeper-env', 'zookeeper-log4j', 'zookeeper-logsearch-conf']
@@ -403,6 +437,13 @@ services:
           - noha: ['HBASE_MASTER', 'HBASE_REGIONSERVER','HBASE_THRIFTSERVER']
             ha: ['HBASE_MASTER', 'HBASE_REGIONSERVER','HBASE_THRIFTSERVER']
             client: ['HBASE_CLIENT']
+      - name: ODP
+        version: 1.3
+        conf: ['hbase-site', 'hbase-env', 'hbase-policy', 'hbase-log4j', 'hbase-logsearch-conf']
+        components:
+          - noha: ['HBASE_MASTER', 'HBASE_REGIONSERVER','HBASE_THRIFTSERVER', 'HBASE_REST_SERVER']
+            ha: ['HBASE_MASTER', 'HBASE_REGIONSERVER','HBASE_THRIFTSERVER', 'HBASE_REST_SERVER']
+            client: ['HBASE_CLIENT']
       - name: HDP
         version: 2.5
         conf: ['hbase-site', 'hbase-env', 'hbase-policy', 'hbase-log4j', 'hbase-logsearch-conf']
@@ -450,6 +491,13 @@ services:
             client: ['HIVE_CLIENT']
       - name: ODP
         version: 1.2
+        conf: ['hive-site', 'hive-env', 'hivemetastore-site', 'hiveserver2-site', 'beeline-log4j2', 'hive-atlas-application.properties', 'hive-exec-log4j', 'hive-exec-log4j2', 'hive-interactive-env', 'hive-interactive-site', 'hive-log4j2', 'hive-logsearch-conf', 'hiveserver2-interactive-site', 'llap-cli-log4j2', 'llap-daemon-log4j', 'parquet-logging', 'tez-interactive-site']
+        components:
+          - noha: ['HIVE_SERVER', 'HIVE_METASTORE']
+            ha: ['HIVE_SERVER', 'HIVE_METASTORE']
+            client: ['HIVE_CLIENT']
+      - name: ODP
+        version: 1.3
         conf: ['hive-site', 'hive-env', 'hivemetastore-site', 'hiveserver2-site', 'beeline-log4j2', 'hive-atlas-application.properties', 'hive-exec-log4j', 'hive-exec-log4j2', 'hive-interactive-env', 'hive-interactive-site', 'hive-log4j2', 'hive-logsearch-conf', 'hiveserver2-interactive-site', 'llap-cli-log4j2', 'llap-daemon-log4j', 'parquet-logging', 'tez-interactive-site']
         components:
           - noha: ['HIVE_SERVER', 'HIVE_METASTORE']
@@ -508,11 +556,25 @@ services:
           - noha: ['FLINK_JOBHISTORYSERVER']
             ha: []
             client: ['FLINK_CLIENT']
+      - name: ODP
+        version: 1.3
+        conf: ['flink-conf', 'flink-env', 'flink-log4j-console', 'flink-log4j-console.properties', 'flink-log4j-historyserver', 'flink-log4j', 'flink-logback-rest']
+        components:
+          - noha: ['FLINK_JOBHISTORYSERVER']
+            ha: []
+            client: ['FLINK_CLIENT']
   - name: HUE
     smoketest: ['HUE_SERVICE_CHECK']
     stacks:
       - name: ODP
         version: 1.2
+        conf: ['hue-env', 'hue-ini-conf','hue-ini-template']
+        components:
+          - noha: ['HUE_SERVER']
+            ha: []
+            client: ['']
+      - name: ODP
+        version: 1.3
         conf: ['hue-env', 'hue-ini-conf','hue-ini-template']
         components:
           - noha: ['HUE_SERVER']
@@ -570,6 +632,13 @@ services:
           - noha: ['RANGER_ADMIN', 'RANGER_USERSYNC', 'RANGER_TAGSYNC']
             ha: ['']
             client: ['']
+      - name: ODP
+        version: 1.3
+        conf: ['ranger-admin-site', 'ranger-env', 'admin-properties', 'admin-logback','ranger-ugsync-site', 'usersync-logback', 'ranger-solr-configuration', 'ranger-tagsync-site','tagsync-logback']
+        components:
+          - noha: ['RANGER_ADMIN', 'RANGER_USERSYNC', 'RANGER_TAGSYNC']
+            ha: ['']
+            client: ['']
   - name: AMBARI_METRICS
     smoketest: ['AMBARI_METRICS_SERVICE_CHECK']
     stacks:
@@ -617,6 +686,13 @@ services:
             client: ['']
       - name: ODP
         version: 1.2
+        conf: ['ams-hbase-env', 'ams-ssl-server', 'ams-hbase-security-site', 'ams-log4j', 'ams-hbase-site', 'ams-env', 'ams-site', 'ams-hbase-policy', 'ams-grafana-env', 'ams-hbase-log4j', 'ams-ssl-client', 'ams-grafana-ini']
+        components:
+          - noha: ['METRICS_MONITOR', 'METRICS_GRAFANA', 'METRICS_COLLECTOR']
+            ha: ['METRICS_MONITOR', 'METRICS_GRAFANA', 'METRICS_COLLECTOR']
+            client: ['']
+      - name: ODP
+        version: 1.3
         conf: ['ams-hbase-env', 'ams-ssl-server', 'ams-hbase-security-site', 'ams-log4j', 'ams-hbase-site', 'ams-env', 'ams-site', 'ams-hbase-policy', 'ams-grafana-env', 'ams-hbase-log4j', 'ams-ssl-client', 'ams-grafana-ini']
         components:
           - noha: ['METRICS_MONITOR', 'METRICS_GRAFANA', 'METRICS_COLLECTOR']
@@ -677,6 +753,13 @@ services:
           - noha: ['INFRA_SOLR']
             ha: ['INFRA_SOLR']
             client: ['INFRA_SOLR_CLIENT']
+      - name: ODP
+        version: 1.3
+        conf: ['infra-solr-log4j', 'infra-solr-xml', 'infra-solr-security-json', 'infra-solr-client-log4j', 'infra-solr-env']
+        components:
+          - noha: ['INFRA_SOLR']
+            ha: ['INFRA_SOLR']
+            client: ['INFRA_SOLR_CLIENT']
   - name: KAFKA
     smoketest: ['KAFKA_SERVICE_CHECK']
     stacks:
@@ -724,6 +807,13 @@ services:
             client: ['']
       - name: ODP
         version: 1.2
+        conf: ['kafka-broker', 'kafka-env', 'kafka-log4j', 'kafka_client_jaas_conf', 'kafka_jaas_conf']
+        components:
+          - noha: ['KAFKA_BROKER']
+            ha: ['KAFKA_BROKER']
+            client: ['']
+      - name: ODP
+        version: 1.3
         conf: ['kafka-broker', 'kafka-env', 'kafka-log4j', 'kafka_client_jaas_conf', 'kafka_jaas_conf']
         components:
           - noha: ['KAFKA_BROKER']
@@ -805,6 +895,13 @@ services:
           - noha: ['LIVY2_SERVER', 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER']
             ha: ['LIVY2_SERVER', 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER']
             client: ['SPARK2_CLIENT']
+      - name: ODP
+        version: 1.3
+        conf: ['livy2-conf', 'livy2-env', 'livy2-log4j-properties', 'livy2-spark-blacklist', 'spark2-defaults', 'spark2-env', 'spark2-hive-site-override', 'spark2-log4j-properties', 'spark2-metrics-properties', 'spark2-thrift-fairscheduler', 'spark2-thrift-sparkconf']
+        components:
+          - noha: ['LIVY2_SERVER', 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER']
+            ha: ['LIVY2_SERVER', 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER']
+            client: ['SPARK2_CLIENT']
   - name: OOZIE
     smoketest: ['OOZIE_SERVICE_CHECK']
     stacks:
@@ -855,6 +952,14 @@ services:
         packages: ['oozie-client','oozie-server','oozie_{{ build_stack_version }}','falcon_{{ build_stack_version }}']
       - name: ODP
         version: 1.2
+        conf: ['oozie-env', 'oozie-log4j', 'oozie-site']
+        components:
+          - noha: ['OOZIE_SERVER']
+            ha: ['OOZIE_SERVER']
+            client: ['OOZIE_CLIENT']
+        packages: ['oozie-client','oozie-server','oozie_{{ build_stack_version }}','falcon_{{ build_stack_version }}']
+      - name: ODP
+        version: 1.3
         conf: ['oozie-env', 'oozie-log4j', 'oozie-site']
         components:
           - noha: ['OOZIE_SERVER']
@@ -932,6 +1037,13 @@ services:
             client: ['']
       - name: ODP
         version: 1.2
+        conf: ['application-properties', 'atlas-env', 'atlas-solrconfig', 'atlas-solrschema', 'atlas-log4j']
+        components:
+          - noha: ['ATLAS_SERVER']
+            ha: ['']
+            client: ['']
+      - name: ODP
+        version: 1.3
         conf: ['application-properties', 'atlas-env', 'atlas-solrconfig', 'atlas-solrschema', 'atlas-log4j']
         components:
           - noha: ['ATLAS_SERVER']
@@ -1023,6 +1135,14 @@ services:
             ha: ['SQOOP']
             client: ['']
         packages: [sqoop', 'sqoop_{{ build_stack_version }}']
+      - name: ODP
+        version: 1.3
+        conf: ['sqoop-atlas-application.properties', 'sqoop-env', 'sqoop-site']
+        components:
+          - noha: ['SQOOP']
+            ha: ['SQOOP']
+            client: ['']
+        packages: [sqoop', 'sqoop_{{ build_stack_version }}']
   - name: KNOX
     smoketest: ['KNOX_SERVICE_CHECK']
     stacks:
@@ -1070,6 +1190,13 @@ services:
             client: ['']
       - name: ODP
         version: 1.2
+        conf: ['topology','admin-topology','gateway-log4j', 'gateway-log4j2', 'gateway-site', 'knox-env', 'knoxsso-topology', 'ldap-log4j', 'users-ldif']
+        components:
+          - noha: ['KNOX_GATEWAY']
+            ha: ['KNOX_GATEWAY']
+            client: ['']
+      - name: ODP
+        version: 1.3
         conf: ['topology','admin-topology','gateway-log4j', 'gateway-log4j2', 'gateway-site', 'knox-env', 'knoxsso-topology', 'ldap-log4j', 'users-ldif']
         components:
           - noha: ['KNOX_GATEWAY']
@@ -1127,6 +1254,13 @@ services:
           - noha: ['RANGER_KMS_SERVER']
             ha: ['RANGER_KMS_SERVER']
             client: ['']
+      - name: ODP
+        version: 1.3
+        conf: ['dbks-site', 'kms-env', 'kms-log4j', 'kms-properties', 'kms-site', 'ranger-kms-audit' , 'ranger-kms-policymgr-ssl', 'ranger-kms-security', 'ranger-kms-site']
+        components:
+          - noha: ['RANGER_KMS_SERVER']
+            ha: ['RANGER_KMS_SERVER']
+            client: ['']
   - name: ZEPPELIN
     smoketest: ['']
     stacks:
@@ -1179,6 +1313,13 @@ services:
           - noha: ['ZEPPELIN_MASTER']
             ha: ['ZEPPELIN_MASTER']
             client: ['']
+      - name: ODP
+        version: 1.3
+        conf: ['zeppelin-site','zeppelin-env','zeppelin-shiro-ini', 'zeppelin-log4j-properties']
+        components:
+          - noha: ['ZEPPELIN_MASTER']
+            ha: ['ZEPPELIN_MASTER']
+            client: ['']
   - name: DRUID
     smoketest: ['']
     stacks:
@@ -1220,6 +1361,13 @@ services:
           - noha: ['NIFI_MASTER', 'NIFI_CA']
             ha: ['NIFI_MASTER', 'NIFI_CA']
             client: ['']
+      - name: ODP
+        version: 1.3
+        conf: ['nifi-ambari-config', 'nifi-ambari-ssl-config', 'nifi-authorizers-env', 'nifi-bootstrap-env', 'nifi-bootstrap-notification-services-env', 'nifi-env', 'nifi-flow-env', 'nifi-jaas-conf', 'nifi-login-identity-providers-env', 'nifi-node-logback-env', 'nifi-properties', 'nifi-state-management-env']
+        components:
+          - noha: ['NIFI_MASTER', 'NIFI_CA']
+            ha: ['NIFI_MASTER', 'NIFI_CA']
+            client: ['']
   - name: NIFI_REGISTRY
     smoketest: ['']
     stacks:
@@ -1239,6 +1387,13 @@ services:
             client: ['']
       - name: ODP
         version: 1.2
+        conf: ['nifi-registry-ambari-config', 'nifi-registry-ambari-ssl-config', 'nifi-registry-authorizers-env', 'nifi-registry-bootstrap-env', 'nifi-registry-env', 'nifi-registry-identity-providers-env', 'nifi-registry-logback-env', 'nifi-registry-properties', 'nifi-registry-providers-env']
+        components:
+          - noha: ['NIFI_REGISTRY_MASTER']
+            ha: ['NIFI_REGISTRY_MASTER']
+            client: ['']
+      - name: ODP
+        version: 1.3
         conf: ['nifi-registry-ambari-config', 'nifi-registry-ambari-ssl-config', 'nifi-registry-authorizers-env', 'nifi-registry-bootstrap-env', 'nifi-registry-env', 'nifi-registry-identity-providers-env', 'nifi-registry-logback-env', 'nifi-registry-properties', 'nifi-registry-providers-env']
         components:
           - noha: ['NIFI_REGISTRY_MASTER']
