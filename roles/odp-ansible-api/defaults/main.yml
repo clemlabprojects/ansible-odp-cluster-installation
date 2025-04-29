@@ -124,6 +124,7 @@ services:
         components:
           - noha: ['RESOURCEMANAGER', 'NODEMANAGER', 'APP_TIMELINE_SERVER', 'TIMELINE_READER', 'YARN_REGISTRY_DNS']
             ha: ['RESOURCEMANAGER', 'NODEMANAGER', 'APP_TIMELINE_SERVER', 'TIMELINE_READER', 'YARN_REGISTRY_DNS']
+            client: ['YARN_CLIENT']
       - name: ODP
         version: 1.3
         conf: ['yarn-site', 'yarn-env', '{{capacity_scheduler_file}}', 'ssl-client', 'ssl-server', 'yarn-log4j', 'yarn-hbase-env', 'yarn-hbase-log4j', 'yarn-hbase-site', 'yarn-hbase-policy', 'resource-types', 'container-executor']
