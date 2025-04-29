@@ -52,12 +52,12 @@
     return_content: yes
   register: getstackpackages
 
-
 - name: Download VDF repository if vdf_source is a URL
   get_url:
     url: "{{ vdf_source }}"
     dest: /tmp/repo.xml
   when: vdf_source is defined and vdf_source != "" and 'http' in vdf_source
+
 - name: Copy VDF repository
   template: >
    src={{vdf_source}}

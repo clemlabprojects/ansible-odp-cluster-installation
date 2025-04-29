@@ -36,21 +36,6 @@
 #     dest: /etc/yum.repos.d/hdp.repo
 #   when: hdp_repo_path is defined
 
-- name: Ensure software is installed (yum)
-  yum: name="hdp-select" state=present update_cache=yes disable_gpg_check=yes
-  when: ambari_stack_name|lower != 'odp' and ansible_distribution != 'Ubuntu'
-
-- name: Ensure software is installed (yum)
-  yum: name="odp-select" state=present update_cache=yes disable_gpg_check=yes
-  when: ambari_stack_name|lower == 'odp' and ansible_distribution != 'Ubuntu'
-
-- name: Ensure software is installed (apt)
-  package: name="odp-select-{{stack_version_flattened}}" state=present
-  when: ambari_stack_name|lower == 'odp' and ansible_distribution == 'Ubuntu'
-
-- name: Ensure Hadoop Client software is installed (apt)
-  package: name="hadoop-{{stack_version_flattened}}-hdfs" state=present
-  when: ambari_stack_name|lower == 'odp' and ansible_distribution == 'Ubuntu'
 ####################################################
 
 ####### Install HDP dependencies ###############
