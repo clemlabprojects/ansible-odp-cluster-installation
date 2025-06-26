@@ -128,6 +128,30 @@
       when: item.StackConfigurations is defined and item.StackConfigurations.type == "hbase-env.xml"
 
   when: cluster_services.HBASE is defined
+
+- name: Get atlas-env content
+  block:
+    - uri:
+        url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/stacks/{{ ambari_stack_name }}/versions/{{ ambari_stack_version }}/services/ATLAS/configurations/content"
+        method: GET
+        force_basic_auth: yes
+        user: "{{ ambari_username }}"
+        password: "{{ ambari_password }}"
+        headers: '{"X-Requested-By":"ambari", "Content-Type": "application/json"}'
+        body_format: json
+        validate_certs: no
+        status_code: 200,201,202
+        return_content: yes
+      register: getatlasenvcontent
+
+    - set_fact:
+        atlasenvcontent: "{{ item.StackConfigurations.property_value }}"
+      with_items:
+        - "{{ getatlasenvcontent.json }}"
+      when: item.StackConfigurations is defined and item.StackConfigurations.type == "atlas-env.xml"
+
+  when: cluster_services.ATLAS is defined
+
 #################################
 
 ### AMBARI_INFRA_SOLR ###

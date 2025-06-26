@@ -27,7 +27,7 @@
 				"hadoop.http.cross-origin.allowed-methods" : "GET,PUT,POST,OPTIONS,HEAD,DELETE",
 				"hadoop.http.cross-origin.allowed-origins" : "*",
 				"hadoop.http.cross-origin.max-age" : "1800",
-				"hadoop.http.filter.initializers" : "org.apache.hadoop.security.AuthenticationFilterInitializer,org.apache.hadoop.security.HttpCrossOriginFilterInitializer",
+				"hadoop.http.filter.initializers": "org.apache.hadoop.security.HttpCrossOriginFilterInitializer,org.apache.hadoop.security.authentication.server.ProxyUserAuthenticationFilterInitializer",
 				"hadoop.proxyuser.yarn.hosts": "*",
 				"hadoop.proxyuser.root.hosts": "*",
 				"hadoop.proxyuser.root.groups": "*",

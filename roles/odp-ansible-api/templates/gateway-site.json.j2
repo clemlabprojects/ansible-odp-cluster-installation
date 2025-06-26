@@ -15,8 +15,20 @@
 				"gateway.websocket.feature.enabled" : "{{websocket_support}}",
 				"gateway.port" : "8443",
 				"gateway.httpclient.socketTimeout" : "20000",
-				"java.security.krb5.conf" : "/etc/krb5.conf"
+				"java.security.krb5.conf" : "/etc/krb5.conf",
+				"gateway.websocket.input.buffer.size"      : "1048576",
+				"gateway.websocket.max.binary.buffer.size" : "1048576",
+				"gateway.websocket.max.binary.size" 	   : "1048576",
+				"gateway.websocket.max.text.buffer.size"   : "1048576",
+				"gateway.websocket.max.text.size" 		   : "1048576",
+				"gateway.httpserver.requestHeaderBuffer"   : "32768",
+				"gateway.httpserver.requestBuffer"        : "65536",  
+				"gateway.httpserver.responseHeaderBuffer"  : "65536",
+				"gateway.httpserver.responseBuffer"        : "32768",
 				{% endraw %}
+				"gateway.knox.admin.groups": "{{ knox_admin_groups | default('hadoop') }}",
+          		"gateway.group.config.hadoop.security.group.mapping": "{{ knox_group_mapping | default('org.apache.hadoop.security.JniBasedUnixGroupsMappingWithFallback') }}"
+
 			}
 		}
 	}

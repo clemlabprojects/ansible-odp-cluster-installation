@@ -5,6 +5,7 @@
 			"tag": "{{ range(00000000, 99999999) | random }}",
 			"properties": {
 			  "atlas.admin.password": "{{ atlas_admin_password | default('test12345678') }}",
+			  "content": "{{ atlasenvcontent | default('') }}",
 			  "atlas.admin.username": "admin",
 			  "atlas.hbase.conf.dir": "/etc/hbase/conf",
 			  "atlas_server_max_new_size": "614",
@@ -12,8 +13,6 @@
 			  "atlas_server_xmx": "2048",
 			  "atlas_solr_replication_factor": "1",
 			  "atlas_solr_shards": "1",
-				{% raw %}
-			  "content": "\n      # The java implementation to use. If JAVA_HOME is not found we expect java and jar to be in path\n      export JAVA_HOME={{java64_home}}\n\n      # any additional java opts you want to set. This will apply to both client and server operations\n      {% if security_enabled %}\n      export ATLAS_OPTS=\"{{metadata_opts}} -Djava.security.auth.login.config={{atlas_jaas_file}}\"\n      {% else %}\n      export ATLAS_OPTS=\"{{metadata_opts}}\"\n      {% endif %}\n\n      # metadata configuration directory\n      export ATLAS_CONF={{conf_dir}}\n\n      # Where log files are stored. Defatult is logs directory under the base install location\n      export ATLAS_LOG_DIR={{log_dir}}\n\n      # additional classpath entries\n      export ATLASCPPATH={{metadata_classpath}}\n\n      # data dir\n      export ATLAS_DATA_DIR={{data_dir}}\n\n      # pid dir\n      export ATLAS_PID_DIR={{pid_dir}}\n\n      # hbase conf dir\n      export HBASE_CONF_DIR={{hbase_conf_dir}}\n\n      # Where do you want to expand the war file. By Default it is in /server/webapp dir under the base install dir.\n      export ATLAS_EXPANDED_WEBAPP_DIR={{expanded_war_dir}}\n      export ATLAS_SERVER_OPTS=\"-server -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+PrintTenuringDistribution -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=$ATLAS_LOG_DIR/atlas_server.hprof -Xloggc:$ATLAS_LOG_DIR/gc-worker.log -verbose:gc -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=1m -XX:+PrintGCDetails -XX:+PrintHeapAtGC -XX:+PrintGCTimeStamps\"\n      {% if java_version == 8 %}\n      export ATLAS_SERVER_HEAP=\"-Xms{{atlas_server_xmx}}m -Xmx{{atlas_server_xmx}}m -XX:MaxNewSize={{atlas_server_max_new_size}}m -XX:MetaspaceSize=100m -XX:MaxMetaspaceSize=512m\"\n      {% else %}\n      export ATLAS_SERVER_HEAP=\"-Xms{{atlas_server_xmx}}m -Xmx{{atlas_server_xmx}}m -XX:MaxNewSize={{atlas_server_max_new_size}}m -XX:MaxPermSize=512m\"\n      {% endif %}\n    ",
 			  "metadata_classpath": " ",
 			  "metadata_conf_file": "atlas-application.properties",
 			  "metadata_data_dir": "/var/lib/atlas/data",
@@ -23,7 +22,6 @@
 			  "metadata_pid_dir": "/var/run/atlas",
 			  "atlas.kafka.client.log.level": "INFO",
 			  "metadata_user": "atlas"
-				{% endraw %}
 
 			}
     }

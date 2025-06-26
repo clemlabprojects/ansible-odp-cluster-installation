@@ -42,11 +42,6 @@
 			  "atlas.graph.storage.backend": "hbase",
 			  "atlas.graph.storage.hbase.table": "atlas_titan",
 			  "atlas.graph.storage.hostname": "{% for host in zookeeper_quorum %}{{ host }}{% if not loop.last %},{% endif %}{% endfor %}",
-				{% if cluster_services.KAFKA is defined %}
-				"atlas.kafka.bootstrap.servers": "{% for host in all['KAFKA_BROKER'] %}{{ host }}:6667{% if not loop.last %},{% endif %}{% endfor %}",
-	      {% else %}
-				"atlas.kafka.bootstrap.servers": "localhost:6667",
-				{% endif %}
 			  "atlas.kafka.enable.auto.commit": "false",
 			  "atlas.kafka.hook.group.id": "atlas",
 			  "atlas.kafka.session.timeout.ms": "30000",

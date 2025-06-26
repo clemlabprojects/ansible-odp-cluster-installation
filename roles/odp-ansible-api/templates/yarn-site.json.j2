@@ -12,14 +12,17 @@
   "yarn.client.nodemanager-connect.max-wait-ms" : "60000",
   "yarn.client.nodemanager-connect.retry-interval-ms" : "10000",
   {% if cluster_services.YARN.SSL is defined and cluster_services.YARN.SSL %}
+
   "yarn.http.policy" : "HTTPS_ONLY",
   "yarn.log.server.url" : "https://{{ all['HISTORYSERVER'][0] }}:19889/jobhistory/logs",
   "yarn.log.server.web-service.url" : "https://{{ all['APP_TIMELINE_SERVER'][0] }}:8190/ws/v1/applicationhistory",
   "yarn.nodemanager.webapp.https.address" : "0.0.0.0:8044",
+  "yarn.resourcemanager.webapp.address" : "{{ all['RESOURCEMANAGER'][0] }}:8090",
   {% else %}
   "yarn.http.policy" : "HTTP_ONLY",
   "yarn.log.server.url" : "http://{{ all['HISTORYSERVER'][0] }}:19888/jobhistory/logs",
   "yarn.log.server.web-service.url" : "http://{{ all['APP_TIMELINE_SERVER'][0] }}:8188/ws/v1/applicationhistory",
+  "yarn.resourcemanager.webapp.address" : "{{ all['RESOURCEMANAGER'][0] }}:8088",
   {% endif %}
   "yarn.nodemanager.webapp.address" : "0.0.0.0:8042",
   "yarn.log-aggregation-enable" : "true",
@@ -142,7 +145,6 @@
   "yarn.resourcemanager.store.class" : "org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore",
   "yarn.resourcemanager.system-metrics-publisher.dispatcher.pool-size" : "10",
   "yarn.resourcemanager.system-metrics-publisher.enabled" : "true",
-  "yarn.resourcemanager.webapp.address" : "{{ all['RESOURCEMANAGER'][0] }}:8088",
   "yarn.resourcemanager.webapp.delegation-token-auth-filter.enabled" : "false",
   "yarn.resourcemanager.webapp.https.address" : "{{ all['RESOURCEMANAGER'][0] }}:8090",
   "yarn.resourcemanager.work-preserving-recovery.enabled" : "true",

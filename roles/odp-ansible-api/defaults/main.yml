@@ -844,6 +844,13 @@ services:
           - noha: ['LIVY2_SERVER','SPARK3_LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
             ha: ['LIVY2_SERVER','SPARK3_LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
             client: ['SPARK3_CLIENT']
+      - name: ODP
+        version: 1.3
+        conf: ['spark3-livy2-client-conf','spark3-livy2-conf', 'spark3-livy2-env', 'spark3-livy2-log4j-properties', 'spark3-livy2-spark-blacklist', 'spark3-defaults', 'spark3-env', 'spark3-hive-site-override', 'spark3-log4j-properties', 'spark3-metrics-properties', 'spark3-thrift-fairscheduler', 'spark3-thrift-sparkconf']
+        components:
+          - noha: ['LIVY2_SERVER','SPARK3_LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
+            ha: ['LIVY2_SERVER','SPARK3_LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
+            client: ['SPARK3_CLIENT']
   - name: SPARK2
     smoketest: ['SPARK2_SERVICE_CHECK']
     stacks:
@@ -891,18 +898,17 @@ services:
             client: ['SPARK2_CLIENT']
       - name: ODP
         version: 1.2
-        conf: ['livy2-conf', 'livy2-env', 'livy2-log4j-properties', 'livy2-spark-blacklist', 'spark2-defaults', 'spark2-env', 'spark2-hive-site-override', 'spark2-log4j-properties', 'spark2-metrics-properties', 'spark2-thrift-fairscheduler', 'spark2-thrift-sparkconf']
+        conf: ['livy2-conf', 'livy2-env','spark2-livy2-client-conf','spark2-livy2-conf', 'spark2-livy2-env','spark2-livy2-log4j-properties', 'spark2-livy2-spark-blacklist', 'livy2-log4j-properties', 'livy2-spark-blacklist', 'spark2-defaults', 'spark2-env', 'spark2-hive-site-override', 'spark2-log4j-properties', 'spark2-metrics-properties', 'spark2-thrift-fairscheduler', 'spark2-thrift-sparkconf']
         components:
-          - noha: ['LIVY2_SERVER', 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER']
-            ha: ['LIVY2_SERVER', 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER']
+          - noha: ['LIVY2_SERVER', 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER','SPARK2_LIVY2_SERVER']
+            ha: ['LIVY2_SERVER', 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER', 'SPARK2_LIVY2_SERVER']
             client: ['SPARK2_CLIENT']
       - name: ODP
         version: 1.3
-        conf: ['livy2-conf', 'livy2-env', 'livy2-log4j-properties', 'livy2-spark-blacklist', 'spark2-defaults', 'spark2-env', 'spark2-hive-site-override', 'spark2-log4j-properties', 'spark2-metrics-properties', 'spark2-thrift-fairscheduler', 'spark2-thrift-sparkconf']
+        conf: ['livy2-conf', 'livy2-env', 'spark2-livy2-client-conf','spark2-livy2-conf', 'spark2-livy2-env', 'spark2-livy2-log4j-properties', 'spark2-livy2-spark-blacklist', 'livy2-log4j-properties', 'livy2-spark-blacklist', 'spark2-defaults', 'spark2-env', 'spark2-hive-site-override', 'spark2-log4j-properties', 'spark2-metrics-properties', 'spark2-thrift-fairscheduler', 'spark2-thrift-sparkconf']
         components:
-          - noha: ['LIVY2_SERVER', 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER']
-            ha: ['LIVY2_SERVER', 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER']
-            client: ['SPARK2_CLIENT']
+          - noha: ['LIVY2_SERVER', 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER','SPARK2_LIVY2_SERVER']
+            ha: ['LIVY2_SERVER', 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER','SPARK2_LIVY2_SERVER']
   - name: OOZIE
     smoketest: ['OOZIE_SERVICE_CHECK']
     stacks:
