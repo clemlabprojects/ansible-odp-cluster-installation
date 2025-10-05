@@ -5,7 +5,7 @@
 			"tag": "{{ range(00000000, 99999999) | random }}",
 			"properties": {
 			  "atlas.admin.password": "{{ atlas_admin_password | default('test12345678') }}",
-			  "content": "{{ atlasenvcontent | default('') }}",
+			  "content": {{ atlasenvcontent | to_json }},
 			  "atlas.admin.username": "admin",
 			  "atlas.hbase.conf.dir": "/etc/hbase/conf",
 			  "atlas_server_max_new_size": "614",

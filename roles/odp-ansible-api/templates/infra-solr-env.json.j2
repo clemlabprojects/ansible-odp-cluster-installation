@@ -28,8 +28,8 @@
         {% if ambari_stack_name == 'ODP' or ambari_stack_version >= 3.0 %}
         "infra_solr_java_stack_size" : "1",
         "infra_solr_extra_java_opts" : "",
-        "infra_solr_gc_log_opts" : "-verbose:gc -XX:+PrintHeapAtGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=15 -XX:GCLogFileSize=200M",
-        "infra_solr_gc_tune" : "-XX:NewRatio=3 -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:MaxTenuringThreshold=8 -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:ConcGCThreads=4 -XX:ParallelGCThreads=4 -XX:+CMSScavengeBeforeRemark -XX:PretenureSizeThreshold=64m -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=50 -XX:CMSMaxAbortablePrecleanTime=6000 -XX:+CMSParallelRemarkEnabled -XX:+ParallelRefProcEnabled",
+        "infra_solr_gc_log_opts" : " ",
+        "infra_solr_gc_tune" : "-XX:NewRatio=3 -XX:SurvivorRatio=4 -XX:TargetSurvivorRatio=90 -XX:MaxTenuringThreshold=8",
         "infra_solr_jmx_enabled" : "false",
         "infra_solr_user_nofile_limit" : "128000",
         "infra_solr_user_nproc_limit" : "65536",

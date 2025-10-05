@@ -1,0 +1,12 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "spark2-livy2-client-conf",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": { {% raw %}
+         "livy.rsc.launcher.address": " "
+		 {% endraw %}
+      }
+    }
+  }
+}
