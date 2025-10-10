@@ -57,13 +57,20 @@
 #####################################################
 
 ##############Install client on all nodes // ########
-- name: Ensure krb client is installed
+- name: Ensure krb client is installed [RHEL9]
   yum:
     name: ['openldap-clients', 'krb5-workstation']
     state: present
     update_cache: yes
     disable_gpg_check: yes
-  when: cluster_services.KERBEROS is defined and ansible_distribution != 'Ubuntu'
+  when: cluster_services.KERBEROS is defined and ansible_distribution != 'Ubuntu' and ansible_distribution_major_version == '9'
+
+- name: Ensure krb client is installed [RHEL8]
+  raw: |
+    set -e
+    yum install -y openldap-clients krb5-workstation
+  when: cluster_services.KERBEROS is defined and ansible_distribution != 'Ubuntu' and ansible_distribution_major_version == '8'
+
 #####################################################
 
 
