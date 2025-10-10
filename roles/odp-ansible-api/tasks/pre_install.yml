@@ -28,17 +28,17 @@
 #####################################################
 
 ##############Fix ambari ############################
-- name: fix error "no package found"
-  replace:
-    path: /usr/lib/ambari-agent/lib/resource_management/libraries/script/script.py
-    regexp: 'package_version = None'
-    replace: '#package_version = None'
+# - name: fix error "no package found"
+#   replace:
+#     path: /usr/lib/ambari-agent/lib/resource_management/libraries/script/script.py
+#     regexp: 'package_version = None'
+#     replace: '#package_version = None'
 
 - name: fix error "package **** not supported by this version of the stack-select tool"
   lineinfile:
     path: /usr/lib/ambari-agent/lib/resource_management/libraries/script/script.py
     regexp: "package_regex = name.replace"
-    line: "    package_regex = name.replace(STACK_VERSION_PLACEHOLDER, '(\\d|{0})+'.format(package_delimiter))"
+    line: "    package_regex = name.replace(STACK_VERSION_PLACEHOLDER, fr'(\\d|{package_delimiter})+') + \"$\""
 #####################################################
 
 ##############Fix ambari ############################

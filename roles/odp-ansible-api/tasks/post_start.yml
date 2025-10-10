@@ -120,15 +120,15 @@
   delay: 10
   when: wait and register_components_stop is defined and register_components_stop.json is defined and register_components_stop and (register_components_stop.json) != ""
 
-- name: Start SPARK2 service after fixed Ranger rules
+- name: Start SPARK2 history Server service after fixed Ranger rules
   uri:
-    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/services/SPARK2"
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/hosts/{{all['SPARK2_JOBHISTORYSERVER'][0]}}/host_components/SPARK2_JOBHISTORYSERVER"
     method: PUT
     force_basic_auth: yes
     user: "{{ ambari_username }}"
     password: "{{ ambari_password }}"
     headers: '{"X-Requested-By":"ambari", "Content-Type": "application/x-www-form-urlencoded"}'
-    body: '{"RequestInfo": {"context" :"Start SPARK2 API"}, "Body": {"ServiceInfo": {"state": "STARTED"}}}'
+    body: '{"RequestInfo":{"context":"API Start Spark2 History Server","operation_level":{"level":"HOST_COMPONENT","cluster_name":"clemlabtest","host_name":"master13.dev11.hadoop.clemlab.com","service_name":"SPARK2"}},"Body":{"HostRoles":{"state":"STARTED"}}}'
     body_format: json
     validate_certs: no
     status_code: 200,201,202

@@ -1,4 +1,18 @@
 ---
+- name: Wait for Ambari API to be available
+  uri:
+    url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers: '{"X-Requested-By":"ambari"}'
+    validate_certs: no
+    status_code: 200
+  register: ambari_api_check
+  until: ambari_api_check.status == 200
+  retries: 30
+  delay: 10
 ### BASE CLUSTER ###
 - name: Get hadoop-env content
   uri:

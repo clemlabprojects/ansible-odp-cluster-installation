@@ -67,7 +67,7 @@ services:
             client: ['HDFS_CLIENT']
       - name: ODP
         version: 1.3
-        conf: ['core-site', 'hdfs-site', 'hadoop-env', 'hdfs-log4j', 'ssl-client', 'ssl-server', 'hadoop-policy', 'viewfs-mount-table', 'httpfs-site', 'httpfs-env']
+        conf: ['core-site','hdfs-site', 'hadoop-env', 'hdfs-log4j', 'ssl-client', 'ssl-server', 'hadoop-policy', 'viewfs-mount-table', 'httpfs-site', 'httpfs-env']
         components:
           - noha: ['NAMENODE', 'SECONDARY_NAMENODE', 'DATANODE', 'HTTPFS_GATEWAY']
             ha: ['NAMENODE', 'ZKFC', 'DATANODE', 'JOURNALNODE', 'HTTPFS_GATEWAY']
@@ -905,10 +905,11 @@ services:
             client: ['SPARK2_CLIENT']
       - name: ODP
         version: 1.3
-        conf: ['livy2-conf', 'livy2-env', 'spark2-livy2-client-conf','spark2-livy2-conf', 'spark2-livy2-env', 'spark2-livy2-log4j-properties', 'spark2-livy2-spark-blacklist', 'livy2-log4j-properties', 'livy2-spark-blacklist', 'spark2-defaults', 'spark2-env', 'spark2-hive-site-override', 'spark2-log4j-properties', 'spark2-metrics-properties', 'spark2-thrift-fairscheduler', 'spark2-thrift-sparkconf']
+        conf: ['spark2-livy2-client-conf','spark2-livy2-conf', 'spark2-livy2-env', 'spark2-livy2-log4j-properties', 'spark2-livy2-spark-blacklist', 'livy2-log4j-properties', 'livy2-spark-blacklist', 'spark2-defaults', 'spark2-env', 'spark2-hive-site-override', 'spark2-log4j-properties', 'spark2-metrics-properties', 'spark2-thrift-fairscheduler', 'spark2-thrift-sparkconf']
         components:
-          - noha: ['LIVY2_SERVER', 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER','SPARK2_LIVY2_SERVER']
-            ha: ['LIVY2_SERVER', 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER','SPARK2_LIVY2_SERVER']
+          - noha: [ 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER','SPARK2_LIVY2_SERVER']
+            ha: [ 'SPARK2_JOBHISTORYSERVER', 'SPARK2_THRIFTSERVER','SPARK2_LIVY2_SERVER']
+            client: ['SPARK2_CLIENT']
   - name: OOZIE
     smoketest: ['OOZIE_SERVICE_CHECK']
     stacks:

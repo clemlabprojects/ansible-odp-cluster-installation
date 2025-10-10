@@ -39,7 +39,7 @@
 				"spark.security.crypto.codec.classes.aes.ctr.nopadding" : "org.apache.spark.crypto.JceAesCtrCryptoCodec",
         "spark.history.provider" : "org.apache.spark.deploy.history.FsHistoryProvider",
         "spark.history.ui.port" : "18082",
-        "spark.yarn.historyServer.address" : {% raw %}"{{spark_history_server_host}}:{{spark_history_ui_port}}",{% endraw %}
+				"spark.yarn.historyServer.address" : "{{ all['SPARK3_JOBHISTORYSERVER'][0]}}:{% if cluster_services.SPARK3 is defined and cluster_services.SPARK3.SSL is defined and cluster_services.SPARK3.SSL %}18482{% else %}18042{% endif %}",
         "spark.yarn.queue" : "default"
       },
 			"properties_attributes": {
