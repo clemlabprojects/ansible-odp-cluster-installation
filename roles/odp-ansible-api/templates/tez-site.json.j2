@@ -5,10 +5,10 @@
 			"tag": "{{ range(00000000, 99999999) | random }}",
 			"properties": {
         {% if cluster_services.TEZ.SSL is defined and cluster_services.TEZ.SSL %}
-        "tez.runtime.shuffle.ssl.enable" : "true",
+        "tez.runtime.shuffle.ssl.enabled" : "true",
         "tez.runtime.shuffle.keep-alive.enabled" : "true",
         {% else %}
-        "tez.runtime.shuffle.ssl.enable" : "false",
+        "tez.runtime.shuffle.ssl.enabled" : "false",
         "tez.runtime.shuffle.keep-alive.enabled" : "false",
         {% endif %}
         "tez.am.am-rm.heartbeat.interval-ms.max" : "250",
@@ -20,15 +20,13 @@
         "tez.am.container.reuse.rack-fallback.enabled" : "true",
         "tez.am.java.opts" : "-Xmx1024m",
         "tez.am.launch.cluster-default.cmd-opts" : "-server -Djava.net.preferIPv4Stack=true {% if ambari_stack_name|lower == "odp" %}-Dodp.version=${odp.version}{% else %}-Dhdp.version=${hdp.version}{% endif %}",
-        {% raw %}
-        "tez.am.launch.cmd-opts" : "-XX:+PrintGCDetails -verbose:gc -XX:+PrintGCTimeStamps -XX:+UseNUMA -XX:+UseG1GC{{heap_dump_opts}}",{% endraw %}
-        "tez.am.launch.env" : "LD_LIBRARY_PATH={% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/hadoop/lib/native:{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}{% raw %}/hadoop/lib/native/Linux-{{architecture}}-64:./tezlib/lib/native:./tezlib/lib/native/Linux-{{architecture}}-64",
+        "tez.am.launch.env" : "LD_LIBRARY_PATH={% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/hadoop/lib/native:{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}{% raw %}/hadoop/lib/native/Linux-{{architecture}}-64:./tezlib/lib/native:./tezlib/lib/native/Linux-{{architecture}}-64{% endraw %}",
         "tez.am.log.level" : "INFO",
         "tez.am.max.app.attempts" : "2",
         "tez.am.maxtaskfailures.per.node" : "10",
         "tez.am.resource.memory.mb" : "2048",
         "tez.am.tez-ui.history-url.template" : "__HISTORY_URL_BASE__?viewPath=%2F%23%2Ftez-app%2F__APPLICATION_ID__",
-        "tez.am.view-acls" : "*",{% endraw %}
+        "tez.am.view-acls" : "*",
         "tez.cluster.additional.classpath.prefix" : "{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/hadoop/lib/hadoop-lzo-0.6.0.{% if ambari_stack_name|lower == "odp" %}${odp.version}{% else %}${hdp.version}{% endif %}.jar:/etc/hadoop/conf/secure",
         "tez.counters.max" : "10000",
         "tez.counters.max.groups" : "3000",
@@ -59,13 +57,21 @@
         "tez.task.am.heartbeat.counter.interval-ms.max" : "4000",
         "tez.task.generate.counters.per.io" : "true",
         "tez.task.get-task.sleep.interval-ms.max" : "200",
-        "tez.task.launch.cluster-default.cmd-opts" : "-server -Djava.net.preferIPv4Stack=true {% if ambari_stack_name|lower == "odp" %}-Dodp.version=${odp.version}{% else %}-Dhdp.version=${hdp.version}{% endif %}",{% raw %}
-        "tez.task.launch.cmd-opts" : "-XX:+PrintGCDetails -verbose:gc -XX:+PrintGCTimeStamps -XX:+UseNUMA -XX:+UseG1GC{{heap_dump_opts}}",{% endraw %}
-        "tez.task.launch.env" : "LD_LIBRARY_PATH={% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/hadoop/lib/native:{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}{% raw %}/hadoop/lib/native/Linux-{{architecture}}-64:./tezlib/lib/native:./tezlib/lib/native/Linux-{{architecture}}-64",
+        "tez.task.launch.cluster-default.cmd-opts" : "-server -Djava.net.preferIPv4Stack=true {% if ambari_stack_name|lower == "odp" %}-Dodp.version=${odp.version}{% else %}-Dhdp.version=${hdp.version}{% endif %}",
+          {% if ambari_stack_name|lower == "odp" and (odp_java_version|default(0)|int) >= 17 %}
+          "tez.am.launch.cmd-opts" : "",
+          "tez.task.launch.cmd-opts" : "",
+          "tez.am.launch.cluster-default.cmd-opts": "-server -Djava.net.preferIPv4Stack=true -Dodp.version=${odp.version}",
+          "tez.task.launch.cluster-default.cmd-opts": "-server -Djava.net.preferIPv4Stack=true -Dodp.version=${odp.version}",
+          {% else %}
+          {% raw %}"tez.task.launch.cmd-opts" : "-XX:+PrintGCDetails -verbose:gc -XX:+PrintGCTimeStamps -XX:+UseNUMA -XX:+UseG1GC{{heap_dump_opts}}",{% endraw %}
+          {% raw %}"tez.am.launch.cmd-opts" : "-XX:+PrintGCDetails -verbose:gc -XX:+PrintGCTimeStamps -XX:+UseNUMA -XX:+UseG1GC{{heap_dump_opts}}",{% endraw %}
+          {% endif %}
+        "tez.task.launch.env" : "LD_LIBRARY_PATH={% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/hadoop/lib/native:{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}{% raw %}/hadoop/lib/native/Linux-{{architecture}}-64:./tezlib/lib/native:./tezlib/lib/native/Linux-{{architecture}}-64{% endraw %}",
         "tez.task.max-events-per-heartbeat" : "500",
         "tez.task.resource.memory.mb" : "1024",
         "tez.use.cluster.hadoop-libs" : "false"
       }
     }
   }
-}{% endraw %}
+}

@@ -1,0 +1,32 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ranger-tagsync-site",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+			{% if cluster_services.RANGER is defined and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL and cluster_services.RANGER.TWOWAY is defined and cluster_services.RANGER.TWOWAY %}
+        "xasecure.policymgr.clientssl.keystore": "{{ ranger_plugin_keystore_path }}",
+        "xasecure.policymgr.clientssl.keystore.credential.file": "{% raw %}jceks://file{{credential_file}}{% endraw %}",
+        "xasecure.policymgr.clientssl.keystore.password": "{{ ranger_plugin_keystore_password }}",
+        "xasecure.policymgr.clientssl.truststore": "{{ ssl_truststore_path }}",
+        "xasecure.policymgr.clientssl.truststore.credential.file": "{% raw %}jceks://file{{credential_file}}{% endraw %}",
+        "xasecure.policymgr.clientssl.truststore.password": "{{ ssl_truststore_password }}"
+			{% elif cluster_services.RANGER is defined and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL and cluster_services.RANGER.TWOWAY is not defined or cluster_services.RANGER.TWOWAY is defined and not cluster_services.RANGER.TWOWAY %}
+        "xasecure.policymgr.clientssl.keystore": "{{ ranger_plugin_keystore_path }}",
+        "xasecure.policymgr.clientssl.keystore.credential.file": "{% raw %}jceks://file{{credential_file}}{% endraw %}",
+        "xasecure.policymgr.clientssl.keystore.password": "{{ ranger_plugin_keystore_password }}",
+        "xasecure.policymgr.clientssl.truststore": "{{ ssl_truststore_path }}",
+        "xasecure.policymgr.clientssl.truststore.credential.file": "{% raw %}jceks://file{{credential_file}}{% endraw %}",
+        "xasecure.policymgr.clientssl.truststore.password": "{{ ssl_truststore_password }}"
+			{% else %}
+        "xasecure.policymgr.clientssl.keystore": "/etc/security/serverKeystore/ranger_tagsync_keystore.jks",
+        "xasecure.policymgr.clientssl.keystore.credential.file": "{% raw %}jceks://file{{credential_file}}{% endraw %}",
+        "xasecure.policymgr.clientssl.keystore.password": "changeit",
+        "xasecure.policymgr.clientssl.truststore": "/etc/security/serverKeystore/ranger_tagsync_truststore.jks",
+        "xasecure.policymgr.clientssl.truststore.credential.file": "{% raw %}jceks://file{{credential_file}}{% endraw %}",
+        "xasecure.policymgr.clientssl.truststore.password": "changeit"
+			{% endif %}
+			}
+		}
+	}
+}

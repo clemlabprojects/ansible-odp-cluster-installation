@@ -621,21 +621,21 @@ services:
             client: ['']
       - name: ODP
         version: 1.1
-        conf: ['ranger-admin-site', 'ranger-env', 'admin-properties', 'admin-log4j', 'ranger-ugsync-site', 'usersync-log4j', 'ranger-solr-configuration']
+        conf: ['ranger-admin-site', 'ranger-env', 'admin-properties', 'admin-log4j', 'ranger-ugsync-site', 'usersync-log4j', 'ranger-solr-configuration','ranger-tagsync-policymgr-ssl']
         components:
           - noha: ['RANGER_ADMIN', 'RANGER_USERSYNC']
             ha: ['']
             client: ['']
       - name: ODP
         version: 1.2
-        conf: ['ranger-admin-site', 'ranger-env', 'admin-properties', 'admin-log4j', 'ranger-ugsync-site', 'usersync-log4j', 'ranger-solr-configuration', 'ranger-tagsync-site']
+        conf: ['ranger-admin-site', 'ranger-env', 'admin-properties', 'admin-log4j', 'ranger-ugsync-site', 'usersync-log4j', 'ranger-solr-configuration', 'ranger-tagsync-site','ranger-tagsync-policymgr-ssl']
         components:
           - noha: ['RANGER_ADMIN', 'RANGER_USERSYNC', 'RANGER_TAGSYNC']
             ha: ['']
             client: ['']
       - name: ODP
         version: 1.3
-        conf: ['ranger-admin-site', 'ranger-env', 'admin-properties', 'admin-logback','ranger-ugsync-site', 'usersync-logback', 'ranger-solr-configuration', 'ranger-tagsync-site','tagsync-logback']
+        conf: ['ranger-admin-site', 'ranger-env', 'admin-properties', 'admin-logback','ranger-ugsync-site', 'usersync-logback', 'ranger-solr-configuration', 'ranger-tagsync-site','tagsync-logback','ranger-tagsync-policymgr-ssl']
         components:
           - noha: ['RANGER_ADMIN', 'RANGER_USERSYNC', 'RANGER_TAGSYNC']
             ha: ['']
@@ -846,7 +846,7 @@ services:
             client: ['SPARK3_CLIENT']
       - name: ODP
         version: 1.3
-        conf: ['spark3-livy2-client-conf','spark3-livy2-conf', 'spark3-livy2-env', 'spark3-livy2-log4j-properties', 'spark3-livy2-spark-blacklist', 'spark3-defaults', 'spark3-env', 'spark3-hive-site-override', 'spark3-log4j-properties', 'spark3-metrics-properties', 'spark3-thrift-fairscheduler', 'spark3-thrift-sparkconf']
+        conf: ['spark3-livy2-client-conf','spark3-livy2-conf', 'spark3-livy2-env', 'spark3-livy2-log4j-properties', 'spark3-livy2-spark-blacklist', 'spark3-defaults', 'spark3-env', 'spark3-hive-site-override', 'spark3-log4j-properties', 'spark3-log4j2-properties', 'spark3-metrics-properties', 'spark3-thrift-fairscheduler', 'spark3-thrift-sparkconf']
         components:
           - noha: ['LIVY2_SERVER','SPARK3_LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
             ha: ['LIVY2_SERVER','SPARK3_LIVY2_SERVER', 'SPARK3_JOBHISTORYSERVER', 'SPARK3_THRIFTSERVER']
