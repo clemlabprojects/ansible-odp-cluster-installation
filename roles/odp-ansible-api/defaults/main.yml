@@ -33,6 +33,20 @@ kafka_log_dirs:
 ipa_do_creation: False
 cgroups_enable: False
 capacity_scheduler_file: 'capacity-scheduler'
+oidc_enabled: False
+oidc_manage_service: True
+oidc_mode: "oidc_only"
+oidc_force_toggle_kerberos: False
+oidc_provider: "keycloak"
+oidc_admin_url: "{{ keycloak_base_url | default(((keycloak_ssl_enabled | default(false) | bool) | ternary('https', 'http')) ~ '://' ~ (keycloak_sso_hostname | default('localhost')) ~ ':' ~ (keycloak_server_port | default(8080) | string), true) }}"
+oidc_admin_realm: "master"
+oidc_realm: "{{ keycloak_realm | default('odp') }}"
+oidc_admin_client_id: "admin-cli"
+oidc_admin_client_secret: ""
+oidc_verify_tls: "{{ keycloak_validate_certs | default(true) }}"
+oidc_admin_principal: "{{ keycloak_service_user | default(keycloak_admin_user | default('')) }}"
+oidc_admin_password: "{{ keycloak_service_user_password | default(keycloak_admin_password | default('')) }}"
+oidc_credential_type: "persisted"
 base_cluster:
   conf: ['global']
 vdf_source: "{{ vdf_path | default('templates/repo.xml.j2') }}"

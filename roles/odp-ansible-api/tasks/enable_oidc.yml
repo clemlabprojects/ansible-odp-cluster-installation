@@ -1,0 +1,214 @@
+---
+- name: Validate OIDC mode
+  assert:
+    that:
+      - oidc_mode in ['oidc_only', 'kerberos_and_oidc']
+    fail_msg: "oidc_mode must be one of: oidc_only, kerberos_and_oidc"
+
+- name: Validate required OIDC variables
+  assert:
+    that:
+      - oidc_admin_url is defined
+      - (oidc_admin_url | trim | length) > 0
+      - oidc_realm is defined
+      - (oidc_realm | trim | length) > 0
+      - oidc_admin_principal is defined
+      - (oidc_admin_principal | trim | length) > 0
+      - oidc_admin_password is defined
+      - (oidc_admin_password | trim | length) > 0
+    fail_msg: "Missing OIDC variables. Required: oidc_admin_url, oidc_realm, oidc_admin_principal, oidc_admin_password."
+  no_log: true
+
+- name: Set OIDC cluster API endpoint
+  set_fact:
+    oidc_cluster_api: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name | lower }}"
+
+- name: Check if OIDC service already installed
+  uri:
+    url: "{{ oidc_cluster_api }}/services/OIDC"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    validate_certs: no
+    return_content: yes
+    status_code: 200,201,202,404
+    timeout: 60
+  register: check_oidc_service
+
+- name: Add OIDC service to the cluster
+  uri:
+    url: "{{ oidc_cluster_api }}/services/OIDC"
+    method: POST
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    body:
+      ServiceInfo:
+        service_name: OIDC
+    body_format: json
+    validate_certs: no
+    return_content: yes
+    status_code: 200,201,202,409
+  when: oidc_manage_service and check_oidc_service.status != 200
+
+- name: Add OIDC environment configuration
+  uri:
+    url: "{{ oidc_cluster_api }}"
+    method: PUT
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    body:
+      Clusters:
+        desired_config:
+          - type: oidc-env
+            tag: "version{{ ansible_date_time.epoch }}"
+            service_config_version_note: "Configure OIDC"
+            properties:
+              oidc_provider: "{{ oidc_provider }}"
+              oidc_admin_url: "{{ oidc_admin_url }}"
+              oidc_admin_realm: "{{ oidc_admin_realm }}"
+              oidc_realm: "{{ oidc_realm }}"
+              oidc_admin_client_id: "{{ oidc_admin_client_id }}"
+              oidc_admin_client_secret: "{{ oidc_admin_client_secret }}"
+              oidc_verify_tls: "{{ (oidc_verify_tls | bool) | ternary('true', 'false') }}"
+    body_format: json
+    validate_certs: no
+    return_content: yes
+    status_code: 200,201,202
+  register: add_oidc_env_conf
+  until: add_oidc_env_conf.status == 200 or add_oidc_env_conf.status == 201 or add_oidc_env_conf.status == 202
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 10
+
+- name: Reset OIDC admin credentials
+  uri:
+    url: "{{ oidc_cluster_api }}/credentials/oidc.admin.credential"
+    method: DELETE
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    body_format: json
+    validate_certs: no
+    return_content: yes
+    status_code: 200,201,202,404,409
+
+- name: Add OIDC admin credential
+  uri:
+    url: "{{ oidc_cluster_api }}/credentials/oidc.admin.credential"
+    method: POST
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    body:
+      Credential:
+        principal: "{{ oidc_admin_principal }}"
+        key: "{{ oidc_admin_password }}"
+        type: "{{ oidc_credential_type }}"
+    body_format: json
+    validate_certs: no
+    return_content: yes
+    status_code: 200,201,202
+  register: add_oidc_credential
+  until: add_oidc_credential.status == 200 or add_oidc_credential.status == 201 or add_oidc_credential.status == 202
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 10
+  no_log: true
+
+- name: Read current cluster security type for OIDC-only flow
+  uri:
+    url: "{{ oidc_cluster_api }}?fields=Clusters/security_type"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    validate_certs: no
+    return_content: yes
+    status_code: 200
+  register: oidc_cluster_info
+  when: oidc_mode == 'oidc_only'
+
+- name: Trigger OIDC provisioning only
+  uri:
+    url: "{{ oidc_cluster_api }}?configure_oidc_only=true"
+    method: PUT
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    body:
+      Clusters:
+        security_type: "{{ (oidc_cluster_info.content | from_json).Clusters.security_type | default('NONE') }}"
+    body_format: json
+    validate_certs: no
+    return_content: yes
+    status_code: 200,201,202
+  register: oidc_trigger
+  when: oidc_mode == 'oidc_only'
+
+- name: Trigger Kerberos with OIDC provisioning
+  uri:
+    url: "{{ oidc_cluster_api }}?configure_oidc=true{% if oidc_force_toggle_kerberos | bool %}&force_toggle_kerberos=true{% endif %}"
+    method: PUT
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    body:
+      Clusters:
+        security_type: KERBEROS
+    body_format: json
+    validate_certs: no
+    return_content: yes
+    status_code: 200,201,202
+  register: oidc_trigger
+  when: oidc_mode == 'kerberos_and_oidc'
+
+- name: Extract OIDC request id
+  set_fact:
+    oidc_request_id: "{{ (oidc_trigger.content | default('{}') | from_json).Requests.id | default('') }}"
+
+- name: Wait for OIDC provisioning request
+  uri:
+    url: "{{ oidc_cluster_api }}/requests/{{ oidc_request_id }}"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    status_code: 200,201,202
+    validate_certs: no
+    return_content: yes
+  register: cluster_check_oidc_install
+  until: (((cluster_check_oidc_install.content|from_json).Requests.request_status == 'COMPLETED' and (cluster_check_oidc_install.content|from_json).Requests.completed_task_count|int > 0) or
+       (cluster_check_oidc_install.content|from_json).Requests.request_status == 'FAILED' or
+       (cluster_check_oidc_install.content|from_json).Requests.request_status == 'TIMEDOUT' or
+       (cluster_check_oidc_install.content|from_json).Requests.request_status == 'ABORTED')
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 30
+  when: wait and oidc_request_id | length > 0
