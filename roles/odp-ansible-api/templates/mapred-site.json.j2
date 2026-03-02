@@ -2,7 +2,7 @@
   {% if cluster_services.MAPREDUCE2.SSL is defined and cluster_services.MAPREDUCE2.SSL %}
   "mapreduce.jobhistory.http.policy" : "HTTPS_ONLY",
   "mapreduce.ssl.enabled" : "true",
-  "mapreduce.shuffle.ssl.enabled" : "false",
+  "mapreduce.shuffle.ssl.enabled" : "true",
   "mapreduce.jobhistory.webapp.https.address" : "{{ all['HISTORYSERVER'][0] }}:19889",
   {% else %}
   "mapreduce.jobhistory.http.policy" : "HTTP_ONLY",
