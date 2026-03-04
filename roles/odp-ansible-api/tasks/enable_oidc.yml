@@ -58,6 +58,124 @@
     status_code: 200,201,202,409
   when: oidc_manage_service and check_oidc_service.status != 200
 
+- name: Check if OIDC_CLIENT already installed
+  uri:
+    url: "{{ oidc_cluster_api }}/services/OIDC/components/OIDC_CLIENT"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    validate_certs: no
+    return_content: yes
+    status_code: 200,201,202,404
+  register: check_oidc_client
+  when: oidc_manage_service
+
+- name: Add OIDC_CLIENT component to the cluster
+  uri:
+    url: "{{ oidc_cluster_api }}/services/OIDC/components/OIDC_CLIENT"
+    method: POST
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    validate_certs: no
+    return_content: yes
+    status_code: 200,201,202,404
+  register: add_oidc_client
+  when:
+    - oidc_manage_service
+    - check_oidc_client.status != 200
+
+- name: Fail if the OIDC_CLIENT component can't be installed
+  fail:
+    msg: "Failed to install OIDC service on {{ cluster_name | lower }} cluster."
+  when:
+    - oidc_manage_service
+    - add_oidc_client.status is defined
+    - add_oidc_client.status == 404
+
+- name: Deploy OIDC_CLIENT service for each hosts
+  uri:
+    url: "{{ oidc_cluster_api }}/hosts"
+    method: POST
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    body: "{{ lookup('template','templates/oidc/deploy_oidc_client.json.j2') }}"
+    body_format: json
+    validate_certs: no
+    return_content: yes
+    status_code: 200,201,202,404
+  register: deploy_oidc_client
+  failed_when: deploy_oidc_client.status == 404
+  when: oidc_manage_service
+
+- name: Install OIDC service and components
+  uri:
+    url: "{{ oidc_cluster_api }}/services/OIDC"
+    method: PUT
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    body:
+      ServiceInfo:
+        state: INSTALLED
+    body_format: json
+    validate_certs: no
+    return_content: yes
+    status_code: 200,201,202,404
+  register: install_oidc_and_components
+  when: oidc_manage_service
+
+- name: Extract OIDC install request id
+  set_fact:
+    oidc_install_request_id: "{{ ((install_oidc_and_components.json | default({})).Requests.id) | default('') }}"
+  when: oidc_manage_service
+
+- name: Wait for OIDC service/components install request
+  uri:
+    url: "{{ oidc_cluster_api }}/requests/{{ oidc_install_request_id }}"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    validate_certs: no
+    return_content: yes
+    status_code: 200,201,202
+  register: oidc_install_request
+  until: (((oidc_install_request.content|from_json).Requests.request_status == 'COMPLETED' and (oidc_install_request.content|from_json).Requests.completed_task_count|int > 0) or
+       (oidc_install_request.content|from_json).Requests.request_status == 'FAILED' or
+       (oidc_install_request.content|from_json).Requests.request_status == 'TIMEDOUT' or
+       (oidc_install_request.content|from_json).Requests.request_status == 'ABORTED')
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 30
+  when: wait and oidc_manage_service and oidc_install_request_id | length > 0
+
+- name: Fail when OIDC service/components install did not complete successfully
+  fail:
+    msg: "OIDC service/component install request failed with status={{ (oidc_install_request.content|from_json).Requests.request_status }}"
+  when:
+    - wait
+    - oidc_manage_service
+    - oidc_install_request_id | length > 0
+    - oidc_install_request is defined
+    - (oidc_install_request.content|from_json).Requests.request_status != 'COMPLETED'
+
 - name: Add OIDC environment configuration
   uri:
     url: "{{ oidc_cluster_api }}"
@@ -189,7 +307,7 @@
 
 - name: Extract OIDC request id
   set_fact:
-    oidc_request_id: "{{ (oidc_trigger.content | default('{}') | from_json).Requests.id | default('') }}"
+    oidc_request_id: "{{ ((oidc_trigger.json | default({})).Requests.id) | default('') }}"
 
 - name: Wait for OIDC provisioning request
   uri:

@@ -18,6 +18,10 @@
     return_content: yes
   register: check_install_all_services
 
+- name: Debug - Trigger installation
+  debug:
+    msg: "Triggered installation for cluster {{ cluster_name }}, request id: {{ check_install_all_services.json.Requests.id }} {{ check_install_all_services.json.Requests }} {{wait }} "
+
 - name: Wait for all services to be installed
   uri:
     url: "{{ ambari_server_protocol }}://{{ ambari_server_hostname }}:{{ ambari_server_port }}/api/v1/clusters/{{ cluster_name }}/requests/{{ check_install_all_services.json.Requests.id }}"
