@@ -55,6 +55,16 @@ tez_am_resource_memory_mb: 1024
 zoo_datadir: /hadoop/zookeeper
 sattelite_repo: false
 services:
+  - name: CORE
+    smoketest: []
+    stacks:
+      - name: ODP
+        version: 1.3
+        conf: ['core-site']
+        components:
+          - noha: []
+            ha: []
+            client: ['CORE_CLIENT']
   - name: HDFS
     smoketest: ['HDFS_SERVICE_CHECK']
     stacks:
@@ -81,7 +91,7 @@ services:
             client: ['HDFS_CLIENT']
       - name: ODP
         version: 1.3
-        conf: ['core-site','hdfs-site', 'hadoop-env', 'hdfs-log4j', 'ssl-client', 'ssl-server', 'hadoop-policy', 'viewfs-mount-table', 'httpfs-site', 'httpfs-env']
+        conf: ['hdfs-site', 'hadoop-env', 'hdfs-log4j', 'ssl-client', 'ssl-server', 'hadoop-policy', 'viewfs-mount-table', 'httpfs-site', 'httpfs-env']
         components:
           - noha: ['NAMENODE', 'SECONDARY_NAMENODE', 'DATANODE', 'HTTPFS_GATEWAY']
             ha: ['NAMENODE', 'ZKFC', 'DATANODE', 'JOURNALNODE', 'HTTPFS_GATEWAY']
