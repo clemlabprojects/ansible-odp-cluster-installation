@@ -1,0 +1,18 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "atlas-tagsync-ssl",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "xasecure.policymgr.clientssl.keystore": "{{ssl_keystore_path}}",
+        "xasecure.policymgr.clientssl.keystore.password": "{{ssl_keystore_password}}",
+        "xasecure.policymgr.clientssl.truststore.password": "{{ssl_truststore_password}}",
+        "xasecure.policymgr.clientssl.truststore": "{{ssl_truststore_path}}",
+				{% raw %}
+        "xasecure.policymgr.clientssl.keystore.credential.file": "jceks://file{{atlas_tagsync_credential_file}}",
+        "xasecure.policymgr.clientssl.truststore.credential.file": "jceks://file{{atlas_tagsync_credential_file}}",
+				{% endraw %}
+			}
+    }
+  }
+}

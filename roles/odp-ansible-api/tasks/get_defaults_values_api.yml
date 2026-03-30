@@ -88,6 +88,7 @@
     validate_certs: no
     status_code: 200,201,202
     return_content: yes
+  become: no
   register: getyarnenvcontent
 
 - set_fact:

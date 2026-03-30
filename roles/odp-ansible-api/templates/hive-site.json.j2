@@ -7,6 +7,8 @@
 			"type": "hive-site",
 			"tag": "{{ range(00000000, 99999999) | random }}",
 			"properties": {
+        "hive.metastore.transactional.event.listeners" : "org.apache.hive.hcatalog.listener.DbNotificationListener",
+        "hive.metastore.event.db.notification.api.auth": "impala,hive",
 				"hive.metastore.warehouse.external.dir": "/warehouse/tablespace/external/hive",
 				"hive.hook.proto.base-directory": "{hive_metastore_warehouse_external_dir}/sys.db/query_data/",
 				"javax.jdo.option.ConnectionDriverName" : {% if database_type == "mysql" %}"com.mysql.jdbc.Driver"{% elif database_type == "postgresql" %}"org.postgresql.Driver"{% endif %},
