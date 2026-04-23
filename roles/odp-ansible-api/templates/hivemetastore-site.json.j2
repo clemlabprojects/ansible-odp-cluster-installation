@@ -1,9 +1,15 @@
+{% set odp_hive4_stack = ambari_stack_name|lower == 'odp' and (ambari_stack_version | float) >= 1.3 %}
+{% set hive_ranger_plugin_enabled = cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN is defined and cluster_services.RANGER.PLUGIN.HIVE is defined and cluster_services.RANGER.PLUGIN.HIVE %}
 {
 	"Clusters": {
 		"desired_configs": {
 			"type": "hivemetastore-site",
 			"tag": "{{ range(00000000, 99999999) | random }}",
 			"properties": {
+        {% if odp_hive4_stack and hive_ranger_plugin_enabled %}
+        "hive.metastore.pre.event.listeners": "org.apache.hadoop.hive.ql.security.authorization.plugin.metastore.HiveMetaStoreAuthorizer",
+        "hive.metastore.filter.hook": "org.apache.hadoop.hive.ql.security.authorization.plugin.metastore.HiveMetaStoreAuthorizer",
+        {% endif %}
         "hive.metastore.metrics.enabled": "true",
         "hive.service.metrics.hadoop2.component": "hivemetastore",
         "hive.service.metrics.reporter": "HADOOP2"

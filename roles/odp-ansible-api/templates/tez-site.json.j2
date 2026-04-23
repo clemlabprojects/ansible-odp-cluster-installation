@@ -34,14 +34,15 @@
         "tez.grouping.max-size" : "1073741824",
         "tez.grouping.min-size" : "16777216",
         "tez.grouping.split-waves" : "1.7",
-        {% if ambari_stack_name == 'HDP' and ambari_stack_version < 3 %}
+        {% if ambari_stack_name == 'HDP' and ambari_stack_version < 3 or ambari_stack_name|lower == "odp" %}
         "tez.history.logging.service.class" : "org.apache.tez.dag.history.logging.ats.ATSV15HistoryLoggingService",
         {% endif %}
+        "tez.am.history.logging.enabled" : "true",
         "tez.history.logging.timeline-cache-plugin.old-num-dags-per-group" : "5",
         "tez.lib.uris" : "{% if ambari_stack_name|lower == "odp" %}/odp/apps/${odp.version}{% else %}/hdp/apps/${hdp.version}{% endif %}/tez/tez.tar.gz",
         "tez.runtime.compress" : "true",
         "tez.runtime.compress.codec" : "org.apache.hadoop.io.compress.SnappyCodec",
-        "tez.runtime.convert.user-payload.to.history-text" : "false",
+        "tez.runtime.convert.user-payload.to.history-text" : "true",
         "tez.runtime.io.sort.mb" : "270",
         "tez.runtime.optimize.local.fetch" : "true",
         "tez.runtime.pipelined.sorter.sort.threads" : "2",
@@ -59,8 +60,8 @@
         "tez.task.get-task.sleep.interval-ms.max" : "200",
         "tez.task.launch.cluster-default.cmd-opts" : "-server -Djava.net.preferIPv4Stack=true {% if ambari_stack_name|lower == "odp" %}-Dodp.version=${odp.version}{% else %}-Dhdp.version=${hdp.version}{% endif %}",
           {% if ambari_stack_name|lower == "odp" and (odp_java_version|default(0)|int) >= 17 %}
-          "tez.am.launch.cmd-opts" : "",
-          "tez.task.launch.cmd-opts" : "",
+          {% raw %}"tez.am.launch.cmd-opts" : "-Xlog:gc*,gc+heap*=info,gc+age=trace -XX:+UseNUMA --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED -XX:+UseG1GC -XX:+ResizeTLAB -XX:+ExplicitGCInvokesConcurrent{{heap_dump_opts}}",{% endraw %}
+          {% raw %}"tez.task.launch.cmd-opts" : "-Xlog:gc*,gc+heap*=info,gc+age=trace -XX:+UseNUMA --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED -XX:+UseG1GC -XX:+ResizeTLAB -XX:+ExplicitGCInvokesConcurrent{{heap_dump_opts}}",{% endraw %}
           "tez.am.launch.cluster-default.cmd-opts": "-server -Djava.net.preferIPv4Stack=true -Dodp.version=${odp.version}",
           "tez.task.launch.cluster-default.cmd-opts": "-server -Djava.net.preferIPv4Stack=true -Dodp.version=${odp.version}",
           {% else %}

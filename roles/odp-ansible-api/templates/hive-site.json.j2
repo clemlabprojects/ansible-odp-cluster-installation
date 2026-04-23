@@ -1,3 +1,5 @@
+{% set odp_hive4_stack = ambari_stack_name|lower == 'odp' and (ambari_stack_version | float) >= 1.3 %}
+{% set hive_ranger_plugin_enabled = cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN is defined and cluster_services.RANGER.PLUGIN.HIVE is defined and cluster_services.RANGER.PLUGIN.HIVE %}
 {
 	"Clusters": {
 		"desired_configs": {
@@ -101,7 +103,7 @@
         "hive.metastore.failure.retries" : "24",
         "hive.metastore.kerberos.keytab.file" : "/etc/security/keytabs/hive.service.keytab",
         "hive.metastore.kerberos.principal" : "hive/_HOST@EXAMPLE.COM",
-        "hive.metastore.pre.event.listeners" : "org.apache.hadoop.hive.ql.security.authorization.AuthorizationPreEventListener",
+        "hive.metastore.pre.event.listeners" : "{% if odp_hive4_stack and hive_ranger_plugin_enabled %}org.apache.hadoop.hive.ql.security.authorization.plugin.metastore.HiveMetaStoreAuthorizer{% else %}org.apache.hadoop.hive.ql.security.authorization.AuthorizationPreEventListener{% endif %}",
         "hive.metastore.sasl.enabled" : "false",
         "hive.metastore.server.max.threads" : "100000",
         "hive.metastore.uris" : "thrift://{{ all['HIVE_METASTORE'][0] }}:9083",
@@ -120,8 +122,8 @@
         "hive.prewarm.enabled" : "false",
         "hive.prewarm.numcontainers" : "3",
         "hive.security.authenticator.manager" : "org.apache.hadoop.hive.ql.security.ProxyUserAuthenticator",
-        "hive.security.authorization.enabled" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE %}true{% else %}false{% endif %}",
-        "hive.security.authorization.manager" : "{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE %}org.apache.ranger.authorization.hive.authorizer.RangerHiveAuthorizerFactory{% else %}"org.apache.hadoop.hive.ql.security.authorization.plugin.sqlstd.SQLStdConfOnlyAuthorizerFactory"{% endif %}",
+        "hive.security.authorization.enabled" : "{% if hive_ranger_plugin_enabled %}true{% else %}false{% endif %}",
+        "hive.security.authorization.manager" : "{% if hive_ranger_plugin_enabled %}org.apache.ranger.authorization.hive.authorizer.RangerHiveAuthorizerFactory{% else %}org.apache.hadoop.hive.ql.security.authorization.plugin.sqlstd.SQLStdConfOnlyAuthorizerFactory{% endif %}",
         "hive.security.metastore.authenticator.manager" : "org.apache.hadoop.hive.ql.security.HadoopDefaultMetastoreAuthenticator",
         "hive.security.metastore.authorization.auth.reads" : "true",
         "hive.security.metastore.authorization.manager" : "org.apache.hadoop.hive.ql.security.authorization.StorageBasedAuthorizationProvider",
