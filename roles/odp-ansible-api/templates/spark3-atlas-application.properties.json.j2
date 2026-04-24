@@ -1,0 +1,16 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "spark3-atlas-application.properties",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+				"enable.external.atlas.for.spark": "false",
+				"atlas.kafka.enable.idempotence": "false"{% if cluster_services.KERBEROS is defined %}
+				,
+				"atlas.jaas.ticketBased-KafkaClient.loginModuleControlFlag": "required",
+				"atlas.jaas.ticketBased-KafkaClient.loginModuleName": "com.sun.security.auth.module.Krb5LoginModule",
+				"atlas.jaas.ticketBased-KafkaClient.option.useTicketCache": "true"{% endif %}
+			}
+		}
+	}
+}
