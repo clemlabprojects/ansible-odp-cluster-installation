@@ -21,6 +21,9 @@ build_stack_version: "1.0.3.0"
 #vdf_url: "https://clemlabs.s3.eu-west-3.amazonaws.com/centos7/odp-release/1.0.3.0-270/ODP-VDF.xml"
 preinstall_stack_packages: False
 preinstall_system_packages: False
+impala_service_user: impala
+impala_service_group: hadoop
+impala_mem_limit: 2g
 ranger_admin_password: "{{ deploy_default_password }}"
 atlas_admin_password: "{{ deploy_default_password }}"
 ipa_ambari_principal: hadoopadmin
@@ -557,6 +560,16 @@ services:
             ha: ['HIVE_SERVER', 'HIVE_METASTORE']
             client: ['HIVE_CLIENT']
         packages: ['hive_{{ build_stack_version }}', 'hive_{{ build_stack_version }}-hcatalog']
+  - name: IMPALA
+    smoketest: ['IMPALA_SERVICE_CHECK']
+    stacks:
+      - name: ODP
+        version: 1.3
+        conf: ['impala-env', 'fair-scheduler', 'llama-site', 'impala-log4j-properties']
+        components:
+          - noha: ['IMPALA_STATE_STORE', 'IMPALA_CATALOG_SERVICE', 'IMPALA_DAEMON']
+            ha: ['IMPALA_STATE_STORE', 'IMPALA_CATALOG_SERVICE', 'IMPALA_DAEMON']
+            client: ['IMPALA_CLIENT']
   - name: FLINK
     smoketest: ['FLINK_SERVICE_CHECK']
     stacks:

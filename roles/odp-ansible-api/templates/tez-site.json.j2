@@ -24,7 +24,7 @@
         "tez.am.log.level" : "INFO",
         "tez.am.max.app.attempts" : "2",
         "tez.am.maxtaskfailures.per.node" : "10",
-        "tez.am.resource.memory.mb" : "2048",
+        "tez.am.resource.memory.mb" : "1024",
         "tez.am.tez-ui.history-url.template" : "__HISTORY_URL_BASE__?viewPath=%2F%23%2Ftez-app%2F__APPLICATION_ID__",
         "tez.am.view-acls" : "*",
         "tez.cluster.additional.classpath.prefix" : "{% if ambari_stack_name|lower == "odp" %}/usr/odp/${odp.version}{% else %}/usr/hdp/${hdp.version}{% endif %}/hadoop/lib/hadoop-lzo-0.6.0.{% if ambari_stack_name|lower == "odp" %}${odp.version}{% else %}${hdp.version}{% endif %}.jar:/etc/hadoop/conf/secure",

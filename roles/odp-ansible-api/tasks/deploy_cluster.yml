@@ -108,7 +108,7 @@
   vars:
     in_services : "{{ item }}"
   with_items: "{{ cluster_services.RANGER.PLUGIN }}"
-  when: cluster_services.RANGER is defined
+  when: cluster_services.RANGER is defined and item != "IMPALA"
 
 - set_fact:
     loop_components_ha: >

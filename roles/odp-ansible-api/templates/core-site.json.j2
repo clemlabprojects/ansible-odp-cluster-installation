@@ -1,3 +1,4 @@
+{% set impala_present = cluster_services.IMPALA is defined or (all is defined and (all['IMPALA_DAEMON'] is defined or all['IMPALA_CATALOG_SERVICE'] is defined or all['IMPALA_STATE_STORE'] is defined)) %}
 {
 	"Clusters": {
 		"desired_configs": {
@@ -40,15 +41,20 @@
 				"hadoop.proxyuser.hue.hosts": "*",{% if cluster_services.HIVE is defined %}
 				"hadoop.proxyuser.HTTP.hosts": "{{ all['WEBHCAT_SERVER'] | join(',') }}",
 				"hadoop.proxyuser.HTTP.groups": "*",
-				"hadoop.proxyuser.hive.hosts": "{{ all['HIVE_SERVER'] | join(',') }}",
-				"hadoop.proxyuser.hive.groups": "*",{% endif %}
+				"hadoop.proxyuser.hive.hosts": "*",
+				"hadoop.proxyuser.hive.groups": "*",
+				"hadoop.proxyuser.hive.users": "*",{% endif %}
+				{% if impala_present %}
+				"hadoop.proxyuser.{{ impala_service_user | default('impala') }}.hosts": "*",
+				"hadoop.proxyuser.{{ impala_service_user | default('impala') }}.groups": "*",
+				"hadoop.proxyuser.{{ impala_service_user | default('impala') }}.users": "*",
+				{% endif %}
 				{% if cluster_services.ZEPPELIN is defined %}
 				"hadoopproxyuser.zeppelin.hosts" : "*",
 				"hadoop.proxyuser.zeppelin.groups" : "*",{% endif %}
 				{% if (cluster_services.SPARK2 is defined) or (cluster_services.SPARK3 is defined) %}
 				"hadoop.proxyuser.livy.hosts" : "*",
 				"hadoop.proxyuser.livy.groups" : "*",{% endif %}
-				{% if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN is defined and cluster_services.RANGER.PLUGIN.HIVE is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN.HIVE %}"hadoop.proxyuser.hive.hosts": "{% for hiveserver in all['HIVE_SERVER'] %}{{ hiveserver }}{% if not loop.last %},{% endif %}{% endfor %}",{% endif %}
 				"hadoop.security.auth_to_local": "DEFAULT",
 				"hadoop.security.authentication": "simple",
 				"hadoop.security.authorization": "false",

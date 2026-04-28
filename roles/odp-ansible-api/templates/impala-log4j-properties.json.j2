@@ -1,0 +1,11 @@
+{
+  "Clusters": {
+    "desired_configs": {
+      "type": "impala-log4j-properties",
+      "tag": "{{ range(00000000, 99999999) | random }}",
+      "properties": {
+        "content": "\nmain.logger=FA\nimpala.root.logger=INFO,FA\nlog4j.rootLogger=${impala.root.logger}\nmax.log.file.size=200MB\nlog4j.appender.FA=org.apache.log4j.FileAppender\nlog4j.appender.FA.layout=org.apache.log4j.PatternLayout\nlog4j.appender.FA.File=${impala.log.dir}/impalad.INFO\nlog4j.appender.FA.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{2}: %m%n\nlog4j.appender.console=org.apache.log4j.ConsoleAppender\nlog4j.appender.console.target=System.err\nlog4j.appender.console.layout=org.apache.log4j.PatternLayout\nlog4j.appender.console.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{2}: %m%n\n        "
+      }
+    }
+  }
+}
