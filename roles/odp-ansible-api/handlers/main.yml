@@ -1,0 +1,11 @@
+---
+- name: Restart Ambari Agent
+  systemd:
+    name: ambari-agent
+    state: restarted
+
+- name: Restart Ambari Server
+  systemd:
+    name: ambari-server
+    state: restarted
+  when: inventory_hostname == ambari_server_hostname

@@ -13,6 +13,9 @@
   # strategy: free
   import_tasks: pre_install.yml
 
+- name: Apply Ambari pre-install restarts before API calls
+  meta: flush_handlers
+
 # Get defaults values from API
 - import_tasks: get_defaults_values_api.yml
   when: inventory_hostname == ambari_server_hostname

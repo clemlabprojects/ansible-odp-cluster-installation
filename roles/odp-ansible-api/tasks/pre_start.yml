@@ -9,3 +9,9 @@
   become: yes
   delegate_to: "{{ all['RANGER_ADMIN'][0] }}"
 ####################################################
+
+# PEM cert tasks moved to pre_install.yml — they must run BEFORE Ambari triggers the
+# service install action (which executes polaris_client.py / impala / kudu install hooks
+# that test -f the cert files).  Leaving them in pre_start.yml is too late; pre_start
+# fires AFTER trigger_cluster_installation.yml.  See main.yml task ordering.
+##################################################################

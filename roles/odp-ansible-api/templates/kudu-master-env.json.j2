@@ -1,0 +1,17 @@
+{
+  "Clusters": {
+    "desired_configs": {
+      "type": "kudu-master-env",
+      "tag": "{{ range(00000000, 99999999) | random }}",
+      "properties": {
+        "rpc_bind_addresses": "0.0.0.0:7051",
+        "webserver_interface": "0.0.0.0",
+        "webserver_port": "8051",
+        "master_addresses": "{% for host in all.get('KUDU_MASTER', []) %}{{ host }}:7051{% if not loop.last %},{% endif %}{% endfor %}",
+        "fs_wal_dir": "{{ kudu_master_wal_dir | default('/var/lib/kudu/master') }}",
+        "fs_data_dirs": "{{ kudu_master_data_dirs | default('/var/lib/kudu/master') }}",
+        "master_additional_flags": "{{ kudu_master_additional_flags | default('') }}"
+      }
+    }
+  }
+}

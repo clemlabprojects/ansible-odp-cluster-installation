@@ -1,0 +1,11 @@
+{
+  "Clusters": {
+    "desired_configs": {
+      "type": "polaris-jaas-conf",
+      "tag": "{{ range(00000000, 99999999) | random }}",
+      "properties": {
+        "content": "{% raw %}\n{{polaris_jaas_context}} {\n  com.sun.security.auth.module.Krb5LoginModule required\n  useKeyTab=true\n  keyTab=\"{{polaris_keytab_path}}\"\n  storeKey=true\n  useTicketCache=false\n  principal=\"{{polaris_jaas_principal}}\";\n};\nClient {\n  com.sun.security.auth.module.Krb5LoginModule required\n  useKeyTab=true\n  keyTab=\"{{polaris_keytab_path}}\"\n  storeKey=true\n  useTicketCache=false\n  principal=\"{{polaris_jaas_principal}}\";\n};\n    {% endraw %}"
+      }
+    }
+  }
+}

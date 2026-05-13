@@ -209,6 +209,50 @@
   retries: "{{ wait_timeout // 10 }}"
   delay: 10
 
+- name: Check if oidc_descriptor artifact exists
+  uri:
+    url: "{{ oidc_cluster_api }}/artifacts/oidc_descriptor"
+    method: GET
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    validate_certs: no
+    return_content: yes
+    status_code: 200, 404
+  register: check_oidc_descriptor
+
+- name: Write OIDC env properties into oidc_descriptor artifact
+  uri:
+    url: "{{ oidc_cluster_api }}/artifacts/oidc_descriptor"
+    method: "{{ 'PUT' if check_oidc_descriptor.status == 200 else 'POST' }}"
+    force_basic_auth: yes
+    user: "{{ ambari_username }}"
+    password: "{{ ambari_password }}"
+    headers:
+      X-Requested-By: ambari
+      Content-Type: application/json
+    body:
+      artifact_data:
+        properties:
+          oidc_provider: "{{ oidc_provider }}"
+          oidc_admin_url: "{{ oidc_admin_url }}"
+          oidc_admin_realm: "{{ oidc_admin_realm }}"
+          oidc_realm: "{{ oidc_realm }}"
+          oidc_admin_client_id: "{{ oidc_admin_client_id }}"
+          oidc_admin_client_secret: "{{ oidc_admin_client_secret }}"
+          oidc_verify_tls: "{{ (oidc_verify_tls | bool) | ternary('true', 'false') }}"
+    body_format: json
+    validate_certs: no
+    return_content: yes
+    status_code: 200, 201, 202
+  register: write_oidc_descriptor
+  until: write_oidc_descriptor.status in [200, 201, 202]
+  retries: "{{ wait_timeout // 10 }}"
+  delay: 10
+
 - name: Reset OIDC admin credentials
   uri:
     url: "{{ oidc_cluster_api }}/credentials/oidc.admin.credential"

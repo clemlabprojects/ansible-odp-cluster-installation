@@ -1,13 +1,15 @@
+{% set ranger_service_name = 'nifi-registry' if in_services == 'NIFI_REGISTRY' else in_services|lower %}
+{% set default_ranger_ssl_conf_dir = '/etc/' ~ ranger_service_name ~ '/conf' if in_services in ['KUDU', 'POLARIS'] else '/usr/' ~ ambari_stack_name ~ '/current/' ~ (in_services|lower) ~ '-client/conf' %}
 {
 	"Clusters": {
 		"desired_configs": {
-			"type": "ranger-{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}-policymgr-ssl",
+			"type": "ranger-{{ ranger_service_name }}-policymgr-ssl",
 			"tag": "{{ range(00000000, 99999999) | random }}",
 			"properties": {
-			{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "NIFI" %}
+			{% if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "NIFI" %}
 				"owner.for.certificate": "",
 			{% endif %}
-			{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "NIFI_REGISTRY" %}
+			{% if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "NIFI_REGISTRY" %}
 				"owner.for.certificate": "",
 			{% endif %}
 			{% if cluster_services.RANGER is defined and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL and cluster_services.RANGER.TWOWAY is defined and cluster_services.RANGER.TWOWAY %}
@@ -25,8 +27,8 @@
         "xasecure.policymgr.clientssl.keystore.credential.file" : "{% raw %}jceks://file{{credential_file}}{% endraw %}",
         "xasecure.policymgr.clientssl.truststore.credential.file" : "{% raw %}jceks://file{{credential_file}}{% endraw %}"
 			{% else %}
-        "xasecure.policymgr.clientssl.keystore" : "/usr/{{ ambari_stack_name }}/current/{{ in_services|lower }}-client/conf/ranger-plugin-keystore.jks",
-        "xasecure.policymgr.clientssl.truststore" : "/usr/{{ ambari_stack_name }}/current/{{ in_services|lower }}-client/conf/ranger-plugin-truststore.jks",
+        "xasecure.policymgr.clientssl.keystore" : "{{ default_ranger_ssl_conf_dir }}/ranger-plugin-keystore.jks",
+        "xasecure.policymgr.clientssl.truststore" : "{{ default_ranger_ssl_conf_dir }}/ranger-plugin-truststore.jks",
         "xasecure.policymgr.clientssl.keystore.password" : "changeit",
         "xasecure.policymgr.clientssl.truststore.password" : "changeit",
         "xasecure.policymgr.clientssl.keystore.credential.file" : {% raw %}"jceks://file{{credential_file}}",{% endraw %}
@@ -34,5 +36,5 @@
 			{% endif %}
       }
     }
-}
+  }
 }

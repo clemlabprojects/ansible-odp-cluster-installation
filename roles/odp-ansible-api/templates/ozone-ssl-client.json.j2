@@ -1,0 +1,13 @@
+{
+	"Clusters": {
+		"desired_configs": {
+			"type": "ozone-ssl-client",
+			"tag": "{{ range(00000000, 99999999) | random }}",
+			"properties": {
+        "ssl.client.truststore.location": "{{ ozone_ssl_client_truststore_location | default('/etc/hadoop/conf/truststore.jks') }}",
+        "ssl.client.truststore.password": "{{ ozone_ssl_client_truststore_password | default(ssl_truststore_password | default('changeit')) }}",
+        "ssl.client.truststore.type": "{{ ozone_ssl_client_truststore_type | default('jks') }}"
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@
 			"type": "spark3-hive-site-override",
 			"tag": "{{ range(00000000, 99999999) | random }}",
 			"properties": { {% raw %}
-				"metastore.catalog.default": "spark",
+				"metastore.catalog.default": "hive",
         "hive.metastore.client.connect.retry.delay" : "5",
         "hive.server2.enable.doAs" : "false",{% endraw %}
         {% if cluster_services.HIVE.SSL is defined and cluster_services.HIVE.SSL %}

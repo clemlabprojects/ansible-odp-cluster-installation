@@ -1,0 +1,17 @@
+{
+  "Clusters": {
+    "desired_configs": {
+      "type": "kudu-tserver-env",
+      "tag": "{{ range(00000000, 99999999) | random }}",
+      "properties": {
+        "rpc_bind_addresses": "0.0.0.0:7050",
+        "webserver_interface": "0.0.0.0",
+        "webserver_port": "8050",
+        "tserver_master_addrs": "{% for host in all.get('KUDU_MASTER', []) %}{{ host }}:7051{% if not loop.last %},{% endif %}{% endfor %}",
+        "fs_wal_dir": "{{ kudu_tserver_wal_dir | default('/var/lib/kudu/tserver') }}",
+        "fs_data_dirs": "{{ kudu_tserver_data_dirs | default('/var/lib/kudu/tserver') }}",
+        "tserver_additional_flags": "{{ kudu_tserver_additional_flags | default('') }}"
+      }
+    }
+  }
+}

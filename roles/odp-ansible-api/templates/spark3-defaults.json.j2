@@ -39,6 +39,19 @@
 				"spark.security.crypto.codec.classes.aes.ctr.nopadding" : "org.apache.spark.crypto.JceAesCtrCryptoCodec",
         "spark.history.provider" : "org.apache.spark.deploy.history.FsHistoryProvider",
         "spark.history.ui.port" : "18082",
+        {# Spark/Hive metastore integration. The stack-default values referenced
+           a non-existent standalone-metastore dir and an outdated 3.0 metastore
+           version. Use builtin jars and let metastore.version be resolved
+           dynamically by Ambari's SPARK3 params.py from the actually-installed
+           hive-common-*.jar so the value is agnostic to the ODP build version
+           (Spark does an exact-string compare against bundled jars).
+           Override via -e spark3_hive_metastore_version=… if needed. #}
+        "spark.sql.hive.metastore.jars" : "{{ spark3_hive_metastore_jars | default('builtin') }}",
+{% if spark3_hive_metastore_version is defined %}
+        "spark.sql.hive.metastore.version" : "{{ spark3_hive_metastore_version }}",
+{% else %}
+        "spark.sql.hive.metastore.version" : "{% raw %}{{hive_metastore_version}}{% endraw %}",
+{% endif %}
 				"spark.yarn.historyServer.address" : "{{ all['SPARK3_JOBHISTORYSERVER'][0]}}:{% if cluster_services.SPARK3 is defined and cluster_services.SPARK3.SSL is defined and cluster_services.SPARK3.SSL %}18482{% else %}18042{% endif %}",
         "spark.yarn.queue" : "default"
       },

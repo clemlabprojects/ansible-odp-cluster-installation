@@ -6,10 +6,12 @@
       copy:
         src: templates/ambari/params_linux.py
         dest: /var/lib/ambari-server/resources/stacks/{{ ambari_stack_name }}/3.0/services/HDFS/package/scripts/params_linux.py
+      notify: Restart Ambari Server
     - name: Copy template zkfc_slave.py
       copy:
         src: templates/ambari/zkfc_slave.py
         dest: /var/lib/ambari-server/resources/stacks/{{ ambari_stack_name }}/3.0/services/HDFS/package/scripts/zkfc_slave.py
+      notify: Restart Ambari Server
   when: ambari_stack_version >= 3 and ambari_stack_name == 'HDP' and inventory_hostname == ambari_server_hostname
 
 - lineinfile:
@@ -17,6 +19,7 @@
     regexp: '^hostname='
     line: 'hostname={{ ambari_server_hostname }}'
   register: checkambariagent
+  notify: Restart Ambari Agent
 ####################################################
 
 ######## Fix failed installation due to TLS version in Ambari-agent ########
@@ -25,6 +28,7 @@
     insertafter: '\[security\]'
     line: 'force_https_protocol=PROTOCOL_TLSv1_2'
   register: fixambari
+  notify: Restart Ambari Agent
 #####################################################
 
 ##############Fix ambari ############################
@@ -39,6 +43,7 @@
     path: /usr/lib/ambari-agent/lib/resource_management/libraries/script/script.py
     regexp: "package_regex = name.replace"
     line: "    package_regex = name.replace(STACK_VERSION_PLACEHOLDER, fr'(\\d|{package_delimiter})+') + \"$\""
+  notify: Restart Ambari Agent
 #####################################################
 
 ##############Fix ambari ############################
@@ -48,6 +53,7 @@
     regexp: '^agent.threadpool.size.max='
     replace: 'agent.threadpool.size.max=120'
   register: fixambari2
+  notify: Restart Ambari Agent
 #####################################################
 
 ##############Install client on all nodes // ########
@@ -69,17 +75,53 @@
   when: cluster_services.KERBEROS is defined and ansible_distribution == 'Ubuntu'
 #####################################################
 
-#####################################################
+######## Copy PEM certs to serverKeys for Impala, Kudu and Polaris ########
+# These files are read by the components' Ambari install hooks (e.g.
+# /var/lib/ambari-agent/cache/stacks/.../POLARIS/package/scripts/polaris.py:_setup_pem_tls
+# does `test -f /etc/security/serverKeys/server.public.pem` during the install action).
+# So the certs must be in place BEFORE trigger_cluster_installation.yml runs.  They used
+# to live in pre_start.yml which fires too late — see the comment block there.
+- name: Copy host SSL certificate to serverKeys
+  copy:
+    src: "{{ security_ssl_cert_folder }}/{{ inventory_hostname }}.cert.pem"
+    dest: "{{ security_server_ssl_stores }}/server.public.pem"
+    remote_src: yes
+    owner: root
+    group: hadoop
+    mode: '0644'
+  become: yes
+  when: >
+    (cluster_services.IMPALA is defined and cluster_services.IMPALA.SSL is defined and cluster_services.IMPALA.SSL) or
+    (cluster_services.KUDU is defined and cluster_services.KUDU.SSL is defined and cluster_services.KUDU.SSL) or
+    (cluster_services.POLARIS is defined and cluster_services.POLARIS.SSL is defined and cluster_services.POLARIS.SSL)
 
-- name: Restart service "Ambari Agent"
-  systemd:
-    name: ambari-agent
-    state: restarted
+- name: Copy host SSL private key to serverKeys
+  copy:
+    src: "{{ security_ssl_cert_folder }}/{{ inventory_hostname }}.key.pem"
+    dest: "{{ security_server_ssl_stores }}/server.key.pem"
+    remote_src: yes
+    owner: root
+    group: hadoop
+    mode: '0640'
+  become: yes
+  when: >
+    (cluster_services.IMPALA is defined and cluster_services.IMPALA.SSL is defined and cluster_services.IMPALA.SSL) or
+    (cluster_services.KUDU is defined and cluster_services.KUDU.SSL is defined and cluster_services.KUDU.SSL) or
+    (cluster_services.POLARIS is defined and cluster_services.POLARIS.SSL is defined and cluster_services.POLARIS.SSL)
 
+- name: Copy CA certificate to serverKeys
+  copy:
+    src: "{{ security_ssl_cacert_path }}"
+    dest: "{{ security_server_ssl_stores }}/ca.cert.pem"
+    remote_src: yes
+    owner: root
+    group: hadoop
+    mode: '0644'
+  become: yes
+  when: >
+    (cluster_services.IMPALA is defined and cluster_services.IMPALA.SSL is defined and cluster_services.IMPALA.SSL) or
+    (cluster_services.KUDU is defined and cluster_services.KUDU.SSL is defined and cluster_services.KUDU.SSL) or
+    (cluster_services.POLARIS is defined and cluster_services.POLARIS.SSL is defined and cluster_services.POLARIS.SSL)
+###########################################################################
 
-- name: Restart service "Ambari Server"
-  systemd:
-    name: ambari-server
-    state: restarted
-  when: inventory_hostname == ambari_server_hostname
 #####################################################

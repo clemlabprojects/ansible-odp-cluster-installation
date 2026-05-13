@@ -1,0 +1,11 @@
+{
+  "Clusters": {
+    "desired_configs": {
+      "type": "polaris-logging-properties",
+      "tag": "{{ range(00000000, 99999999) | random }}",
+      "properties": {
+        "content": "{% raw %}\n# Polaris logging defaults (applied via /etc/polaris/conf/logging.properties).\n\n# Strip OTEL trace-context brackets, empty MDC fields, and thread name from log lines.\n# Default Quarkus+OTEL format includes [traceId,spanId] [,,,] (thread) which is noisy.\nquarkus.log.console.format=%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{3.}] %s%e%n\nquarkus.log.file.format=%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c{3.}] %s%e%n\n\n# Keep these Ranger-related categories at INFO for production baselines.\n# Admins can raise specific categories to DEBUG/TRACE when troubleshooting.\nquarkus.log.category.\"org.apache.polaris.service.config\".level=INFO\nquarkus.log.category.\"org.apache.polaris.extension.auth.ranger\".level=INFO\nquarkus.log.category.\"org.apache.ranger\".level=INFO\nquarkus.log.category.\"org.apache.ranger.plugin\".level=INFO\nquarkus.log.category.\"org.apache.ranger.plugin.service\".level=INFO\nquarkus.log.category.\"org.apache.ranger.plugin.util\".level=INFO\nquarkus.log.category.\"org.apache.ranger.plugin.util.PolicyRefresher\".level=INFO\nquarkus.log.category.\"org.apache.ranger.admin.client\".level=INFO\nquarkus.log.category.\"org.apache.ranger.admin.client.RangerAdminRESTClient\".level=INFO\nquarkus.log.category.\"org.apache.ranger.audit\".level=INFO\nquarkus.log.category.\"org.apache.ranger.audit.destination\".level=INFO\nquarkus.log.category.\"org.apache.ranger.audit.provider\".level=INFO\nquarkus.log.category.\"org.apache.ranger.audit.provider.hdfs\".level=INFO\nquarkus.log.category.\"org.apache.ranger.audit.utils\".level=INFO\nquarkus.log.category.\"org.apache.ranger.audit.queue\".level=INFO\n\n# Example troubleshooting overrides (uncomment temporarily):\n# quarkus.log.category.\"org.apache.ranger.audit.provider.hdfs\".level=DEBUG\n# quarkus.log.category.\"org.apache.ranger.audit.destination\".level=DEBUG\n# quarkus.log.category.\"org.apache.ranger.plugin.util.PolicyRefresher\".level=DEBUG\n    {% endraw %}"
+      }
+    }
+  }
+}

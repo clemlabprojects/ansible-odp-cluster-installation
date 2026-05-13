@@ -1,32 +1,29 @@
+{% set ranger_service_name = 'nifi-registry' if in_services == 'NIFI_REGISTRY' else in_services|lower %}
+{% set plugin_enabled = cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER.PLUGIN[in_services] %}
+{% set hadoop_authorization_services = ['HDFS', 'YARN', 'OZONE', 'KUDU', 'POLARIS'] %}
 {
 	"Clusters": {
 		"desired_configs": {
-			"type": "ranger-{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}-security",
+			"type": "ranger-{{ ranger_service_name }}-security",
 			"tag": "{{ range(00000000, 99999999) | random }}",
 			"properties": {
 				{% if cluster_services.RANGER is defined and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL %}
-        "ranger.plugin.{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}.policy.rest.url" : "https://{{ all['RANGER_ADMIN'][0] }}:6182",
+        "ranger.plugin.{{ ranger_service_name }}.policy.rest.url" : "https://{{ all['RANGER_ADMIN'][0] }}:6182",
 				{% else %}
-        "ranger.plugin.{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}.policy.rest.url" : "http://{{ all['RANGER_ADMIN'][0] }}:6080",
+        "ranger.plugin.{{ ranger_service_name }}.policy.rest.url" : "http://{{ all['RANGER_ADMIN'][0] }}:6080",
 				{% endif %}
-        "ranger.plugin.{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}.policy.pollIntervalMs" : "30000",
-        "ranger.plugin.{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}.policy.source.impl" : "{% if in_services == "KNOX" %}org.apache.ranger.admin.client.RangerAdminJersey2RESTClient{% else %}org.apache.ranger.admin.client.RangerAdminRESTClient{% endif %}",
-				"ranger.plugin.{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}.policy.cache.dir" : {% raw %}"/etc/ranger/{{repo_name}}/policycache",{% endraw %}
-        "ranger.plugin.{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}.service.name" : {% raw %}"{{repo_name}}",{% endraw %}
-				{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "YARN" %}
+        "ranger.plugin.{{ ranger_service_name }}.policy.pollIntervalMs" : "30000",
+        "ranger.plugin.{{ ranger_service_name }}.policy.source.impl" : "{% if in_services == "KNOX" %}org.apache.ranger.admin.client.RangerAdminJersey2RESTClient{% else %}org.apache.ranger.admin.client.RangerAdminRESTClient{% endif %}",
+				"ranger.plugin.{{ ranger_service_name }}.policy.cache.dir" : {% raw %}"/etc/ranger/{{repo_name}}/policycache",{% endraw %}
+        "ranger.plugin.{{ ranger_service_name }}.service.name" : {% raw %}"{{repo_name}}",{% endraw %}
+				{% if plugin_enabled and in_services == "YARN" %}
 				"ranger.add-yarn-authorization" : "false",
 				{% endif %}
-				{%if cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "HIVE" %}
-				{% raw %}"ranger.plugin.hive.policy.rest.ssl.config.file" : "{{ranger_hive_ssl_config_file}}"{% endraw %}
-				{% elif cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services in ["HDFS", "YARN"] and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL %}
+				{% if plugin_enabled and in_services in hadoop_authorization_services %}
 				"xasecure.add-hadoop-authorization" : "true",
-				"ranger.plugin.{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}.policy.rest.ssl.config.file" : "/etc/hadoop/conf/ranger-policymgr-ssl.xml"
-				{% elif cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] is defined and cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN[in_services] and in_services == "HDFS" and cluster_services.RANGER.SSL is defined and cluster_services.RANGER.SSL %}
-				"xasecure.add-hadoop-authorization" : "true"
-				{% else %}
-				"ranger.plugin.{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}.policy.rest.ssl.config.file" : "/etc/{% if in_services == "NIFI_REGISTRY" %}nifi-registry{% else %}{{ in_services|lower }}{% endif %}/conf/ranger-policymgr-ssl.xml"
 				{% endif %}
+				"ranger.plugin.{{ ranger_service_name }}.policy.rest.ssl.config.file" : "{% if in_services == "HIVE" %}{% raw %}{{ranger_hive_ssl_config_file}}{% endraw %}{% elif in_services in ["HDFS", "YARN", "OZONE"] %}/etc/hadoop/conf/ranger-policymgr-ssl.xml{% else %}/etc/{{ ranger_service_name }}/conf/ranger-policymgr-ssl.xml{% endif %}"
       }
     }
-		}
-		}
+	}
+}

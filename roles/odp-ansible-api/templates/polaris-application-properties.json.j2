@@ -1,0 +1,62 @@
+{% set polaris_ssl_enabled = cluster_services.POLARIS is defined and cluster_services.POLARIS.SSL is defined and cluster_services.POLARIS.SSL %}
+{% set polaris_ranger_enabled = cluster_services.RANGER is defined and cluster_services.RANGER.PLUGIN is defined and cluster_services.RANGER.PLUGIN.POLARIS is defined and cluster_services.RANGER.PLUGIN.POLARIS %}
+{% set polaris_oidc_enabled = (oidc_enabled | default(false)) or (cluster_services.OIDC is defined) %}
+{
+  "Clusters": {
+    "desired_configs": {
+      "type": "polaris-application-properties",
+      "tag": "{{ range(00000000, 99999999) | random }}",
+      "properties": {
+        "quarkus.http.port": "8181",
+        "quarkus.http.ssl-port": "8443",
+        "quarkus.management.port": "8182",
+        "quarkus.http.insecure-requests": "{{ 'redirect' if polaris_ssl_enabled else 'enabled' }}",
+        "quarkus.http.ssl.certificate.key-store-file": "{{ ssl_keystore_path | default('/etc/security/serverKeys/keystore.jks') }}",
+        "quarkus.http.ssl.certificate.key-store-file-type": "JKS",
+        "quarkus.http.ssl.certificate.key-store-password": "{{ ssl_keystore_password | default('changeit') }}",
+        "quarkus.http.ssl.certificate.trust-store-file": "{{ ssl_truststore_path | default('/etc/security/serverKeys/truststore.jks') }}",
+        "quarkus.http.ssl.certificate.trust-store-file-type": "JKS",
+        "quarkus.http.ssl.certificate.trust-store-password": "{{ ssl_truststore_password | default('changeit') }}",
+        "quarkus.log.console.enabled": "false",
+        "quarkus.log.file.enabled": "true",
+        "polaris.persistence.type": "relational-jdbc",
+        "quarkus.datasource.db-kind": "postgresql",
+        "quarkus.datasource.jdbc.url": "jdbc:postgresql://{{ polaris_database_host | default(postgres_server | default('localhost')) }}:{{ polaris_database_port | default(database_port | default('5432')) }}/{{ polaris_database | default('polaris') }}",
+        "quarkus.datasource.jdbc.driver": "org.postgresql.Driver",
+        "quarkus.datasource.username": "{{ polaris_database_user | default('polaris') }}",
+        "quarkus.datasource.password": "{{ polaris_database_user_password | default('') }}",
+        "quarkus.datasource.devservices.enabled": "false",
+        "polaris.authentication.type": "{{ 'mixed' if polaris_oidc_enabled else 'internal' }}",
+        "polaris.authorization.type": "{{ 'ranger' if polaris_ranger_enabled else 'internal' }}",
+        "polaris.authentication.authenticator.type": "default",
+        "polaris.authentication.token-service.type": "default",
+        "polaris.authentication.token-broker.type": "rsa-key-pair",
+        "polaris.authentication.token-broker.max-token-generation": "PT1H",
+        "polaris.authentication.token-broker.rsa-key-pair.public-key-file": "/etc/polaris/conf/keys/public.key",
+        "polaris.authentication.token-broker.rsa-key-pair.private-key-file": "/etc/polaris/conf/keys/private.key",
+        "polaris.authentication.token-broker.symmetric-key.file": "/etc/polaris/conf/keys/symmetric.key",
+        "polaris.authentication.token-broker.symmetric-key.secret": "{{ polaris_token_broker_symmetric_secret | default('') }}",
+        "polaris.realm-context.realms": "POLARIS",
+        "polaris.realm-context.header-name": "Polaris-Realm",
+        "polaris.realm-context.require-header": "true",
+        "quarkus.http.cors": "true",
+        "quarkus.http.cors.origins": "{{ polaris_cors_origins | default('*') }}",
+        "quarkus.http.cors.methods": "GET,POST,PUT,DELETE,PATCH,HEAD,OPTIONS",
+        "quarkus.http.cors.headers": "Content-Type,Authorization,Polaris-Realm,X-Requested-By,Accept",
+        "quarkus.http.cors.access-control-allow-credentials": "true",
+        "quarkus.oidc.tenant-enabled": "{{ 'true' if polaris_oidc_enabled else 'false' }}",
+        "quarkus.oidc.auth-server-url": "{{ polaris_oidc_auth_server_url | default((oidc_admin_url | default('http://localhost:8080') | regex_replace('/$', '')) ~ '/realms/' ~ (oidc_realm | default('polaris'))) }}",
+        "quarkus.oidc.client-id": "{{ polaris_oidc_client_id | default(cluster_name ~ '-polaris') }}",
+        "quarkus.oidc.application-type": "hybrid",
+        "quarkus.oidc.roles.role-claim-path": "polaris/roles",
+        "polaris.oidc.principal-mapper.type": "default",
+        "polaris.oidc.principal-mapper.id-claim-path": "polaris/principal_id",
+        "polaris.oidc.principal-mapper.name-claim-path": "polaris/principal_name",
+        "polaris.oidc.principal-roles-mapper.type": "default",
+        "polaris.oidc.principal-roles-mapper.filter": "^(?!profile$|email$).*",
+        "polaris.oidc.principal-roles-mapper.mappings[0].regex": "^.*$",
+        "polaris.oidc.principal-roles-mapper.mappings[0].replacement": "PRINCIPAL_ROLE:$0"
+      }
+    }
+  }
+}

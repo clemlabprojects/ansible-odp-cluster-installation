@@ -1,0 +1,20 @@
+{
+  "Clusters": {
+    "desired_configs": {
+      "type": "polaris-db-properties",
+      "tag": "{{ range(00000000, 99999999) | random }}",
+      "properties": {
+        "create_db_dbuser": "{{ (polaris_create_db_dbuser | default(false) | bool) | ternary('true', 'false') }}",
+        "DB_FLAVOR": "POSTGRES",
+        "db_host": "{{ polaris_database_host | default(postgres_server | default('localhost')) }}",
+        "db_port": "{{ polaris_database_port | default(database_port | default('5432')) }}",
+        "polaris_privelege_user_jdbc_url": "jdbc:postgresql://{{ polaris_database_host | default(postgres_server | default('localhost')) }}:{{ polaris_database_port | default(database_port | default('5432')) }}/postgres",
+        "db_root_user": "{{ polaris_database_root_user | default(postgres_user | default('postgres')) }}",
+        "db_root_password": "{{ polaris_database_root_password | default(postgres_pwd | default('')) }}",
+        "db_name": "{{ polaris_database | default('polaris') }}",
+        "db_user": "{{ polaris_database_user | default('polaris') }}",
+        "db_password": "{{ polaris_database_user_password | default('') }}"
+      }
+    }
+  }
+}
