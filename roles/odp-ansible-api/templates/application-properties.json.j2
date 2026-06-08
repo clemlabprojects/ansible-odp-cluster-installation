@@ -36,7 +36,7 @@
 			  "atlas.authentication.method.ldap.user.searchfilter": "",
 			  "atlas.authentication.method.ldap.userDNpattern": "uid=",
 			  "atlas.authentication.principal": "atlas",
-			  {% raw %}"atlas.cluster.name": "{{cluster_name}}",{% endraw %}
+			  "atlas.cluster.name": "{{ cluster_name }}",
 			  "atlas.graph.index.search.solr.mode": "cloud",
 			  "atlas.graph.index.search.solr.zookeeper-url": "{% for host in zookeeper_quorum %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/infra-solr",
 			  "atlas.graph.storage.backend": "hbase",
