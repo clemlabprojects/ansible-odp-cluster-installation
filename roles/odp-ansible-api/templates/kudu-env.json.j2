@@ -12,8 +12,8 @@
         "kudu_run_dir": "/var/run/kudu",
         "ranger_kudu_receiver_fifo_dir": "/var/lib/kudu",
         "kudu_enable_tls": "{{ 'true' if kudu_ssl_enabled else 'false' }}",
-        "kudu_tls_cert_file": "{{ kudu_tls_cert_file | default(security_server_ssl_stores ~ '/server.public.pem') if kudu_ssl_enabled else '/etc/kudu/conf/tls/kudu-server.crt' }}",
-        "kudu_tls_private_key_file": "{{ kudu_tls_private_key_file | default(security_server_ssl_stores ~ '/server.key.pem') if kudu_ssl_enabled else '/etc/kudu/conf/tls/kudu-server.key' }}",
+        "kudu_tls_cert_file": "{{ kudu_tls_cert_file | default(security_server_ssl_stores ~ '/certificate.cert.pem') if kudu_ssl_enabled else '/etc/kudu/conf/tls/kudu-server.crt' }}",
+        "kudu_tls_private_key_file": "{{ kudu_tls_private_key_file | default(security_server_ssl_stores ~ '/certificate.key.pem') if kudu_ssl_enabled else '/etc/kudu/conf/tls/kudu-server.key' }}",
         "kudu_tls_ca_cert_file": "{{ kudu_tls_ca_cert_file | default(security_server_ssl_stores ~ '/ca.cert.pem') if kudu_ssl_enabled else '' }}",
         "kudu_principal_name": "{{ kudu_principal_name | default((kudu_service_user | default('kudu')) ~ '/_HOST@' ~ (kerberos_realm | default('EXAMPLE.COM'))) }}",
         "kudu_keytab": "{{ kudu_keytab | default('/etc/security/keytabs/kudu.service.keytab') }}"
