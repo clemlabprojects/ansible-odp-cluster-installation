@@ -82,53 +82,12 @@
   when: cluster_services.KERBEROS is defined and ansible_distribution == 'Ubuntu'
 #####################################################
 
-######## Copy PEM certs to serverKeys for Impala, Kudu and Polaris ########
-# These files are read by the components' Ambari install hooks (e.g.
-# /var/lib/ambari-agent/cache/stacks/.../POLARIS/package/scripts/polaris.py:_setup_pem_tls
-# does `test -f /etc/security/serverKeys/server.public.pem` during the install action).
-# So the certs must be in place BEFORE trigger_cluster_installation.yml runs.  They used
-# to live in pre_start.yml which fires too late — see the comment block there.
-- name: Copy host SSL certificate to serverKeys
-  copy:
-    src: "{{ security_ssl_cert_folder }}/{{ inventory_hostname }}.cert.pem"
-    dest: "{{ security_server_ssl_stores }}/server.public.pem"
-    remote_src: yes
-    owner: root
-    group: hadoop
-    mode: '0644'
-  become: yes
-  when: >
-    (cluster_services.IMPALA is defined and cluster_services.IMPALA.SSL is defined and cluster_services.IMPALA.SSL) or
-    (cluster_services.KUDU is defined and cluster_services.KUDU.SSL is defined and cluster_services.KUDU.SSL) or
-    (cluster_services.POLARIS is defined and cluster_services.POLARIS.SSL is defined and cluster_services.POLARIS.SSL)
-
-- name: Copy host SSL private key to serverKeys
-  copy:
-    src: "{{ security_ssl_cert_folder }}/{{ inventory_hostname }}.key.pem"
-    dest: "{{ security_server_ssl_stores }}/server.key.pem"
-    remote_src: yes
-    owner: root
-    group: hadoop
-    mode: '0640'
-  become: yes
-  when: >
-    (cluster_services.IMPALA is defined and cluster_services.IMPALA.SSL is defined and cluster_services.IMPALA.SSL) or
-    (cluster_services.KUDU is defined and cluster_services.KUDU.SSL is defined and cluster_services.KUDU.SSL) or
-    (cluster_services.POLARIS is defined and cluster_services.POLARIS.SSL is defined and cluster_services.POLARIS.SSL)
-
-- name: Copy CA certificate to serverKeys
-  copy:
-    src: "{{ security_ssl_cacert_path }}"
-    dest: "{{ security_server_ssl_stores }}/ca.cert.pem"
-    remote_src: yes
-    owner: root
-    group: hadoop
-    mode: '0644'
-  become: yes
-  when: >
-    (cluster_services.IMPALA is defined and cluster_services.IMPALA.SSL is defined and cluster_services.IMPALA.SSL) or
-    (cluster_services.KUDU is defined and cluster_services.KUDU.SSL is defined and cluster_services.KUDU.SSL) or
-    (cluster_services.POLARIS is defined and cluster_services.POLARIS.SSL is defined and cluster_services.POLARIS.SSL)
-###########################################################################
+# PEM certs for Impala / Kudu / Polaris (and any other non-JKS-consuming service) now come
+# from the `javakeystore` role, which runs CLUSTER-wide on `--tags java_keystore` and
+# populates /etc/security/serverKeys/certificate.{cert,key}.pem on every host.  The Ambari
+# config templates (impala-env.json.j2, polaris-env.json.j2, kudu-env.json.j2) reference
+# those paths directly via the `security_server_ssl_stores` var.
+# Previously this file copied the PEM material here too (master01 only), which was both
+# redundant with javakeystore and incomplete (other hosts didn't get the files).
 
 #####################################################
