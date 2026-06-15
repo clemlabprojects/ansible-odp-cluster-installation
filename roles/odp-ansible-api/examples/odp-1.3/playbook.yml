@@ -1,0 +1,225 @@
+# ============================================================================
+# ambari-api role - usage example for ODP 1.3 (Ambari 2.8 / Java 21)
+# ----------------------------------------------------------------------------
+# This is the modern counterpart to ../playbook.yml (which targets HDP 2.6).
+# Modelled on a real, deploying cluster (deploy_dev_w11_rhel9.yml).
+# Run from this directory:
+#   ansible-playbook -i hosts playbook.yml -u vagrant -b
+#
+# The host-to-component mapping lives in cluster.yaml ("all" dict). Every
+# service enabled in cluster_services below must have its component groups
+# declared there (e.g. POLARIS -> POLARIS_SERVER, KUDU -> KUDU_MASTER, ...).
+# ============================================================================
+- hosts: admin1
+  gather_facts: yes
+  vars_files:
+    - cluster.yaml
+
+  roles:
+    - role: ambari-api
+      vars:
+        silent: true
+
+        # ---- Ambari server endpoint -------------------------------------
+        ambari_server_hostname: master1
+        ambari_server_port: 8442
+        ambari_server_protocol: https
+        cluster_name: dev01                 # no space / underscore / special chars
+        ambari_username: admin
+        ambari_password: admin
+
+        # ---- Cluster topology -------------------------------------------
+        hostnames: "{{ all['CLUSTER'] }}"        # FQDN list (used by params_linux.py)
+        cluster_hosts: "{{ groups['CLUSTER'] }}" # inventory group of cluster hosts
+        first_namenode:  "{{ all['NAMENODE'][0] }}"
+        second_namenode: "{{ all['NAMENODE'][1] }}"
+        zookeeper_quorum: "{{ all['ZOOKEEPER_SERVER'] }}"
+
+        # ---- ODP stack identity (replaces HDP-era hdp_version) ----------
+        ambari_stack_name: ODP
+        ambari_stack_version: 1.3                       # stack major (Ambari stack id)
+        build_stack_version: "{{ stack_major_version }}" # e.g. 1.3.2.0 (build/repo id)
+        repos_url:       "{{ repos_url_hdp }}"
+        repos_url_utils: "{{ repos_url_hdp_utils }}"
+        # vdf_path: templates/repository_versions/ODP-1.3.xml  # optional: pin a specific VDF
+        # vdf_url:  "http://my_repo/ODP/ODP-VDF.xml"           # optional: remote VDF
+
+        # ---- Java (ODP 1.3 runs on Java 21) -----------------------------
+        java_home:   /usr/lib/jvm/java-21-openjdk
+        java64_home: /usr/lib/jvm/java-21-openjdk
+        java_version: 21
+        odp_java_version: 21
+
+        # ---- Storage layout ---------------------------------------------
+        hdp_namenode_dir:
+          - "/data/nn"
+        hdp_datanode_dir:
+          - "/data/hdfs/data/1"
+          - "/data/hdfs/data/2"
+          - "/data/hdfs/data/3"
+          - "/data/hdfs/data/4"
+        hdp_checkpoint_dir:
+          - "/data/checkpoint"
+        hdp_journalnode_dir:
+          - "/data/journalnode"
+        hdp_yarn_local_dir:
+          - "/data/yarn/local/1"
+          - "/data/yarn/local/2"
+        hdp_yarn_log_dir:
+          - "/data/yarn/log/1"
+          - "/data/yarn/log/2"
+
+        # ---- Database backend (PostgreSQL) ------------------------------
+        database_type: postgresql
+        database_server: admin1
+        database_port: 5432
+        database_hive: hive_db
+        database_hive_user: hive
+        database_hive_user_password: hive123
+        database_ranger: ranger_db
+        database_ranger_user: ranger
+        database_ranger_user_password: ranger123
+        database_oozie: oozie_db
+        database_oozie_user: oozie
+        database_oozie_user_password: oozie123
+        database_rangerkms: rangerkms_db
+        database_rangerkms_user: rangerkms
+        database_rangerkms_user_password: rangerkms123
+        # Polaris catalog DB (only needed when the POLARIS service is enabled)
+        polaris_database_host: admin1
+        polaris_database_port: 5432
+        # polaris_database / _user / _user_password are read from your inventory vars.
+
+        # ---- SSL keystore / truststore ----------------------------------
+        ssl_truststore_path: "/etc/security/serverKeys/truststore.jks"
+        ssl_truststore_password: truststore123
+        ssl_keystore_path: "/etc/security/serverKeys/keystore.jks"
+        ssl_keystore_password: keystore123
+
+        # ---- Ranger admin + KMS + plugin SSL ----------------------------
+        ranger_admin_password: test12345678
+        ranger_truststore_alias: "clemlab.odp.ranger"
+        ranger_keystore_credential_alias: "master1"
+        ranger_keystore_keyalias: "master1"
+        rangerkms_master_key: "changeMeMasterKey"
+        rangerkms_encryption_key: "changeMeEncKey"
+        ranger_plugin_keystore_path: "/etc/security/serverKeys/ranger-ssl-plugin-keystore.jks"
+        ranger_plugin_keystore_alias: "rangersslagent"
+        ranger_plugin_keystore_password: "changeit"
+
+        knox_master_password: knox12345678
+        hst_agent_version: "1.4.5.2.6.2.2-1"   # must match your smartsense package version
+
+        # ---- Kerberos via FreeIPA ---------------------------------------
+        # Replaces the HDP-era kerberos_principal / kerberos_principal_password pair.
+        kdc_type: ipa                          # "ipa" (FreeIPA) or "mit-kdc"
+        kerberos_realm: DEV01.HADOOP.CLEMLAB.COM
+        kdc_server: admin1                     # primary KDC / IPA server
+        kdc_hosts:                             # all IPA/KDC hosts (HA)
+          - admin1
+        manage_identities: true                # Ambari manages principals/keytabs
+        ambari_manage_krb5_conf: true          # Ambari manages /etc/krb5.conf
+        ignore_create_users_and_groups: true
+        ipa_ambari_password: admin123          # password for the Ambari IPA admin principal
+        ipa_do_creation: true                  # create the Ambari admin principal in IPA
+        hadoop_rpc_protection: privacy         # authentication | integrity | privacy
+
+        # For a plain MIT-KDC instead of FreeIPA, drop the ipa_* keys and use:
+        # kdc_type: mit-kdc
+        # kerberos_principal: admin@DEV01.HADOOP.CLEMLAB.COM
+        # kerberos_principal_password: admin123
+
+        # ---- OIDC / SSO (Keycloak) --------------------------------------
+        # Only required when the OIDC service is enabled in cluster_services.
+        oidc_mode: kerberos_and_oidc           # oidc_only | kerberos_and_oidc
+        oidc_admin_url: "https://sso-dev.dev01.hadoop.clemlab.com:8443"
+        oidc_admin_realm: "dev01-realm"        # realm used to mint the Ambari admin token
+        oidc_realm: "dev01-realm"              # realm services (e.g. Polaris) authenticate against
+        oidc_admin_principal: "ambari-oidc"
+        oidc_admin_password: "ambari-oidc123"
+        oidc_admin_client_id: "ambari-oidc"
+        oidc_admin_client_secret: "ambari-oidc123"
+
+        # ---- Package preinstall toggles ---------------------------------
+        preinstall_stack_packages: false       # let Ambari pull stack RPMs
+        preinstall_system_packages: false      # let Ambari pull OS deps
+
+        # ---- Optional: per-host config overrides ------------------------
+        # config_groups:
+        #   - cfg1:
+        #     config_type: 'hdfs-site'
+        #     config_tag: "datanode"
+        #     group_name: "datanode"
+        #     group_description: "dfs.datanode.data.dir for storage node"
+        #     group_tag: 'datanode_storage'
+        #     properties:
+        #       - dfs.datanode.data.dir=[DISK]/data/1/hdfs/data,[DISK]/data/2/hdfs/data
+        #     hosts:
+        #       - worker1
+        #       - worker2
+
+        # ---- Services to install ----------------------------------------
+        # Flags: HA, SSL, TWOWAY (mutual TLS), PLUGIN (Ranger plugins).
+        cluster_services:
+          CORE:
+            SSL: True
+          HDFS:
+            HA: True
+            SSL: True
+          YARN:
+            HA: True
+            SSL: True
+          MAPREDUCE2:
+            SSL: True
+          TEZ:
+            SSL: True
+          ZOOKEEPER:
+          HIVE:
+            SSL: True
+          RANGER:
+            SSL: True
+            # TWOWAY: True
+            PLUGIN:
+              HDFS: True
+              YARN: True
+              HIVE: True
+              HBASE: True
+              KNOX: True
+              KUDU: True
+              POLARIS: True
+              IMPALA: True
+              KAFKA: True
+              ATLAS: True
+          # RANGER_KMS:
+          #   SSL: True
+          AMBARI_INFRA_SOLR:
+            SSL: True
+          AMBARI_METRICS:
+          KERBEROS:
+          OIDC:
+          IMPALA:
+            SSL: True
+            HA: True
+          KUDU:
+            SSL: True
+            HA: True
+          POLARIS:
+            SSL: True
+            HA: True
+          SPARK3:
+            SSL: True
+          KAFKA:
+            SSL: True
+          OOZIE:
+            SSL: True
+          KNOX:
+            SSL: True
+          ATLAS:
+            SSL: True
+          HBASE:
+            SSL: True
+          # ZEPPELIN:
+          #   SSL: True
+          # HUE:
+          #   SSL: True
+          # SMOKETEST:

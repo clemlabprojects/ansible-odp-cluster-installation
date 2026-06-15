@@ -1,0 +1,219 @@
+# ============================================================================
+# ambari-api - host -> component layout for ODP 1.3
+# ----------------------------------------------------------------------------
+# Modern counterpart to ../cluster.yaml (HDP 2.6). Host names match ./hosts.
+# Every service enabled in playbook.yml:cluster_services must have its
+# component groups declared here. Topology: 3 masters + 1 admin/edge + 3 workers.
+# ============================================================================
+all:
+  # ---- Whole-cluster group (referenced as all['CLUSTER']) -----------------
+  CLUSTER:
+      - admin1
+      - master1
+      - master2
+      - master3
+      - worker1
+      - worker2
+      - worker3
+
+  # ---- HDFS (HA) ----------------------------------------------------------
+  NAMENODE:
+      - master1
+      - master2
+  ZKFC:
+      - master1
+      - master2
+  JOURNALNODE:
+      - master1
+      - master2
+      - master3
+  DATANODE:
+      - worker1
+      - worker2
+      - worker3
+  HDFS_CLIENT:
+      - master1
+      - worker1
+      - worker2
+      - worker3
+
+  # ---- YARN / MapReduce (HA) ---------------------------------------------
+  RESOURCEMANAGER:
+      - master1
+      - master2
+  APP_TIMELINE_SERVER:
+      - master2
+  TIMELINE_READER:
+      - master2
+  YARN_REGISTRY_DNS:
+      - master2
+  HISTORYSERVER:
+      - master2
+  NODEMANAGER:
+      - worker1
+      - worker2
+      - worker3
+  YARN_CLIENT:
+      - master1
+      - master2
+      - worker1
+      - worker2
+      - worker3
+  MAPREDUCE2_CLIENT:
+      - master1
+      - master2
+      - worker1
+      - worker2
+      - worker3
+
+  # ---- ZooKeeper ----------------------------------------------------------
+  ZOOKEEPER_SERVER:
+      - master1
+      - master2
+      - master3
+  ZOOKEEPER_CLIENT:
+      - worker1
+      - worker2
+      - worker3
+
+  # ---- Tez ----------------------------------------------------------------
+  TEZ_CLIENT:
+      - admin1
+      - worker1
+      - worker2
+      - worker3
+
+  # ---- Hive ---------------------------------------------------------------
+  HIVE_METASTORE:
+      - master1
+  HIVE_SERVER:
+      - master1
+      - master2
+  HIVE_CLIENT:
+      - master1
+      - worker1
+      - worker2
+      - worker3
+
+  # ---- HBase --------------------------------------------------------------
+  HBASE_MASTER:
+      - master1
+      - master2
+  HBASE_REGIONSERVER:
+      - worker1
+      - worker2
+      - worker3
+  HBASE_CLIENT:
+      - admin1
+      - master1
+      - master2
+
+  # ---- Kafka --------------------------------------------------------------
+  KAFKA_BROKER:
+      - worker1
+      - worker2
+      - worker3
+
+  # ---- Spark 3 (replaces HDP-era SPARK2) ----------------------------------
+  SPARK3_JOBHISTORYSERVER:
+      - master2
+  SPARK3_THRIFTSERVER:
+      - worker1
+  SPARK3_CLIENT:
+      - admin1
+      - master1
+      - master2
+      - worker1
+      - worker2
+      - worker3
+
+  # ---- Impala -------------------------------------------------------------
+  IMPALA_STATE_STORE:
+      - master1
+  IMPALA_CATALOG_SERVICE:
+      - master1
+  IMPALA_DAEMON:
+      - worker1
+      - worker2
+      - worker3
+  IMPALA_CLIENT:
+      - admin1
+      - master1
+
+  # ---- Kudu ---------------------------------------------------------------
+  KUDU_MASTER:
+      - master1
+      - master2
+      - master3
+  KUDU_TSERVER:
+      - worker1
+      - worker2
+      - worker3
+  KUDU_CLIENT:
+      - admin1
+      - master1
+
+  # ---- Polaris (Iceberg REST catalog) -------------------------------------
+  POLARIS_SERVER:
+      - master1
+  POLARIS_CONSOLE:
+      - master1
+  POLARIS_CLIENT:
+      - admin1
+      - master1
+
+  # ---- Oozie --------------------------------------------------------------
+  OOZIE_SERVER:
+      - master1
+  OOZIE_CLIENT:
+      - master1
+      - master2
+      - worker1
+      - worker2
+      - worker3
+
+  # ---- Ranger (+ KMS) -----------------------------------------------------
+  RANGER_ADMIN:
+      - master1
+  RANGER_USERSYNC:
+      - master1
+  RANGER_TAGSYNC:
+      - master1
+  RANGER_KMS_SERVER:
+      - master1
+
+  # ---- Atlas --------------------------------------------------------------
+  ATLAS_SERVER:
+      - master2
+  ATLAS_CLIENT:
+      - master1
+      - master2
+      - worker1
+      - worker2
+      - worker3
+
+  # ---- Ambari Infra / Metrics ---------------------------------------------
+  INFRA_SOLR:
+      - worker1
+      - worker2
+      - worker3
+  INFRA_SOLR_CLIENT:
+      - master1
+      - master2
+      - worker1
+      - worker2
+      - worker3
+  METRICS_COLLECTOR:
+      - master2
+  METRICS_GRAFANA:
+      - master2
+  METRICS_MONITOR:
+      - master1
+      - master2
+      - worker1
+      - worker2
+      - worker3
+
+  # ---- Knox ---------------------------------------------------------------
+  KNOX_GATEWAY:
+      - admin1
