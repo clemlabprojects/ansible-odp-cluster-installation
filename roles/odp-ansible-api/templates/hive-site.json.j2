@@ -59,7 +59,7 @@
         "hive.exec.compress.output" : "false",
         "hive.exec.dynamic.partition" : "true",
         "hive.exec.dynamic.partition.mode" : "nonstrict",
-        "hive.exec.failure.hooks" : "org.apache.hadoop.hive.ql.hooks.ATSHook",
+        "hive.exec.failure.hooks" : "{% if cluster_services.ATLAS is defined %}org.apache.atlas.hive.hook.HiveHook,{% endif %}org.apache.hadoop.hive.ql.hooks.ATSHook",
         "hive.exec.max.created.files" : "100000",
         "hive.exec.max.dynamic.partitions" : "5000",
         "hive.exec.max.dynamic.partitions.pernode" : "2000",
@@ -69,8 +69,11 @@
         "hive.exec.orc.encoding.strategy" : "SPEED",
         "hive.exec.parallel" : "false",
         "hive.exec.parallel.thread.number" : "8",
-        "hive.exec.post.hooks" : "org.apache.hadoop.hive.ql.hooks.ATSHook",
+        "hive.exec.post.hooks" : "{% if cluster_services.ATLAS is defined %}org.apache.atlas.hive.hook.HiveHook,{% endif %}org.apache.hadoop.hive.ql.hooks.ATSHook",
         "hive.exec.pre.hooks" : "org.apache.hadoop.hive.ql.hooks.ATSHook",
+        {% if cluster_services.ATLAS is defined %}
+        "hive.metastore.event.listeners" : "org.apache.atlas.hive.hook.HiveMetastoreHookImpl",
+        {% endif %}
         "hive.exec.reducers.bytes.per.reducer" : "67108864",
         "hive.exec.reducers.max" : "1009",
         "hive.exec.scratchdir" : "/tmp/hive",
