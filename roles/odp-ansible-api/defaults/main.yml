@@ -665,14 +665,14 @@ services:
             client: ['']
       - name: ODP
         version: 1.2
-        conf: ['ranger-admin-site', 'ranger-env', 'admin-properties', 'admin-log4j', 'ranger-ugsync-site', 'usersync-log4j', 'ranger-solr-configuration', 'ranger-tagsync-site','ranger-tagsync-policymgr-ssl']
+        conf: ['ranger-admin-site', 'ranger-env', 'admin-properties', 'admin-log4j', 'ranger-ugsync-site', 'usersync-log4j', 'ranger-solr-configuration', 'ranger-tagsync-site','ranger-tagsync-policymgr-ssl','atlas-tagsync-ssl','tagsync-log4j']
         components:
           - noha: ['RANGER_ADMIN', 'RANGER_USERSYNC', 'RANGER_TAGSYNC']
             ha: ['']
             client: ['']
       - name: ODP
         version: 1.3
-        conf: ['ranger-admin-site', 'ranger-env', 'admin-properties', 'admin-logback','ranger-ugsync-site', 'usersync-logback', 'ranger-solr-configuration', 'ranger-tagsync-site','tagsync-logback','ranger-tagsync-policymgr-ssl']
+        conf: ['ranger-admin-site', 'ranger-env', 'admin-properties', 'admin-logback','admin-log4j','ranger-ugsync-site', 'usersync-logback','usersync-log4j', 'ranger-solr-configuration', 'ranger-tagsync-site','tagsync-logback','tagsync-log4j','ranger-tagsync-policymgr-ssl','atlas-tagsync-ssl','tagsync-application-properties']
         components:
           - noha: ['RANGER_ADMIN', 'RANGER_USERSYNC', 'RANGER_TAGSYNC']
             ha: ['']
@@ -1089,7 +1089,7 @@ services:
             client: ['']
       - name: ODP
         version: 1.3
-        conf: ['application-properties', 'atlas-env', 'atlas-solrconfig', 'atlas-solrschema', 'atlas-log4j']
+        conf: ['application-properties', 'atlas-env', 'atlas-solrconfig', 'atlas-solrschema', 'atlas-log4j', 'atlas-logback']
         components:
           - noha: ['ATLAS_SERVER']
             ha: ['']
